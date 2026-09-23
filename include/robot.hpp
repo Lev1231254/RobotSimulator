@@ -18,7 +18,7 @@ class Robot {;
         void setRadius(float radius);
         void setAngleRad(float angleRadInput);
 
-        void moveRobot(float angleDeg, float speedPxs);
+        void moveRobot(bool direction, float speedPxs);
 
 };
 

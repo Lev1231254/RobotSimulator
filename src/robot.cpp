@@ -32,10 +32,14 @@ void Robot::setAngleRad(float angleRadInput){
     angleRad = angleRadInput;
 }
 
-void Robot::moveRobot(float angleDeg, float speedPxs){
-    //changes position of the robot using angle in degrees and speed in pixel pro second
-    float xSpeed = sin(angleDeg) * speedPxs;
-    float ySpeed = cos(angleDeg) * speedPxs;
+void Robot::moveRobot(bool direction, float speedPxs){
+    //moves robot in the direction it's facing
+    // 1 - forwards, 0 - backwards
+    int direction_factor = 2 * (direction - 0.5);
+
+
+    float xSpeed = direction_factor * cos(angleRad) * speedPxs;
+    float ySpeed = -1 * direction_factor * sin(angleRad) * speedPxs;
 
     float x = body.getPosition().x + xSpeed;
     float y = body.getPosition().y + ySpeed;

@@ -5,6 +5,8 @@
 #include <draw.hpp>
 
 float const pi = 3.141592653f;
+float const movement_speed = 2.0f;
+float const turning_speed = pi / 90;
 
 int main()
 {
@@ -14,7 +16,8 @@ int main()
         "Robot simulator",
         sf::Style::Close
     );
-    window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
+    window.setKeyRepeatEnabled(false);
 
 
     Robot robot;
@@ -29,9 +32,25 @@ int main()
             if (event->is<sf::Event::Closed>()){
                 window.close();
             }
+            
 
 
+        }
 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
+            robot.moveRobot(1, movement_speed);
+        }
+    
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
+            robot.moveRobot(0, movement_speed);
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
+            robot.setAngleRad(robot.getAngleRad() + turning_speed);
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
+            robot.setAngleRad(robot.getAngleRad() - turning_speed);
         }
 
         window.clear(sf::Color::Black);
