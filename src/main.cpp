@@ -1,8 +1,10 @@
 #include <SFML/Graphics.hpp>
-#include <cmath>
+#include <numbers>
 #include <optional>
 #include <robot.hpp>
 #include <draw.hpp>
+
+float const pi = 3.141592653f;
 
 int main()
 {
@@ -17,7 +19,8 @@ int main()
 
     Robot robot;
     robot.setPosition({500.0f, 500.0f});
-    robot.setRadius(100.0f);
+    robot.setRadius(50.0f);
+    robot.setAngleRad(pi / 6);
 
 
     while (window.isOpen()){

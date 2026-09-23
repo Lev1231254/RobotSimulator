@@ -10,10 +10,13 @@ float Robot::getRadius() {
     return body.getRadius();
 }
 
-sf::CircleShape Robot::getBody() {
+sf::CircleShape Robot::getBodyCircle() {
     return body;
 }
 
+float Robot::getAngleRad(){
+    return angleRad;
+}
 
 
 void Robot::setPosition(sf::Vector2f position){
@@ -22,6 +25,11 @@ void Robot::setPosition(sf::Vector2f position){
 
 void Robot::setRadius(float radius){
     body.setRadius(radius);
+    body.setOrigin({radius, radius});
+}
+
+void Robot::setAngleRad(float angleRadInput){
+    angleRad = angleRadInput;
 }
 
 void Robot::moveRobot(float angleDeg, float speedPxs){
