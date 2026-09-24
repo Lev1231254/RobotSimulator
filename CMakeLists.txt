@@ -23,6 +23,7 @@ add_executable(robot_simulator
     src/main.cpp
     src/draw.cpp
     src/robot.cpp
+    src/utils.cpp
 )
 
 target_include_directories(robot_simulator
