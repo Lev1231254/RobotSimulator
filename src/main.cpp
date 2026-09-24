@@ -28,6 +28,11 @@ int main()
     robot.setRadius(50.0f);
     robot.setAngleRad(pi / 6);
 
+    sf::RectangleShape obstacle({100, 100});
+    obstacle.setPosition({300, 300});
+    obstacle.setFillColor(sf::Color::Blue);
+
+
     sf::Clock clock;
     float accumulator = 0.f;
 
@@ -41,35 +46,26 @@ int main()
 
 
         }
-
+        
+        // simulation
         float frameTime = clock.restart().asSeconds();
         accumulator += frameTime;
-
+        
         while (accumulator >= dTime) {
 
-            scanAndMove(robot, movement_speed, turning_speed);
-            
-            // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
-            //     robot.moveRobot(1, movement_speed);
+            // while (circleIntersectsRect(robot.getBodyCircle(), obstacle)){
+            //     robot.moveRobot(0, movement_speed / 2);
             // }
-        
-            // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
-            //     robot.moveRobot(0, movement_speed);
-            // }
-
-            // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
-            //     robot.setAngleRad(robot.getAngleRad() + turning_speed);
-            // }
-
-            // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
-            //     robot.setAngleRad(robot.getAngleRad() - turning_speed);
-            // }
+            scanAndMove(robot, obstacle, movement_speed, turning_speed);
             accumulator -= dTime;
 
         }
+
+        // drawing
         window.clear(sf::Color::Black);
 
         draw_robot(window, robot);
+        window.draw(obstacle);
 
         window.display();
     }

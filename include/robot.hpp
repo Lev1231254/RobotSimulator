@@ -19,6 +19,7 @@ class Robot {;
         void setAngleRad(float angleRadInput);
 
         void moveRobot(bool direction, float speedPxs);
+        sf::Vector2f getFuturePos(bool direction, float speedPxs);
 
 };
 

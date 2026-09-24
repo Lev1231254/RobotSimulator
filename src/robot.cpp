@@ -46,3 +46,19 @@ void Robot::moveRobot(bool direction, float speedPxs){
 
     body.setPosition({x, y});
 }
+
+
+sf::Vector2f Robot::getFuturePos(bool direction, float speedPxs){
+    //get future position of the robot after the movement (used to do collisions)
+    // direction: 1 - forwards, 0 - backwards
+    int direction_factor = 2 * (direction - 0.5);
+
+
+    float xSpeed = direction_factor * cos(angleRad) * speedPxs;
+    float ySpeed = -1 * direction_factor * sin(angleRad) * speedPxs;
+
+    float x = body.getPosition().x + xSpeed;
+    float y = body.getPosition().y + ySpeed;
+
+    return {x, y};
+}
