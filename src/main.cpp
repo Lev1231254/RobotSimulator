@@ -5,8 +5,10 @@
 #include <draw.hpp>
 
 float const pi = 3.141592653f;
-float const movement_speed = 2.0f;
-float const turning_speed = pi / 90;
+float const movement_speed = 2.f;
+float const turning_speed = pi / 90.f;
+float const dTime = 1.f / 60.f;
+
 
 int main()
 {
@@ -25,6 +27,8 @@ int main()
     robot.setRadius(50.0f);
     robot.setAngleRad(pi / 6);
 
+    sf::Clock clock;
+    float accumulator = 0.f;
 
     while (window.isOpen()){
         while (const std::optional event = window.pollEvent()){
@@ -37,22 +41,30 @@ int main()
 
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
-            robot.moveRobot(1, movement_speed);
-        }
-    
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
-            robot.moveRobot(0, movement_speed);
-        }
+        float frameTime = clock.restart().asSeconds();
+        accumulator += frameTime;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
-            robot.setAngleRad(robot.getAngleRad() + turning_speed);
-        }
+        while (accumulator >= dTime) {
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
-            robot.setAngleRad(robot.getAngleRad() - turning_speed);
-        }
+         
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
+                robot.moveRobot(1, movement_speed);
+            }
+        
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
+                robot.moveRobot(0, movement_speed);
+            }
 
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
+                robot.setAngleRad(robot.getAngleRad() + turning_speed);
+            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
+                robot.setAngleRad(robot.getAngleRad() - turning_speed);
+            }
+            accumulator -= dTime;
+
+        }
         window.clear(sf::Color::Black);
 
         draw_robot(window, robot);
