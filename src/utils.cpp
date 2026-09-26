@@ -61,7 +61,7 @@ sf::Image getWindowImage(sf::RenderWindow& window){
     return image;
 }
 
-sf::Vector2f getSquareInGrid(sf::Vector2f gridSize, int squareSide, sf::Vector2f position){
+sf::Vector2f getSquareInGrid(sf::Vector2f gridSize, int squareSide, sf::Vector2i position){
     float x = (int(position.x) / squareSide) * squareSide;
     float y = (int(position.y) / squareSide) * squareSide;
 

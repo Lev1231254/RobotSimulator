@@ -10,8 +10,8 @@ float const pi = 3.141592653f;
 float const movement_speed = 2.f;
 float const turning_speed = pi / 90.f;
 float const dTime = 1.f / 90.f;
-int const squareSide = 5; // side-size of small squares in a grid
-
+int const square_side = 30; // side-size of small squares in a grid
+sf::Vector2f const window_size = {1000, 1000};
 
 int main()
 {
@@ -45,6 +45,8 @@ int main()
     int simulationMode = 0;
     // 0 - WASD mode
     // 1 - pathfinding mode
+
+    sf::Vector2f selectedSquare;
 
 
     while (window.isOpen()){
@@ -81,7 +83,8 @@ int main()
                 
             }
             else if (simulationMode == 1){
-                
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                selectedSquare = getSquareInGrid(window_size, square_side, mousePos);
             }
 
             
@@ -96,8 +99,7 @@ int main()
         draw_robot(window, robot);
         window.draw(obstacle);
         if (simulationMode == 1){
-            makeSquareGreener(window, windowImage, {350, 350}, 100);
-            makeSquareGreener(window, windowImage, {400, 400}, 500);
+            makeSquareGreener(window, windowImage, selectedSquare, square_side);
         }
         
         

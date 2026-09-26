@@ -21,9 +21,13 @@ void draw_robot(sf::RenderWindow& window, Robot robot){
 }
 
 void makeSquareGreener(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, float sideLen){
-    unsigned int x = leftTop.x;
-    unsigned int y = leftTop.y;
+    int x = leftTop.x;
+    int y = leftTop.y;
+    
+    int xMax = window.getSize().x;
+    int yMax = window.getSize().y;
 
+    if (x < 0 || x >= xMax || y < 0 || y >= yMax) return;
     sf::Color color = windowCopy.getPixel({x,y});
 
     color = color + sf::Color(0, 200, 0, 255);

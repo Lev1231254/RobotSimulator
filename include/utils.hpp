@@ -9,6 +9,6 @@ void scanAndMove(Robot& robot, sf::RectangleShape obstacle, float movement_speed
 float clamp(float value, float min, float max);
 bool circleIntersectsRect(sf::CircleShape circle, sf::RectangleShape rect);
 sf::Image getWindowImage(sf::RenderWindow& window);
-sf::Vector2f getSquareInGrid(sf::Vector2f gridSize, int squareSide, sf::Vector2f position);
+sf::Vector2f getSquareInGrid(sf::Vector2f gridSize, int squareSide, sf::Vector2i position);
 
 #endif
