@@ -4,11 +4,13 @@
 #include <robot.hpp>
 #include <draw.hpp>
 #include <utils.hpp>
+#include <iostream>
 
 float const pi = 3.141592653f;
 float const movement_speed = 2.f;
 float const turning_speed = pi / 90.f;
 float const dTime = 1.f / 90.f;
+int const squareSide = 5; // side-size of small squares in a grid
 
 
 int main()
@@ -52,7 +54,20 @@ int main()
                 window.close();
             }
             
-
+            // change between modes using LeftSHIFT
+            if (const auto* key = event->getIf<sf::Event::KeyPressed>()){
+                if (key->scancode == sf::Keyboard::Scancode::LShift){
+                    if (simulationMode == 1) {
+                        simulationMode = 0;
+                        std::cout << "Mode - 0" << std::endl;
+                    }
+                    else if (simulationMode == 0){
+                        std::cout << "Mode - 1" << std::endl;
+                        simulationMode = 1;
+                    } 
+                }
+                
+            }
 
         }
         
@@ -61,7 +76,16 @@ int main()
         accumulator += frameTime;
         
         while (accumulator >= dTime) {
-            scanAndMove(robot, obstacle, movement_speed, turning_speed);
+            if (simulationMode == 0){
+                scanAndMove(robot, obstacle, movement_speed, turning_speed);
+                
+            }
+            else if (simulationMode == 1){
+                
+            }
+
+            
+            
             accumulator -= dTime;
 
         }
@@ -71,8 +95,11 @@ int main()
 
         draw_robot(window, robot);
         window.draw(obstacle);
-        makeSquareGreener(window, windowImage, {350, 350}, 100);
-        makeSquareGreener(window, windowImage, {400, 400}, 500);
+        if (simulationMode == 1){
+            makeSquareGreener(window, windowImage, {350, 350}, 100);
+            makeSquareGreener(window, windowImage, {400, 400}, 500);
+        }
+        
         
 
         window.display();
