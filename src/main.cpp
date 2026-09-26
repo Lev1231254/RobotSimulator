@@ -15,26 +15,35 @@ int main()
 {
 
     sf::RenderWindow window(
-        sf::VideoMode({800, 600}),
+        sf::VideoMode({1000, 1000}),
         "Robot simulator",
         sf::Style::Close
     );
     window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(false);
 
+    sf::RectangleShape obstacle({100, 100});
+    obstacle.setPosition({300, 300});
+    obstacle.setFillColor(sf::Color::Blue);
+
+    window.draw(obstacle);
+    sf::Image windowImage = getWindowImage(window);
 
     Robot robot;
     robot.setPosition({500.0f, 500.0f});
     robot.setRadius(50.0f);
     robot.setAngleRad(pi / 6);
 
-    sf::RectangleShape obstacle({100, 100});
-    obstacle.setPosition({300, 300});
-    obstacle.setFillColor(sf::Color::Blue);
+
 
 
     sf::Clock clock;
     float accumulator = 0.f;
+
+    int simulationMode = 0;
+    // 0 - WASD mode
+    // 1 - pathfinding mode
+
 
     while (window.isOpen()){
         while (const std::optional event = window.pollEvent()){
@@ -52,10 +61,6 @@ int main()
         accumulator += frameTime;
         
         while (accumulator >= dTime) {
-
-            // while (circleIntersectsRect(robot.getBodyCircle(), obstacle)){
-            //     robot.moveRobot(0, movement_speed / 2);
-            // }
             scanAndMove(robot, obstacle, movement_speed, turning_speed);
             accumulator -= dTime;
 
@@ -66,6 +71,9 @@ int main()
 
         draw_robot(window, robot);
         window.draw(obstacle);
+        makeSquareGreener(window, windowImage, {350, 350}, 100);
+        makeSquareGreener(window, windowImage, {400, 400}, 500);
+        
 
         window.display();
     }

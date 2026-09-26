@@ -5,5 +5,6 @@
 #include "robot.hpp"
 
 void draw_robot(sf::RenderWindow& window, Robot robot);
+void makeSquareGreener(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, float sideLen);
 
 #endif

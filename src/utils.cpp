@@ -52,3 +52,15 @@ bool circleIntersectsRect(sf::CircleShape circle, sf::RectangleShape rect){
 
     return distanceX * distanceX + distanceY * distanceY <= radius * radius;
 }
+
+sf::Image getWindowImage(sf::RenderWindow& window){
+    sf::Texture texture(window.getSize());
+    texture.update(window);
+
+    sf::Image image = texture.copyToImage();
+    return image;
+}
+
+sf::Vector2f getSquareInGrid(sf::Vector2f gridSize, float squareSide, sf::Vector2f position){
+    
+}
