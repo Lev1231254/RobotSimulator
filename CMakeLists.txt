@@ -25,6 +25,7 @@ add_executable(robot_simulator
     src/robot.cpp
     src/utils.cpp
     src/pathfindingMode.cpp
+    src/app.cpp
 )
 
 target_include_directories(robot_simulator
