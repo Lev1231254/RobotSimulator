@@ -28,6 +28,11 @@ void App::setMapImage(){
     mapImage = getWindowImage(window);
 }
 
+void App::readMap(Map mapInput){
+    map = mapInput;
+}
+
+
 void App::run(){
     sf::Clock clock;
     float accumulator = 0.f;

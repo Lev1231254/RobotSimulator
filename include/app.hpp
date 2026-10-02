@@ -33,6 +33,7 @@ class App{
         void setWindow(unsigned int width, unsigned int height, std::string title);
         void addObstacle(Obstacle obstacle);
         void setMapImage();
+        void readMap(Map mapInput);
         void run();
 };
 

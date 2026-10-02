@@ -21,11 +21,11 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(robot_simulator
     src/main.cpp
+    src/app.cpp
     src/draw.cpp
     src/objects.cpp
     src/utils.cpp
     src/pathfindingMode.cpp
-    src/app.cpp
 )
 
 target_include_directories(robot_simulator
