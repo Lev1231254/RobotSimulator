@@ -1,4 +1,4 @@
-#include <robot.hpp>
+#include <objects.hpp>
 #include <math.h>
 
 
@@ -61,4 +61,44 @@ sf::Vector2f Robot::getFuturePos(bool direction, float speedPxs){
     float y = body.getPosition().y + ySpeed;
 
     return {x, y};
+}
+
+
+// OBSTACLE ------------------------------------------
+
+sf::RectangleShape Obstacle::getBodyRect(){
+    return body;
+}
+
+sf::Vector2f Obstacle::getPosition(){
+    return body.getPosition();
+}
+
+float Obstacle::getWidth(){
+    return body.getSize().x;
+}
+
+float Obstacle::getHeight(){
+    return body.getSize().y;
+}
+
+void Obstacle::setPosition(sf::Vector2f position){
+    body.setPosition(position);
+}
+
+void Obstacle::setWidth(float width){
+    float height = body.getSize().y;
+    body.setSize({width, height});
+}
+
+void Obstacle::setHeight(float height){
+    float width = body.getSize().x;
+    body.setSize({width, height});
+}
+
+void Obstacle::setSize(float width, float height){
+    body.setSize({width, height});
+}
+void Obstacle::setColor(sf::Color color){
+    body.setFillColor(color);
 }

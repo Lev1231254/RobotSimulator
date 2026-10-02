@@ -22,7 +22,7 @@ FetchContent_MakeAvailable(SFML)
 add_executable(robot_simulator
     src/main.cpp
     src/draw.cpp
-    src/robot.cpp
+    src/objects.cpp
     src/utils.cpp
     src/pathfindingMode.cpp
     src/app.cpp

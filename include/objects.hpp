@@ -1,10 +1,10 @@
-#ifndef ROBOT_H
-#define ROBOT_H
+#ifndef OBJECTS_H
+#define OBJECTS_H
 
-#include <vector>
 #include <SFML/Graphics.hpp>
+#include <memory>
 
-class Robot {;
+class Robot {
     sf::CircleShape body;
     float angleRad;
 
@@ -20,6 +20,23 @@ class Robot {;
 
         void moveRobot(bool direction, float speedPxs);
         sf::Vector2f getFuturePos(bool direction, float speedPxs);
+
+};
+
+class Obstacle {
+    sf::RectangleShape body;
+
+    public:
+        sf::RectangleShape getBodyRect();
+        sf::Vector2f getPosition();
+        float getWidth();
+        float getHeight();
+
+        void setPosition(sf::Vector2f position);
+        void setWidth(float width);
+        void setHeight(float height);
+        void setSize(float width, float height);
+        void setColor(sf::Color colorInput);
 
 };
 

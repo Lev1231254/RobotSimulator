@@ -3,11 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 #include <optional>
-#include <robot.hpp>
+#include <objects.hpp>
 #include <draw.hpp>
 #include <utils.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
 
 float const pi = 3.141592653f;
 float const movement_speed = 2.f;

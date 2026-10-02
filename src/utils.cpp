@@ -1,5 +1,5 @@
 #include <utils.hpp>
-#include <algorithm>
+
 void scanAndMove(Robot& robot, sf::RectangleShape obstacle,float movement_speed, float turning_speed){
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
@@ -61,9 +61,10 @@ sf::Image getWindowImage(sf::RenderWindow& window){
     return image;
 }
 
-sf::Vector2f getSquareInGrid(sf::Vector2f gridSize, int squareSide, sf::Vector2i position){
+sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2i position){
     float x = (int(position.x) / squareSide) * squareSide;
     float y = (int(position.y) / squareSide) * squareSide;
 
     return {x, y};
 }
+

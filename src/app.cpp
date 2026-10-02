@@ -73,7 +73,7 @@ void App::run(){
             }
             else if (simulationMode == 1){
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                selectedSquare = getSquareInGrid(window_size, square_side, mousePos);
+                selectedSquare = getSquareInGrid(square_side, mousePos);
             }
 
             
