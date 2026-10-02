@@ -17,14 +17,14 @@ void App::setWindow(unsigned int width, unsigned int height, std::string title){
     window.setKeyRepeatEnabled(false);
 }
 
-void App::setObstacle(sf::Vector2f size, sf::Vector2f position, sf::Color color){
-    obstacle.setSize(size);
-    obstacle.setPosition(position);
-    obstacle.setFillColor(color);
+void App::addObstacle(Obstacle obstacle){
+    map.obstacles.push_back(obstacle);
 }
 
+
+
 void App::setMapImage(){
-    window.draw(obstacle);
+    drawObstacles(window, map.obstacles);
     mapImage = getWindowImage(window);
 }
 
@@ -68,7 +68,7 @@ void App::run(){
         
         while (accumulator >= dTime) {
             if (simulationMode == 0){
-                scanAndMove(robot, obstacle, movement_speed, turning_speed);
+                scanAndMove(robot, map, movement_speed, turning_speed);
                 
             }
             else if (simulationMode == 1){
@@ -85,8 +85,8 @@ void App::run(){
         // drawing
         window.clear(sf::Color::Black);
 
-        draw_robot(window, robot);
-        window.draw(obstacle);
+        drawRobot(window, robot);
+        drawObstacles(window, map.obstacles);
         if (simulationMode == 1){
             makeSquareGreener(window, mapImage, selectedSquare, square_side);
         }

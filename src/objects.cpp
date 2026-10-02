@@ -96,8 +96,8 @@ void Obstacle::setHeight(float height){
     body.setSize({width, height});
 }
 
-void Obstacle::setSize(float width, float height){
-    body.setSize({width, height});
+void Obstacle::setSize(sf::Vector2f size){
+    body.setSize(size);
 }
 void Obstacle::setColor(sf::Color color){
     body.setFillColor(color);

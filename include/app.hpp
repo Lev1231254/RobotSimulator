@@ -23,13 +23,13 @@ sf::Vector2f const window_size = {window_width, window_height};
 class App{
     sf::RenderWindow window;
     Robot robot;
-    sf::RectangleShape obstacle;
+    Map map;
     sf::Image mapImage;
 
     public:
         void setRobot(sf::Vector2f position, float radius, float angleRad);
         void setWindow(unsigned int width, unsigned int height, std::string title);
-        void setObstacle(sf::Vector2f size, sf::Vector2f position, sf::Color color);
+        void addObstacle(Obstacle obstacle);
         void setMapImage();
         void run();
 };

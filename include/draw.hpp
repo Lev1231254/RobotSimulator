@@ -4,7 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <objects.hpp>
 
-void draw_robot(sf::RenderWindow& window, Robot robot);
+void drawRobot(sf::RenderWindow& window, Robot robot);
 void makeSquareGreener(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, float sideLen);
+void drawObstacles(sf::RenderWindow& window, std::vector<Obstacle> obstacles);
 
 #endif

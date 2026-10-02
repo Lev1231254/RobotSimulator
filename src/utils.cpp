@@ -1,25 +1,24 @@
 #include <utils.hpp>
 
-void scanAndMove(Robot& robot, sf::RectangleShape obstacle,float movement_speed, float turning_speed){
+
+void scanAndMove(Robot& robot, Map map, float movement_speed, float turning_speed){
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
         sf::Vector2f newPos = robot.getFuturePos(1, movement_speed);
 
-        sf::CircleShape oldCircle = robot.getBodyCircle();
-        sf::CircleShape newCircle = oldCircle;
-        newCircle.setPosition(newPos);
+        Robot futureRobot = robot;
+        futureRobot.setPosition(newPos);
         
-        if (!circleIntersectsRect(newCircle, obstacle)) robot.moveRobot(1, movement_speed);
+        if (!robotCollidesObsts(futureRobot, map.obstacles)) robot.moveRobot(1, movement_speed);
     }
         
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
         sf::Vector2f newPos = robot.getFuturePos(0, movement_speed);
 
-        sf::CircleShape oldCircle = robot.getBodyCircle();
-        sf::CircleShape newCircle = oldCircle;
-        newCircle.setPosition(newPos);
+        Robot futureRobot = robot;
+        futureRobot.setPosition(newPos);
         
-        if (!circleIntersectsRect(newCircle, obstacle)) robot.moveRobot(0, movement_speed);
+        if (!robotCollidesObsts(futureRobot, map.obstacles)) robot.moveRobot(0, movement_speed);
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
@@ -31,11 +30,13 @@ void scanAndMove(Robot& robot, sf::RectangleShape obstacle,float movement_speed,
     }    
 }   
 
+
 float clamp(float value, float min, float max){
     if (value < min) return min;
     if (value > max) return max;
     return value;
 }
+
 
 bool circleIntersectsRect(sf::CircleShape circle, sf::RectangleShape rect){
     sf::Vector2f rectTopLeft = rect.getPosition();
@@ -53,6 +54,22 @@ bool circleIntersectsRect(sf::CircleShape circle, sf::RectangleShape rect){
     return distanceX * distanceX + distanceY * distanceY <= radius * radius;
 }
 
+
+bool robotCollidesObst(Robot robot, Obstacle obstacle){
+    sf::CircleShape circle = robot.getBodyCircle();
+    sf::RectangleShape rect = obstacle.getBodyRect();
+    return circleIntersectsRect(circle, rect);
+}
+
+
+bool robotCollidesObsts(Robot robot, std::vector<Obstacle> obstacles){
+    for (auto obstacle : obstacles){
+        if (robotCollidesObst(robot, obstacle)) return 1;
+    }
+    return 0;
+}
+
+
 sf::Image getWindowImage(sf::RenderWindow& window){
     sf::Texture texture(window.getSize());
     texture.update(window);
@@ -60,6 +77,7 @@ sf::Image getWindowImage(sf::RenderWindow& window){
     sf::Image image = texture.copyToImage();
     return image;
 }
+
 
 sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2i position){
     float x = (int(position.x) / squareSide) * squareSide;

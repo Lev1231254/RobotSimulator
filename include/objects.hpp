@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include <vector>
+
 
 class Robot {
     sf::CircleShape body;
@@ -35,9 +37,13 @@ class Obstacle {
         void setPosition(sf::Vector2f position);
         void setWidth(float width);
         void setHeight(float height);
-        void setSize(float width, float height);
+        void setSize(sf::Vector2f size);
         void setColor(sf::Color colorInput);
 
+};
+
+struct Map{
+    std::vector<Obstacle> obstacles;
 };
 
 #endif

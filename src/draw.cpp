@@ -1,7 +1,7 @@
 #include <draw.hpp>
 #include <iostream>
 
-void draw_robot(sf::RenderWindow& window, Robot robot){
+void drawRobot(sf::RenderWindow& window, Robot robot){
     // draw the circle and the direction line
 
     sf::Vector2f center = robot.getPosition();
@@ -44,4 +44,10 @@ void makeSquareGreener(sf::RenderWindow & window, sf::Image windowCopy, sf::Vect
     square.setFillColor(color);
 
     window.draw(square);
+}
+
+void drawObstacles(sf::RenderWindow& window, std::vector<Obstacle> obstacles){
+    for (auto obstacle : obstacles){
+        window.draw(obstacle.getBodyRect());
+    }
 }
