@@ -23,16 +23,14 @@ float const ROBOT_ANGLE_RAD = pi / 6;
 
 int main()
 {
-    App app;
+    Robot robot(ROBOT_POS, ROBOT_RADIUS);
+    App app(robot);
 
     app.setWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
-    Obstacle obst1;
-    obst1.setColor(sf::Color::White);
-    obst1.setSize({100, 200});
-    obst1.setPosition({100, 100});
+    
+    Obstacle obst1({100, 100}, {100, 200}, sf::Color::White);
     app.addObstacle(obst1);
     app.setMapImage();
-    app.setRobot(ROBOT_POS, ROBOT_RADIUS, ROBOT_ANGLE_RAD);
 
     app.run();
     return 0;

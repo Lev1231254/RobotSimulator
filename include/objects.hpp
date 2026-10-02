@@ -11,6 +11,7 @@ class Robot {
     float angleRad;
 
     public:
+        Robot(sf::Vector2f pos, float radius);
         sf::CircleShape getBodyCircle();
         sf::Vector2f getPosition();
         float getAngleRad();
@@ -29,6 +30,7 @@ class Obstacle {
     sf::RectangleShape body;
 
     public:
+        Obstacle(sf::Vector2f pos, sf::Vector2f size, sf::Color color);
         sf::RectangleShape getBodyRect();
         sf::Vector2f getPosition();
         float getWidth();

@@ -27,6 +27,8 @@ class App{
     sf::Image mapImage;
 
     public:
+        App(Robot robotInput) 
+            : robot(robotInput){};
         void setRobot(sf::Vector2f position, float radius, float angleRad);
         void setWindow(unsigned int width, unsigned int height, std::string title);
         void addObstacle(Obstacle obstacle);

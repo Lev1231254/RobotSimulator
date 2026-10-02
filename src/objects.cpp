@@ -1,6 +1,14 @@
 #include <objects.hpp>
 #include <math.h>
 
+const float pi = 3.1416;
+
+Robot::Robot(sf::Vector2f pos, float radius){
+    body.setPosition(pos);
+    body.setRadius(radius);
+    angleRad = pi / 2;
+    body.setOrigin({radius, radius});
+}
 
 sf::Vector2f Robot::getPosition(){
     return body.getPosition();
@@ -65,6 +73,11 @@ sf::Vector2f Robot::getFuturePos(bool direction, float speedPxs){
 
 
 // OBSTACLE ------------------------------------------
+Obstacle::Obstacle(sf::Vector2f pos, sf::Vector2f size, sf::Color color){
+    body.setFillColor(color);
+    body.setPosition(pos);
+    body.setSize(size);
+}
 
 sf::RectangleShape Obstacle::getBodyRect(){
     return body;
