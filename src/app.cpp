@@ -25,10 +25,8 @@ void App::setMapImage(){
 }
 
 void App::runSimulationStep(){
-    std::cout << accumulator << std::endl;
     while (accumulator >= dTime) {
         if (simulationMode == 0){
-            std::cout << "Scan and move mode" << std::endl;
             scanAndMove(robot, map, movement_speed, turning_speed);
             
         }
@@ -45,29 +43,36 @@ void App::runSimulationStep(){
 
 }
 
+void App::handleEvents(sf::Event event){
+    if (event.is<sf::Event::Closed>()){
+        window.close();
+    }
+    
+    // toggle pathfinding mode using LeftSHIFT
+    if (const auto* key = event.getIf<sf::Event::KeyPressed>()){
+        if (key->scancode == sf::Keyboard::Scancode::LShift){
+            if (simulationMode == 1) {
+                simulationMode = 0;
+                std::cout << "Mode - 0" << std::endl;
+            }
+            else if (simulationMode == 0){
+                std::cout << "Mode - 1" << std::endl;
+                simulationMode = 1;
+            } 
+        }
+        
+    }
+}
+
 void App::run(){
+    map.computeAvoidanceMatrix();
+    map.makeAvoidanceRects();
 
     while (window.isOpen()){
+        // change modes
         while (const std::optional event = window.pollEvent()){
 
-            if (event->is<sf::Event::Closed>()){
-                window.close();
-            }
-            
-            // toggle pathfinding mode using LeftSHIFT
-            if (const auto* key = event->getIf<sf::Event::KeyPressed>()){
-                if (key->scancode == sf::Keyboard::Scancode::LShift){
-                    if (simulationMode == 1) {
-                        simulationMode = 0;
-                        std::cout << "Mode - 0" << std::endl;
-                    }
-                    else if (simulationMode == 0){
-                        std::cout << "Mode - 1" << std::endl;
-                        simulationMode = 1;
-                    } 
-                }
-                
-            }
+            handleEvents(*event);
 
         }
             
@@ -75,24 +80,7 @@ void App::run(){
         float frameTime = clock.restart().asSeconds();
         accumulator += frameTime;
         runSimulationStep();
-        
-        
-        // while (accumulator >= dTime) {
-        //     if (simulationMode == 0){
-        //         scanAndMove(robot, map, movement_speed, turning_speed);
-                
-        //     }
-        //     else if (simulationMode == 1){
-        //         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-        //         selectedSquare = getSquareInGrid(square_side, mousePos);
-        //     }
-
-            
-            
-        //     accumulator -= dTime;
-
-        // }
-
+    
         // drawing
         window.clear(sf::Color::Black);
 
@@ -100,6 +88,7 @@ void App::run(){
         map.drawObstacles(window);
         if (simulationMode == 1){
             map.addColorToSquare(window, mapImage, selectedSquare, sf::Color::Green);
+            map.drawAvoidanceField(window, mapImage);
         }
         
         

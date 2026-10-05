@@ -120,9 +120,7 @@ void Obstacle::setColor(sf::Color color){
 
 // MAP -------------------------------
 
-std::vector<std::vector<bool>> Map::computeAvoidanceMatrix(){
-    std::vector<std::vector<bool>> avoidanceMatrix;
-
+void Map::computeAvoidanceMatrix(){
     for (unsigned int y = 0; y < mapSize.y; y += squareSide){
         avoidanceMatrix.push_back({});
         for (unsigned int x = 0; x < mapSize.x; x += squareSide){
@@ -137,9 +135,8 @@ std::vector<std::vector<bool>> Map::computeAvoidanceMatrix(){
             }
         }
     }
-
-    return avoidanceMatrix;
 }
+
 
 
 void Map::drawObstacles(sf::RenderWindow& window){
@@ -148,8 +145,30 @@ void Map::drawObstacles(sf::RenderWindow& window){
     }
 }
 
+void Map::drawAvoidanceField(sf::RenderWindow& window, sf::Image windowCopy){
+    for (auto square : avoidanceRects) window.draw(square);
+}
 
-void Map::addColorToSquare(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd){
+
+void Map::makeAvoidanceRects(){
+    for (unsigned int i = 0; i < avoidanceMatrix.size(); i++){
+        auto row = avoidanceMatrix[i];
+        for (unsigned j = 0; j < row.size(); j++){
+            bool isSquareOk = row[j];
+            
+            if (!isSquareOk) {
+                sf::Vector2f squareTopLeft = {j * squareSide, i * squareSide};
+                sf::RectangleShape square({squareSide, squareSide});
+                square.setPosition(squareTopLeft);
+                square.setFillColor(sf::Color(255, 0, 0, 100));
+                avoidanceRects.push_back(square);
+            }
+        }
+    }
+}
+
+
+void Map::addColorToSquare(sf::RenderWindow& window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd){
     int x = leftTop.x;
     int y = leftTop.y;
     

@@ -19,7 +19,6 @@ float const ROBOT_ANGLE_RAD = pi / 6;
 
 Map map(desktop.size, square_side, obstacles1);
 
-
 int main()
 {
     Robot robot(ROBOT_POS, ROBOT_RADIUS);

@@ -49,6 +49,7 @@ class Map {
         int squareSide;
         std::vector<Obstacle> obstacles;
         std::vector<std::vector<bool>> avoidanceMatrix;
+        std::vector<sf::RectangleShape> avoidanceRects;
         std::vector<std::vector<sf::Vector2f>> grid;
 
     public:
@@ -58,10 +59,11 @@ class Map {
             obstacles(obstaclesInput) {}; 
 
         void drawObstacles(sf::RenderWindow& window);
+        void drawAvoidanceField(sf::RenderWindow& window, sf::Image windowCopy);
         void addColorToSquare(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
 
-        std::vector<std::vector<bool>> computeAvoidanceMatrix();
-        std::vector<std::vector<sf::Vector2f>> computeGrid();
+        void computeAvoidanceMatrix();
+        void makeAvoidanceRects();
         
         void addObstacle(Obstacle obstacle);
 

@@ -41,6 +41,7 @@ class App{
         void setMapImage();
         void run();
         void runSimulationStep();
+        void handleEvents(sf::Event event);
 };
 
 #endif
