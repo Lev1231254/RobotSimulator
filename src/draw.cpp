@@ -20,34 +20,34 @@ void drawRobot(sf::RenderWindow& window, Robot robot){
 
 }
 
-void makeSquareGreener(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, float sideLen){
-    int x = leftTop.x;
-    int y = leftTop.y;
+// void makeSquareGreener(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, float sideLen){
+//     int x = leftTop.x;
+//     int y = leftTop.y;
     
-    int xMax = window.getSize().x;
-    int yMax = window.getSize().y;
+//     int xMax = window.getSize().x;
+//     int yMax = window.getSize().y;
 
-    if (x < 0 || x >= xMax || y < 0 || y >= yMax) return;
-    sf::Color color = windowCopy.getPixel({x,y});
+//     if (x < 0 || x >= xMax || y < 0 || y >= yMax) return;
+//     sf::Color color = windowCopy.getPixel({x,y});
 
-    color = color + sf::Color(0, 200, 0, 255);
-    color = color - sf::Color(100, 0, 100, 0);
-
-    
+//     color = color + sf::Color(0, 200, 0, 255);
+//     color = color - sf::Color(100, 0, 100, 0);
 
     
+
     
-    color.a = 255;
+    
+//     color.a = 255;
 
-    sf::RectangleShape square({sideLen, sideLen});
-    square.setPosition(leftTop);
-    square.setFillColor(color);
+//     sf::RectangleShape square({sideLen, sideLen});
+//     square.setPosition(leftTop);
+//     square.setFillColor(color);
 
-    window.draw(square);
-}
+//     window.draw(square);
+// }
 
-void drawObstacles(sf::RenderWindow& window, std::vector<Obstacle> obstacles){
-    for (auto obstacle : obstacles){
-        window.draw(obstacle.getBodyRect());
-    }
-}
+// void drawObstacles(sf::RenderWindow& window, std::vector<Obstacle> obstacles){
+//     for (auto obstacle : obstacles){
+//         window.draw(obstacle.getBodyRect());
+//     }
+// }

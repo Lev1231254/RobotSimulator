@@ -17,15 +17,16 @@ sf::Vector2f const ROBOT_POS = {900, 500};
 float const ROBOT_RADIUS = 40;
 float const ROBOT_ANGLE_RAD = pi / 6;
 
+Map map(desktop.size, square_side, obstacles1);
+
 
 int main()
 {
     Robot robot(ROBOT_POS, ROBOT_RADIUS);
-    App app(robot);
+    App app(robot, map);
 
     app.setWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
     
-    app.readMap(map1);
     app.setMapImage();
 
     app.run();

@@ -17,32 +17,32 @@ void App::setWindow(unsigned int width, unsigned int height, std::string title){
     window.setKeyRepeatEnabled(false);
 }
 
-void App::addObstacle(Obstacle obstacle){
-    map.obstacles.push_back(obstacle);
-}
+// void App::addObstacle(Obstacle obstacle){
+//     map.obstacles.push_back(obstacle);
+// }
 
 
 
 void App::setMapImage(){
-    drawObstacles(window, map.obstacles);
+    map.drawObstacles(window);
     mapImage = getWindowImage(window);
     
 
 }
 
-void App::readMap(Map mapInput){
-    map = mapInput;
-    map.avoidanceMatrix = getAvoidanceMatrix(map.obstacles, square_side, window.getSize());
-    std::cout << "AvoidanceMatrix size: " << map.avoidanceMatrix.size() << " " << map.avoidanceMatrix[0].size();
+// void App::readMap(Map mapInput){
+//     map = mapInput;
+//     map.avoidanceMatrix = getAvoidanceMatrix(map.obstacles, square_side, window.getSize());
+//     std::cout << "AvoidanceMatrix size: " << map.avoidanceMatrix.size() << " " << map.avoidanceMatrix[0].size();
 
-    for (int i = 0; i < map.avoidanceMatrix.size(); i ++){
-        std::cout << std::endl;
-        for (int j = 0; j < map.avoidanceMatrix[0].size(); j++){
-            std::cout << map.avoidanceMatrix[i][j] << " ";
-        }
-    }
-    std::cout << std::endl;
-}
+//     for (int i = 0; i < map.avoidanceMatrix.size(); i ++){
+//         std::cout << std::endl;
+//         for (int j = 0; j < map.avoidanceMatrix[0].size(); j++){
+//             std::cout << map.avoidanceMatrix[i][j] << " ";
+//         }
+//     }
+//     std::cout << std::endl;
+// }
 
 
 void App::run(){
@@ -103,9 +103,9 @@ void App::run(){
         window.clear(sf::Color::Black);
 
         drawRobot(window, robot);
-        drawObstacles(window, map.obstacles);
+        map.drawObstacles(window);
         if (simulationMode == 1){
-            makeSquareGreener(window, mapImage, selectedSquare, square_side);
+            map.addColorToSquare(window, mapImage, selectedSquare, sf::Color::Green);
         }
         
         

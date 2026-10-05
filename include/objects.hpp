@@ -43,10 +43,31 @@ class Obstacle {
         void setColor(sf::Color colorInput);
 
 };
+class Map {
+    private:
+        sf::Vector2u mapSize;
+        int squareSide;
+        std::vector<Obstacle> obstacles;
+        std::vector<std::vector<bool>> avoidanceMatrix;
+        std::vector<std::vector<sf::Vector2f>> grid;
 
-struct Map{
-    std::vector<Obstacle> obstacles;
-    std::vector<std::vector<bool>> avoidanceMatrix;
+    public:
+        Map(sf::Vector2u mapSizeInput, int squareSideInput, std::vector<Obstacle> obstaclesInput)
+            : mapSize(mapSizeInput),
+            squareSide(squareSideInput),
+            obstacles(obstaclesInput) {}; 
+
+        void drawObstacles(sf::RenderWindow& window);
+        void addColorToSquare(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
+
+        std::vector<std::vector<bool>> computeAvoidanceMatrix();
+        std::vector<std::vector<sf::Vector2f>> computeGrid();
+        
+        void addObstacle(Obstacle obstacle);
+
+        std::vector<Obstacle> getObstacles();
+        std::vector<std::vector<bool>> getAvoidanceMatrix();
 };
+
 
 #endif

@@ -9,7 +9,7 @@ void scanAndMove(Robot& robot, Map map, float movement_speed, float turning_spee
         Robot futureRobot = robot;
         futureRobot.setPosition(newPos);
         
-        if (!robotCollidesObsts(futureRobot, map.obstacles)) robot.moveRobot(1, movement_speed);
+        if (!robotCollidesObsts(futureRobot, map.getObstacles())) robot.moveRobot(1, movement_speed);
     }
         
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
@@ -18,7 +18,7 @@ void scanAndMove(Robot& robot, Map map, float movement_speed, float turning_spee
         Robot futureRobot = robot;
         futureRobot.setPosition(newPos);
         
-        if (!robotCollidesObsts(futureRobot, map.obstacles)) robot.moveRobot(0, movement_speed);
+        if (!robotCollidesObsts(futureRobot, map.getObstacles())) robot.moveRobot(0, movement_speed);
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){

@@ -115,3 +115,69 @@ void Obstacle::setSize(sf::Vector2f size){
 void Obstacle::setColor(sf::Color color){
     body.setFillColor(color);
 }
+
+
+
+// MAP -------------------------------
+
+std::vector<std::vector<bool>> Map::computeAvoidanceMatrix(){
+    std::vector<std::vector<bool>> avoidanceMatrix;
+
+    for (unsigned int y = 0; y < mapSize.y; y += squareSide){
+        avoidanceMatrix.push_back({});
+        for (unsigned int x = 0; x < mapSize.x; x += squareSide){
+            avoidanceMatrix.back().push_back(1);
+            for (auto obstacle : obstacles){
+                bool xInRect = obstacle.getPosition().x - squareSide <= x && x <= (obstacle.getPosition().x + obstacle.getWidth());
+                bool yInRect = obstacle.getPosition().y - squareSide <= y && y <= (obstacle.getPosition().y + obstacle.getHeight());
+                if (xInRect && yInRect) {
+                    avoidanceMatrix.back().back() = 0;
+                    break;
+                }
+            }
+        }
+    }
+
+    return avoidanceMatrix;
+}
+
+
+void Map::drawObstacles(sf::RenderWindow& window){
+    for (auto obstacle : obstacles){
+        window.draw(obstacle.getBodyRect());
+    }
+}
+
+
+void Map::addColorToSquare(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd){
+    int x = leftTop.x;
+    int y = leftTop.y;
+    
+    int xMax = window.getSize().x;
+    int yMax = window.getSize().y;
+
+    if (x < 0 || x >= xMax || y < 0 || y >= yMax) return;
+    sf::Color color = windowCopy.getPixel({x,y});
+
+    color = color + colorToAdd;
+    color = color - sf::Color(100, 100, 100, 0);
+    color.a = 255;
+
+    sf::RectangleShape square({squareSide, squareSide});
+    square.setPosition(leftTop);
+    square.setFillColor(color);
+
+    window.draw(square);
+}
+
+void Map::addObstacle(Obstacle obstacle){
+    obstacles.push_back(obstacle);
+}
+
+std::vector<Obstacle> Map::getObstacles(){
+    return obstacles;
+}
+
+std::vector<std::vector<bool>> Map::getAvoidanceMatrix(){
+    return avoidanceMatrix;
+}
