@@ -17,12 +17,6 @@ void App::setWindow(unsigned int width, unsigned int height, std::string title){
     window.setKeyRepeatEnabled(false);
 }
 
-// void App::addObstacle(Obstacle obstacle){
-//     map.obstacles.push_back(obstacle);
-// }
-
-
-
 void App::setMapImage(){
     map.drawObstacles(window);
     mapImage = getWindowImage(window);
@@ -30,30 +24,28 @@ void App::setMapImage(){
 
 }
 
-// void App::readMap(Map mapInput){
-//     map = mapInput;
-//     map.avoidanceMatrix = getAvoidanceMatrix(map.obstacles, square_side, window.getSize());
-//     std::cout << "AvoidanceMatrix size: " << map.avoidanceMatrix.size() << " " << map.avoidanceMatrix[0].size();
+void App::runSimulationStep(){
+    std::cout << accumulator << std::endl;
+    while (accumulator >= dTime) {
+        if (simulationMode == 0){
+            std::cout << "Scan and move mode" << std::endl;
+            scanAndMove(robot, map, movement_speed, turning_speed);
+            
+        }
+        else if (simulationMode == 1){
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            selectedSquare = getSquareInGrid(square_side, mousePos);
+        }
 
-//     for (int i = 0; i < map.avoidanceMatrix.size(); i ++){
-//         std::cout << std::endl;
-//         for (int j = 0; j < map.avoidanceMatrix[0].size(); j++){
-//             std::cout << map.avoidanceMatrix[i][j] << " ";
-//         }
-//     }
-//     std::cout << std::endl;
-// }
+        
+        
+        accumulator -= dTime;
 
+    }
+
+}
 
 void App::run(){
-    sf::Clock clock;
-    float accumulator = 0.f;
-
-    int simulationMode = 0;
-    // 0 - WASD mode
-    // 1 - pathfinding mode
-
-    sf::Vector2f selectedSquare;
 
     while (window.isOpen()){
         while (const std::optional event = window.pollEvent()){
@@ -82,22 +74,24 @@ void App::run(){
         // simulation
         float frameTime = clock.restart().asSeconds();
         accumulator += frameTime;
+        runSimulationStep();
         
-        while (accumulator >= dTime) {
-            if (simulationMode == 0){
-                scanAndMove(robot, map, movement_speed, turning_speed);
+        
+        // while (accumulator >= dTime) {
+        //     if (simulationMode == 0){
+        //         scanAndMove(robot, map, movement_speed, turning_speed);
                 
-            }
-            else if (simulationMode == 1){
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                selectedSquare = getSquareInGrid(square_side, mousePos);
-            }
+        //     }
+        //     else if (simulationMode == 1){
+        //         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        //         selectedSquare = getSquareInGrid(square_side, mousePos);
+        //     }
 
             
             
-            accumulator -= dTime;
+        //     accumulator -= dTime;
 
-        }
+        // }
 
         // drawing
         window.clear(sf::Color::Black);

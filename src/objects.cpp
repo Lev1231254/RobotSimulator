@@ -160,7 +160,7 @@ void Map::addColorToSquare(sf::RenderWindow & window, sf::Image windowCopy, sf::
     sf::Color color = windowCopy.getPixel({x,y});
 
     color = color + colorToAdd;
-    color = color - sf::Color(100, 100, 100, 0);
+    color = color - sf::Color(50, 50, 50, 0);
     color.a = 255;
 
     sf::RectangleShape square({squareSide, squareSide});

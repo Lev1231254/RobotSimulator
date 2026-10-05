@@ -27,6 +27,10 @@ class App{
     Robot robot;
     Map map;
     sf::Image mapImage;
+    sf::Clock clock;
+    float accumulator = 0.f;
+    int simulationMode = 0;
+    sf::Vector2f selectedSquare;
 
     public:
         App(Robot robotInput, Map mapInput) 
@@ -36,6 +40,7 @@ class App{
         void setWindow(unsigned int width, unsigned int height, std::string title);
         void setMapImage();
         void run();
+        void runSimulationStep();
 };
 
 #endif
