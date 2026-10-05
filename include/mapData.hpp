@@ -5,9 +5,9 @@
 
 Map map1 = {
     {
-        Obstacle({0,0}, {20, 1000}, sf::Color::White),
-        Obstacle({0,0}, {1000, 20}, sf::Color::White),
-        Obstacle({100,100}, {200, 200}, sf::Color::White)
+        Obstacle({640,960}, {400, 96}, sf::Color::White),
+        Obstacle({640,320}, {96, 640}, sf::Color::White),
+        Obstacle({96,96}, {96, 96}, sf::Color::White)
     }
 };
 

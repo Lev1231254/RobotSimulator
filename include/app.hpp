@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <aStar.hpp>
+
 
 float const pi = 3.141592653f;
 float const movement_speed = 2.f;

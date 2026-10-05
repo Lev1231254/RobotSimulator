@@ -26,10 +26,22 @@ void App::addObstacle(Obstacle obstacle){
 void App::setMapImage(){
     drawObstacles(window, map.obstacles);
     mapImage = getWindowImage(window);
+    
+
 }
 
 void App::readMap(Map mapInput){
     map = mapInput;
+    map.avoidanceMatrix = getAvoidanceMatrix(map.obstacles, square_side, window.getSize());
+    std::cout << "AvoidanceMatrix size: " << map.avoidanceMatrix.size() << " " << map.avoidanceMatrix[0].size();
+
+    for (int i = 0; i < map.avoidanceMatrix.size(); i ++){
+        std::cout << std::endl;
+        for (int j = 0; j < map.avoidanceMatrix[0].size(); j++){
+            std::cout << map.avoidanceMatrix[i][j] << " ";
+        }
+    }
+    std::cout << std::endl;
 }
 
 

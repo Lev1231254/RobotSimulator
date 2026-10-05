@@ -46,6 +46,7 @@ class Obstacle {
 
 struct Map{
     std::vector<Obstacle> obstacles;
+    std::vector<std::vector<bool>> avoidanceMatrix;
 };
 
 #endif
