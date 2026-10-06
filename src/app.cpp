@@ -65,6 +65,7 @@ void App::handleEvents(sf::Event event){
 }
 
 void App::run(){
+    testAStar();
     map.computeAvoidanceMatrix();
     map.makeAvoidanceRects();
 

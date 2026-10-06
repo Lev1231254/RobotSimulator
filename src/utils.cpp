@@ -86,3 +86,10 @@ sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2i position){
     return {x, y};
 }
 
+float getDistance(sf::Vector2f pos1, sf::Vector2f pos2){
+    float xDistance = pos1.x - pos2.x;
+    float yDistance = pos1.y - pos2.y;
+    return sqrt( pow(xDistance, 2) + pow(yDistance, 2) );
+}
+
+
