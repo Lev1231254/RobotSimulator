@@ -85,7 +85,7 @@ void App::run(){
         // drawing
         window.clear(sf::Color::Black);
 
-        drawRobot(window, robot);
+        robot.drawRobot(window);
         map.drawObstacles(window);
         if (simulationMode == 1){
             map.addColorToSquare(window, mapImage, selectedSquare, sf::Color::Green);

@@ -71,6 +71,25 @@ sf::Vector2f Robot::getFuturePos(bool direction, float speedPxs){
     return {x, y};
 }
 
+void Robot::drawRobot(sf::RenderWindow& window){
+    // draw the circle and the direction line
+
+    sf::Vector2f center = body.getPosition();
+    float anglePointX = center.x + body.getRadius() * cos(angleRad);
+    float anglePointY = center.y - body.getRadius() * sin(angleRad);
+    sf::Vector2f anglePoint(anglePointX, anglePointY);
+
+    sf::VertexArray line(sf::PrimitiveType::Lines, 2);
+    line[0].position = center;
+    line[0].color = sf::Color::Red;
+    line[1].position = anglePoint;
+    line[1].color = sf::Color::Red;
+
+    window.draw(body);
+    window.draw(line);
+
+}
+
 
 // OBSTACLE ------------------------------------------
 Obstacle::Obstacle(sf::Vector2f pos, sf::Vector2f size, sf::Color color){

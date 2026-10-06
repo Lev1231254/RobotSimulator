@@ -23,6 +23,7 @@ class Robot {
 
         void moveRobot(bool direction, float speedPxs);
         sf::Vector2f getFuturePos(bool direction, float speedPxs);
+        void drawRobot(sf::RenderWindow& window);
 
 };
 
