@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <optional>
 #include <objects.hpp>
-#include <draw.hpp>
 #include <utils.hpp>
 #include <iostream>
 #include <string>
@@ -31,6 +30,7 @@ class App{
     float accumulator = 0.f;
     int simulationMode = 0;
     sf::Vector2f selectedSquare;
+    Path currentPath;
 
     public:
         App(Robot robotInput, Map mapInput) 

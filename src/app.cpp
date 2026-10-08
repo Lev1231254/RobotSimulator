@@ -34,8 +34,6 @@ void App::runSimulationStep(){
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             selectedSquare = getSquareInGrid(square_side, mousePos);
         }
-
-        
         
         accumulator -= dTime;
 
@@ -61,6 +59,25 @@ void App::handleEvents(sf::Event event){
             } 
         }
         
+    }
+
+    // find the best path
+    if (event.is<sf::Event::MouseButtonPressed>() && simulationMode == 1){
+        int colMouse = int(selectedSquare.x / square_side);
+        int rowMouse = int(selectedSquare.y / square_side);
+        Pair end = {colMouse, rowMouse};
+
+        if (map.getAvoidanceMatrix()[rowMouse][colMouse] != 0){
+            sf::Vector2f robotPos = robot.getBodyCircle().getPosition();
+            Pair start = realPosToMatrix( 
+                getSquareInGrid(square_side, {int(robotPos.x), int(robotPos.y)}), 
+                square_side
+            );
+
+            currentPath.setNodes(findPathAStar(map.getAvoidanceMatrix(), start, end));
+        }
+
+        else printf("Robot can't go there");
     }
 }
 
@@ -90,6 +107,9 @@ void App::run(){
         if (simulationMode == 1){
             map.addColorToSquare(window, mapImage, selectedSquare, sf::Color::Green);
             map.drawAvoidanceField(window, mapImage);
+            if (!currentPath.getNodes().empty()) {
+                currentPath.drawPath(window, square_side);
+            }
         }
         
         

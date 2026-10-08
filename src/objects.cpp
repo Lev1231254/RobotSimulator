@@ -219,3 +219,50 @@ std::vector<Obstacle> Map::getObstacles(){
 std::vector<std::vector<bool>> Map::getAvoidanceMatrix(){
     return avoidanceMatrix;
 }
+
+
+
+Nodes Path::getNodes(){
+    return nodes;
+}
+
+void Path::setNodes(Nodes nodesInput){
+    nodes = nodesInput;
+}
+
+void Path::drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end){
+    if (end.x < start.x){
+        sf::Vector2f startCopy = start;
+        start = end;
+        end = startCopy;
+    }
+    float xDistance = end.x - start.x;
+    float yDistance = (end.y - start.y);
+
+    sf::RectangleShape line(
+        {
+            sqrt(pow(xDistance, 2) + pow(yDistance, 2)), 
+            lineHeight
+        }
+    );
+    line.setFillColor(color);
+
+    line.setOrigin({0, lineHeight / 2});
+    line.rotate(sf::radians(atan(yDistance / xDistance)));
+
+    
+
+    line.setPosition(start);
+    
+    window.draw(line);
+}
+
+void Path::drawPath(sf::RenderWindow& window, int squareSide){
+    for (int i = 0; i < nodes.size(); i++){
+        Node node = nodes[i];
+        sf::Vector2f start = {node.parentPos.first * squareSide, node.parentPos.second * squareSide};
+        sf::Vector2f end = {node.pos.first * squareSide, node.pos.second * squareSide};
+
+        drawLine(window, start, end);
+    }
+}

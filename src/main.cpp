@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <optional>
 #include <objects.hpp>
-#include <draw.hpp>
 #include <utils.hpp>
 #include <iostream>
 #include <app.hpp>

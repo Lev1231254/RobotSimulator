@@ -84,6 +84,7 @@ Nodes makePath(Nodes closedList, Pair startPos, Pair destinationPos){
 
 
 Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, Pair startPos, Pair destinationPos){
+    int c = 0;
     Nodes openList = {};
     Nodes closedList = {};
 
@@ -107,23 +108,32 @@ Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, Pair startPo
             }
             else{
                 // skip the nodes, if the closer nodes are already found
-                int iOpen = nodeInList(openList, successor);
-                if (iOpen != -1 && openList[iOpen].f < successor.f){
-                   continue;
-                }
                 int iClosed = nodeInList(closedList, successor);
-                if (iClosed != -1 && closedList[iClosed].f < successor.f){
+                if (iClosed != -1){
                     continue;
                 }
 
+                int iOpen = nodeInList(openList, successor);
+                if (iOpen != -1){
+                    if (openList[iOpen].f <= successor.f) continue;
+
+                    else {
+                        openList[iOpen].parentPos = successor.parentPos;
+                        openList[iOpen].f = successor.f;
+                    }
+                    continue;
+                }
+                
                 openList.push_back(successor);
             }
         }
 
+        c++;
         closedList.push_back(q);
     }
 
     Nodes path = makePath(closedList, startPos, destinationPos);
+    printf("Processed %d nodes\n", c);
     return path;
 }
 
@@ -139,14 +149,14 @@ void printNodes(Nodes list){
 
 void testAStar(){
     std::vector<std::vector<bool>> avoidanceMatrix = {
-        {0, 1, 0, 0},
-        {1, 0, 1, 1},
+        {1, 1, 1, 1},
         {1, 0, 0, 1},
-        {0, 1, 1, 1}
+        {1, 0, 0, 1},
+        {1, 1, 1, 1}
     };
 
-    Pair startPos = {0, 2};
-    Pair destinationPos = {3, 1};
+    Pair startPos = {0, 0};
+    Pair destinationPos = {3, 3};
 
     printNodes(findPathAStar(avoidanceMatrix, startPos, destinationPos));
 }

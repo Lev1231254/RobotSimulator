@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
+#include <math.h>
+#include <nodes.hpp>
 
 
 class Robot {
@@ -27,6 +29,7 @@ class Robot {
 
 };
 
+
 class Obstacle {
     sf::RectangleShape body;
 
@@ -44,6 +47,8 @@ class Obstacle {
         void setColor(sf::Color colorInput);
 
 };
+
+
 class Map {
     private:
         sf::Vector2u mapSize;
@@ -72,5 +77,24 @@ class Map {
         std::vector<std::vector<bool>> getAvoidanceMatrix();
 };
 
+
+class Path {
+    Nodes nodes;
+    int lineHeight;
+    sf::Color color;
+
+    public:
+        Path(Nodes nodesInput = {})
+            : nodes(nodesInput),
+            lineHeight(6),
+            color(sf::Color(0, 0, 255, 100)){};
+        
+        Nodes getNodes();
+
+        void setNodes(Nodes nodesInput);
+
+        void drawPath(sf::RenderWindow& window, int squareSide);
+        void drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end);
+};
 
 #endif

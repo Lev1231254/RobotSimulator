@@ -92,4 +92,6 @@ float getDistance(sf::Vector2f pos1, sf::Vector2f pos2){
     return sqrt( pow(xDistance, 2) + pow(yDistance, 2) );
 }
 
-
+Pair realPosToMatrix(sf::Vector2f pos, int squareSide){
+    return {int(pos.x / squareSide), int(pos.y / squareSide)};
+}

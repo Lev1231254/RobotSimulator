@@ -1,9 +1,0 @@
-#ifndef DRAW_H
-#define DRAW_H
-
-#include <SFML/Graphics.hpp>
-#include <objects.hpp>
-
-void drawRobot(sf::RenderWindow& window, Robot robot);
-
-#endif

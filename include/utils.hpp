@@ -18,4 +18,6 @@ sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2i position);
 
 float getDistance(sf::Vector2f pos1, sf::Vector2f pos2);
 
+Pair realPosToMatrix(sf::Vector2f pos, int squareSide);
+
 #endif
