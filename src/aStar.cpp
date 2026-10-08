@@ -1,7 +1,7 @@
 #include <aStar.hpp>
 
 
-Node findClosestNode(Nodes list){
+Node findClosestNode(Nodes& list){
     Node bestNode = list[0];
 
     for (Node node : list){
@@ -19,7 +19,7 @@ sf::Vector2f pairToVector2f(Pair pair){
     return {float(pair.first), float(pair.second)};
 }
 
-Nodes generateSuccessors(std::vector<std::vector<bool>> avoidanceMatrix, Node parent, Pair destinationPos){
+Nodes generateSuccessors(std::vector<std::vector<bool>>& avoidanceMatrix, Node& parent, Pair destinationPos){
     Nodes successors;
 
     for (int dcol = -1; dcol< 2; dcol++){
@@ -33,9 +33,10 @@ Nodes generateSuccessors(std::vector<std::vector<bool>> avoidanceMatrix, Node pa
 
             if (successorInMatrix && avoidanceMatrix[successor.pos.second][successor.pos.first]){
                 successor.parentPos = parent.pos;
-                float g = getDistance(pairToVector2f(successor.pos), pairToVector2f(parent.pos));
+                float g = getDistance(pairToVector2f(successor.pos), pairToVector2f(parent.pos)) + parent.g;
                 float h = getDistance(pairToVector2f(successor.pos), pairToVector2f(destinationPos));
                 successor.f = g + h;
+                successor.g = g;
                 successors.push_back(successor);
             }
             
@@ -46,7 +47,7 @@ Nodes generateSuccessors(std::vector<std::vector<bool>> avoidanceMatrix, Node pa
 }
 
 
-int nodeInList(Nodes list, Node node){
+int nodeInList(Nodes& list, Node& node){
     // checks only positions
     // return -1, if not found
     // return index, if found
@@ -57,13 +58,13 @@ int nodeInList(Nodes list, Node node){
     return -1;
 }
 
-Nodes makePath(Nodes closedList, Pair startPos, Pair destinationPos){
+Nodes makePath(Nodes &closedList, Pair startPos, Pair destinationPos){
     Nodes path;
 
     Pair childPos = destinationPos;
 
     while (childPos != startPos){
-        for (Node node : closedList){
+        for (Node &node : closedList){
             if (node.pos == childPos){
                 path.push_back(node);
                 childPos = node.parentPos;
@@ -72,7 +73,7 @@ Nodes makePath(Nodes closedList, Pair startPos, Pair destinationPos){
         }
     }
 
-    for (Node node : closedList){
+    for (Node &node : closedList){
         if (node.pos == startPos){
             path.push_back(node);
             break;
@@ -92,6 +93,7 @@ Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, Pair startPo
     startNode.pos= startPos;
     startNode.parentPos = startPos;
     startNode.f = 0;
+    startNode.g = 0;
     openList.push_back(startNode);
 
     while (!openList.empty()){
@@ -100,7 +102,7 @@ Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, Pair startPo
 
         Nodes successors = generateSuccessors(avoidanceMatrix, q, destinationPos);
 
-        for (Node successor : successors){
+        for (Node &successor : successors){
             if (successor.pos == destinationPos) {
                 closedList.push_back(successor);
                 openList = {}; // empty the list

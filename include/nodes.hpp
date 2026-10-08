@@ -7,6 +7,7 @@ struct Node {
     Pair pos;
     Pair parentPos;
     float f;
+    float g;
 
     bool operator==(const Node& other) const {
         return (pos == other.pos) && (parentPos == other.parentPos) && (f == other.f);
