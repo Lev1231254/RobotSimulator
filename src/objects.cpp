@@ -139,16 +139,16 @@ void Obstacle::setColor(sf::Color color){
 
 // MAP -------------------------------
 
-void Map::computeAvoidanceMatrix(){
+void Map::computePassMask(){
     for (unsigned int y = 0; y < mapSize.y; y += squareSide){
-        avoidanceMatrix.push_back({});
+        passMask.push_back({});
         for (unsigned int x = 0; x < mapSize.x; x += squareSide){
-            avoidanceMatrix.back().push_back(1);
+            passMask.back().push_back(1);
             for (auto obstacle : obstacles){
                 bool xInRect = obstacle.getPosition().x - squareSide <= x && x <= (obstacle.getPosition().x + obstacle.getWidth());
                 bool yInRect = obstacle.getPosition().y - squareSide <= y && y <= (obstacle.getPosition().y + obstacle.getHeight());
                 if (xInRect && yInRect) {
-                    avoidanceMatrix.back().back() = 0;
+                    passMask.back().back() = 0;
                     break;
                 }
             }
@@ -165,13 +165,13 @@ void Map::drawObstacles(sf::RenderWindow& window){
 }
 
 void Map::drawAvoidanceField(sf::RenderWindow& window, sf::Image windowCopy){
-    for (auto square : avoidanceRects) window.draw(square);
+    for (auto square : obstacleRects) window.draw(square);
 }
 
 
 void Map::makeAvoidanceRects(){
-    for (unsigned int i = 0; i < avoidanceMatrix.size(); i++){
-        auto row = avoidanceMatrix[i];
+    for (unsigned int i = 0; i < passMask.size(); i++){
+        auto row = passMask[i];
         for (unsigned j = 0; j < row.size(); j++){
             bool isSquareOk = row[j];
             
@@ -180,7 +180,7 @@ void Map::makeAvoidanceRects(){
                 sf::RectangleShape square({squareSide, squareSide});
                 square.setPosition(squareTopLeft);
                 square.setFillColor(sf::Color(255, 0, 0, 100));
-                avoidanceRects.push_back(square);
+                obstacleRects.push_back(square);
             }
         }
     }
@@ -216,11 +216,23 @@ std::vector<Obstacle> Map::getObstacles(){
     return obstacles;
 }
 
-std::vector<std::vector<bool>> Map::getAvoidanceMatrix(){
-    return avoidanceMatrix;
+std::vector<std::vector<bool>> Map::getPassMask(){
+    return passMask;
 }
 
+int Map::getSquareSide(){
+    return squareSide;
+}
 
+sf::Vector2u Map::getMapSize(){
+    return mapSize;
+}
+
+bool Map::isOnMap(sf::Vector2f pos){
+    return (0 <= pos.x && pos.x < mapSize.x) && (0 <= pos.y && pos.y < mapSize.y);
+}
+
+// PATH -------------------------------------------------
 
 Nodes Path::getNodes(){
     return nodes;
@@ -266,3 +278,14 @@ void Path::drawPath(sf::RenderWindow& window, int squareSide){
         drawLine(window, start, end);
     }
 }
+
+// void Path::smoothPath(std::vector<std::vector<bool>> avoidanceMatrix){
+//     for (int i = 0; i < nodes.size()-1; i++){
+//         Node start = nodes[i];
+//         for (int j = nodes.size()-1; j > i; j--){
+//             Node end = nodes[j];
+//             if ()
+//         }
+
+//     }
+// }

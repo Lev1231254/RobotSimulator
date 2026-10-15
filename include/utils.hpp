@@ -14,10 +14,13 @@ bool robotCollidesObst(Robot robot, Obstacle obstacle);
 bool robotCollidesObsts(Robot robot, std::vector<Obstacle> obstacles);
 
 sf::Image getWindowImage(sf::RenderWindow& window);
-sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2i position);
+sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2f position);
 
 float getDistance(sf::Vector2f pos1, sf::Vector2f pos2);
 
 Pair realPosToMatrix(sf::Vector2f pos, int squareSide);
+
+float devideUntilLess(float num, float step);
+sf::Vector2f normalize(sf::Vector2f vec);
 
 #endif

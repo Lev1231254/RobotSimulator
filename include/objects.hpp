@@ -48,15 +48,16 @@ class Obstacle {
 
 };
 
+typedef std::vector<std::vector<bool>> mask2;
 
 class Map {
     private:
         sf::Vector2u mapSize;
         int squareSide;
         std::vector<Obstacle> obstacles;
-        std::vector<std::vector<bool>> avoidanceMatrix;
-        std::vector<sf::RectangleShape> avoidanceRects;
-        std::vector<std::vector<sf::Vector2f>> grid;
+        mask2 passMask;
+        std::vector<sf::RectangleShape> obstacleRects;
+
 
     public:
         Map(sf::Vector2u mapSizeInput, int squareSideInput, std::vector<Obstacle> obstaclesInput)
@@ -68,13 +69,19 @@ class Map {
         void drawAvoidanceField(sf::RenderWindow& window, sf::Image windowCopy);
         void addColorToSquare(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
 
-        void computeAvoidanceMatrix();
+        void computePassMask();
         void makeAvoidanceRects();
         
         void addObstacle(Obstacle obstacle);
 
         std::vector<Obstacle> getObstacles();
-        std::vector<std::vector<bool>> getAvoidanceMatrix();
+        mask2 getPassMask();
+        int getSquareSide();
+        sf::Vector2u getMapSize();
+        bool isOnMap(sf::Vector2f pos);
+
+
+        bool isLineTraversable(sf::Vector2f start, sf::Vector2f end);
 };
 
 
@@ -95,6 +102,8 @@ class Path {
 
         void drawPath(sf::RenderWindow& window, int squareSide);
         void drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end);
+
+        void smoothPath(std::vector<std::vector<bool>> avoidanceMatrix);
 };
 
 #endif

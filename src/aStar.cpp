@@ -85,6 +85,8 @@ Nodes makePath(Nodes &closedList, Pair startPos, Pair destinationPos){
 
 
 Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, Pair startPos, Pair destinationPos){
+    bool destinationIsUnreachable = 1;
+
     int c = 0;
     Nodes openList = {};
     Nodes closedList = {};
@@ -106,6 +108,7 @@ Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, Pair startPo
             if (successor.pos == destinationPos) {
                 closedList.push_back(successor);
                 openList = {}; // empty the list
+                destinationIsUnreachable = 0;
                 break;
             }
             else{
@@ -132,6 +135,11 @@ Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, Pair startPo
 
         c++;
         closedList.push_back(q);
+    }
+
+    if (destinationIsUnreachable) {
+        printf("Destination is unreachable\n");
+        return {};
     }
 
     Nodes path = makePath(closedList, startPos, destinationPos);

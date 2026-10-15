@@ -79,7 +79,7 @@ sf::Image getWindowImage(sf::RenderWindow& window){
 }
 
 
-sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2i position){
+sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2f position){
     float x = (int(position.x) / squareSide) * squareSide;
     float y = (int(position.y) / squareSide) * squareSide;
 
@@ -94,4 +94,64 @@ float getDistance(sf::Vector2f pos1, sf::Vector2f pos2){
 
 Pair realPosToMatrix(sf::Vector2f pos, int squareSide){
     return {int(pos.x / squareSide), int(pos.y / squareSide)};
+}
+
+
+bool intersectsRectangle(
+    const sf::Vector2f& a,
+    const sf::Vector2f& b,
+    const sf::RectangleShape& rectangle)
+{
+    const sf::Vector2f position = rectangle.getPosition();
+    const sf::Vector2f size = rectangle.getSize();
+
+    const float left   = std::min(position.x, position.x + size.x);
+    const float right  = std::max(position.x, position.x + size.x);
+    const float top    = std::min(position.y, position.y + size.y);
+    const float bottom = std::max(position.y, position.y + size.y);
+
+    float tMin = 0.f;
+    float tMax = 1.f;
+
+    auto clipAxis = [&](float origin, float direction,
+                        float minimum, float maximum) {
+        if (direction == 0.f) {
+            return origin >= minimum && origin <= maximum;
+        }
+
+        float t1 = (minimum - origin) / direction;
+        float t2 = (maximum - origin) / direction;
+
+        if (t1 > t2) {
+            std::swap(t1, t2);
+        }
+
+        tMin = std::max(tMin, t1);
+        tMax = std::min(tMax, t2);
+
+        return tMin <= tMax;
+    };
+
+    return clipAxis(a.x, b.x - a.x, left, right)
+        && clipAxis(a.y, b.y - a.y, top, bottom);
+}
+
+
+float devideUntilLess(float num, float step){
+    int i = 1;
+    float currStep = num / i;
+    
+    
+    while(currStep > step){
+        currStep = num / i;
+        i++;
+    }
+    
+    return currStep;
+}
+
+
+sf::Vector2f normalize(sf::Vector2f vec){
+    float sum = getDistance({0, 0}, vec);
+    return {vec.x / sum, vec.y / sum};
 }

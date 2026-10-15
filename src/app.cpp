@@ -32,7 +32,7 @@ void App::runSimulationStep(){
         }
         else if (simulationMode == 1){
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            selectedSquare = getSquareInGrid(square_side, mousePos);
+            selectedSquare = getSquareInGrid(square_side, {float(mousePos.x), float(mousePos.y)});
         }
         
         accumulator -= dTime;
@@ -67,14 +67,14 @@ void App::handleEvents(sf::Event event){
         int rowMouse = int(selectedSquare.y / square_side);
         Pair end = {colMouse, rowMouse};
 
-        if (map.getAvoidanceMatrix()[rowMouse][colMouse] != 0){
+        if (map.getPassMask()[rowMouse][colMouse] != 0){
             sf::Vector2f robotPos = robot.getBodyCircle().getPosition();
             Pair start = realPosToMatrix( 
-                getSquareInGrid(square_side, {int(robotPos.x), int(robotPos.y)}), 
+                getSquareInGrid(square_side, {robotPos.x, robotPos.y}), 
                 square_side
             );
 
-            currentPath.setNodes(findPathAStar(map.getAvoidanceMatrix(), start, end));
+            currentPath.setNodes(findPathAStar(map.getPassMask(), start, end));
         }
 
         else printf("Robot can't go there");
@@ -82,7 +82,7 @@ void App::handleEvents(sf::Event event){
 }
 
 void App::run(){
-    map.computeAvoidanceMatrix();
+    map.computePassMask();
     map.makeAvoidanceRects();
 
     while (window.isOpen()){
@@ -103,6 +103,7 @@ void App::run(){
 
         robot.drawRobot(window);
         map.drawObstacles(window);
+
         if (simulationMode == 1){
             map.addColorToSquare(window, mapImage, selectedSquare, sf::Color::Green);
             map.drawAvoidanceField(window, mapImage);
