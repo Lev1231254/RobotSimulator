@@ -1,16 +1,24 @@
 #include <rayTracer.hpp>
+#include <objects.hpp>
+#include <utils.hpp>
+
+RayTracer::RayTracer(Map& map, mask2& occupancyMaskInput)
+    : squareSide(map.getSquareSide()),
+      mapSize(map.getMapSize()),
+      occupancyMask(occupancyMaskInput) {}
 
 
 ray posToRay(sf::Vector2f start, sf::Vector2f end){
     ray ray;
     ray.start = start;
     ray.direction = end - start;
+    ray.direction = normalize(ray.direction);
     ray.angle = sf::radians(atan(ray.direction.y / ray.direction.x));
 
     return ray;
 }
 
-sf::Vector2f RayTracer::findOffset(sf::Vector2f &pos, sf::Vector2i &signs){
+sf::Vector2f RayTracer::findOffset(sf::Vector2f pos, sf::Vector2i signs){
     sf::Vector2f entry = getSquareInGrid(squareSide, pos);
 
     sf::Vector2f offset = entry - pos;
@@ -40,6 +48,7 @@ sf::Vector2f RayTracer::getFirstHit(ray &ray, Map& map){
 
     sf::Vector2f tmax;
 
+    
     while (map.isOnMap(currPos) && occupancyMask[cords.row][cords.col] == 0){
 
         if (occupancyMask[cords.row][cords.col]) return currPos;

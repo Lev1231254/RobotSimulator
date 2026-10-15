@@ -16,6 +16,8 @@ sf::Vector2f const ROBOT_POS = {900, 500};
 float const ROBOT_RADIUS = 40;
 float const ROBOT_ANGLE_RAD = pi / 6;
 
+SensorDist sensor1()
+
 Map map(desktop.size, square_side, obstacles1);
 
 int main()

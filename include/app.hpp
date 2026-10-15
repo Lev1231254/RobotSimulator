@@ -31,6 +31,7 @@ class App{
     int simulationMode = 0;
     sf::Vector2f selectedSquare;
     Path currentPath;
+    
 
     public:
         App(Robot robotInput, Map mapInput) 

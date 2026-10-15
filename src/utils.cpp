@@ -79,14 +79,14 @@ sf::Image getWindowImage(sf::RenderWindow& window){
 }
 
 
-sf::Vector2f getSquareInGrid(int &squareSide, sf::Vector2f &position){
+sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2f position){
     float x = (int(position.x) / squareSide) * squareSide;
     float y = (int(position.y) / squareSide) * squareSide;
 
     return {x, y};
 }
 
-float getDistance(sf::Vector2f &pos1, sf::Vector2f &pos2){
+float getDistance(sf::Vector2f pos1, sf::Vector2f pos2){
     float xDistance = pos1.x - pos2.x;
     float yDistance = pos1.y - pos2.y;
     return sqrt( pow(xDistance, 2) + pow(yDistance, 2) );
@@ -157,11 +157,11 @@ sf::Vector2f normalize(sf::Vector2f vec){
 }
 
 
-void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide){
-    sf::Vector2f entryPos = getSquareInGrid(squareSide, pos);
-    pos.x = clamp(pos.x, entryPos.x, entryPos.x + squareSide - 1);
-    pos.y = clamp(pos.y, entryPos.y, entryPos.y + squareSide - 1);
-}
+// void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide){
+//     sf::Vector2f entryPos = getSquareInGrid(squareSide, pos);
+//     pos.x = clamp(pos.x, entryPos.x, entryPos.x + squareSide - 1);
+//     pos.y = clamp(pos.y, entryPos.y, entryPos.y + squareSide - 1);
+// }
 
 // void clampToGrid(sf::Vector2f &pos, int &squareSide){
 //     float restX = (int(pos.x) / squareSide) * squareSide - pos.x;

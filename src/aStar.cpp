@@ -19,7 +19,7 @@ sf::Vector2f cordsToVector2f(cords position){
     return {float(position.col), float(position.row)};
 }
 
-Nodes generateSuccessors(std::vector<std::vector<bool>>& avoidanceMatrix, Node& parent, cords destinationPos){
+Nodes generateSuccessors(const std::vector<std::vector<bool>>& avoidanceMatrix, Node& parent, cords &destinationPos){
     Nodes successors;
 
     for (int dcol = -1; dcol< 2; dcol++){
@@ -84,7 +84,7 @@ Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos){
 }
 
 
-Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, cords startPos, cords destinationPos){
+Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords &startPos, cords &destinationPos){
     bool destinationIsUnreachable = 1;
 
     int c = 0;

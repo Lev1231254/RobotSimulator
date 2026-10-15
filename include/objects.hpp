@@ -5,15 +5,17 @@
 #include <memory>
 #include <vector>
 #include <math.h>
-#include <nodes.hpp>
+#include <structs.hpp>
+#include <rayTracer.hpp>
+
 
 
 class Robot {
     sf::CircleShape body;
     float angleRad;
-
+    SensorDist sensorDist;
     public:
-        Robot(sf::Vector2f pos, float radius);
+        Robot(sf::Vector2f pos, float radius, SensorDist sensorDist);
         sf::CircleShape getBodyCircle();
         sf::Vector2f getPosition();
         float getAngleRad();
@@ -48,7 +50,6 @@ class Obstacle {
 
 };
 
-typedef std::vector<std::vector<bool>> mask2;
 
 class Map {
     private:
@@ -104,6 +105,44 @@ class Path {
         void drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end);
 
         void smoothPath(std::vector<std::vector<bool>> avoidanceMatrix);
+};
+
+
+class SensorDist{
+    ray rayData;
+    mask2 occupancyMask;
+    sf::Vector2f end;
+    Map map;
+    RayTracer tracer;
+    sf::Color color = sf::Color::Red;
+    float radius = 10;
+    float lineThickness = 5;
+    
+
+    private:
+        void updateDirection();
+
+    public:
+        SensorDist(ray rayInput, mask2 &occupancyMaskInput, Map &mapInput)
+        : rayData(rayInput),
+        occupancyMask(occupancyMaskInput),
+        map(mapInput),
+        tracer(map, occupancyMaskInput) {};
+
+        ray getRay();
+        sf::Vector2f getStart();
+        sf::Vector2f getDirection();
+        sf::Angle getAngle();
+
+        void setStart(sf::Vector2f start);
+        void setAngle(sf::Angle angle);
+        void setRay(ray ray);
+        void setPosition(sf::Vector2f pos);
+
+        void updateEnd();
+        void drawSensor(sf::RenderWindow & window);
+        
+
 };
 
 #endif

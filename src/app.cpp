@@ -70,7 +70,7 @@ void App::handleEvents(sf::Event event){
         if (map.getPassMask()[rowMouse][colMouse] != 0){
             sf::Vector2f robotPos = robot.getBodyCircle().getPosition();
             cords start = realPosToMatrix(
-                getSquareInGrid(square_side, {robotPos.x, robotPos.y}), 
+                getSquareInGrid(map.getSquareSide(), {robotPos.x, robotPos.y}), 
                 square_side
             );
 

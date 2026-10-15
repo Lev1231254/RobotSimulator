@@ -1,6 +1,8 @@
-#ifndef NODES_HPP
-#define NODES_HPP
+#ifndef STRUCTS_HPP
+#define STRUCTS_HPP
 
+#include <SFML/Graphics.hpp>
+#include <vector>
 
 struct cords{
     int row;
@@ -23,5 +25,13 @@ struct Node {
 };
 
 typedef std::vector<Node> Nodes;
+
+struct ray{
+    sf::Vector2f start;
+    sf::Vector2f direction; //normalized vector
+    sf::Angle angle;
+};
+
+typedef std::vector<std::vector<bool>> mask2;
 
 #endif

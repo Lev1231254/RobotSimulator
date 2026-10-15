@@ -3,7 +3,70 @@
 
 const float pi = 3.1416;
 
-Robot::Robot(sf::Vector2f pos, float radius){
+
+sf::Vector2f SensorDist::getStart(){
+    return rayData.start;
+}
+
+ray SensorDist::getRay(){
+    return rayData;
+}
+
+sf::Vector2f SensorDist::getDirection(){
+    return rayData.direction;
+}
+
+sf::Angle SensorDist::getAngle(){
+    return rayData.angle;
+}
+
+void SensorDist::setAngle(sf::Angle angle){
+    rayData.angle = angle;
+    updateDirection();
+}
+
+void SensorDist::setStart(sf::Vector2f start){
+    rayData.start = start;
+}
+
+void SensorDist::setRay(ray ray){
+    rayData = ray;
+}
+
+void SensorDist::updateEnd(){
+    end = tracer.getFirstHit(rayData, map);
+}
+
+void SensorDist::updateDirection(){
+    rayData.direction.x = cos(rayData.angle.asRadians());
+    rayData.direction.y = sin(rayData.angle.asRadians());
+}
+
+void SensorDist::drawSensor(sf::RenderWindow & window){
+    sf::CircleShape circle(radius);
+    circle.setOrigin({radius, radius});
+    circle.setFillColor(color);
+    circle.setPosition(end);
+
+    sf::RectangleShape line({0, lineThickness});
+    line.setOrigin({0, lineThickness/2});
+    line.setRotation(rayData.angle);
+    line.setFillColor(color);
+    line.setPosition(rayData.start);
+
+    window.draw(circle);
+    window.draw(line);
+
+}
+
+void SensorDist::setPosition(sf::Vector2f pos){
+    rayData.start = pos;
+}
+
+
+// ROBOT -----------------------------
+
+Robot::Robot(sf::Vector2f pos, float radius, SensorDist sensorDist){
     body.setPosition(pos);
     body.setRadius(radius);
     angleRad = pi / 2;
@@ -38,6 +101,7 @@ void Robot::setRadius(float radius){
 
 void Robot::setAngleRad(float angleRadInput){
     angleRad = angleRadInput;
+    sensorDist.setAngle(sf::radians(angleRadInput));
 }
 
 void Robot::moveRobot(bool direction, float speedPxs){
@@ -53,6 +117,7 @@ void Robot::moveRobot(bool direction, float speedPxs){
     float y = body.getPosition().y + ySpeed;
 
     body.setPosition({x, y});
+    sensorDist.setPosition({x, y});
 }
 
 
@@ -87,7 +152,7 @@ void Robot::drawRobot(sf::RenderWindow& window){
 
     window.draw(body);
     window.draw(line);
-
+    sensorDist.drawSensor(window);
 }
 
 
