@@ -1,7 +1,14 @@
 #include <rayTracer.hpp>
 
 
+ray posToRay(sf::Vector2f start, sf::Vector2f end){
+    ray ray;
+    ray.start = start;
+    ray.direction = end - start;
+    ray.angle = sf::radians(atan(ray.direction.y / ray.direction.x));
 
+    return ray;
+}
 
 sf::Vector2f RayTracer::findOffset(sf::Vector2f &pos, sf::Vector2i &signs){
     sf::Vector2f entry = getSquareInGrid(squareSide, pos);
@@ -22,20 +29,42 @@ sf::Vector2i RayTracer::getSigns(ray &ray){
     return res;
 }
 
-cords RayTracer::getFirstHit(ray ray, Map& map){
+sf::Vector2f RayTracer::getFirstHit(ray &ray, Map& map){
+
     sf::Vector2f currPos = ray.start;
-    cords cords = realPosToMatrix(getSquareInGrid(squareSide, currPos), squareSide);
-    sf::Vector2f entryPos;
-    bool hitSomething = 0;
+    sf::Vector2f entryPos = getSquareInGrid(squareSide, currPos);
+    cords cords = realPosToMatrix(entryPos, squareSide);
+
+    sf::Vector2i signs = getSigns(ray);
+    sf::Vector2f offset;
+
+    sf::Vector2f tmax;
 
     while (map.isOnMap(currPos) && occupancyMask[cords.row][cords.col] == 0){
+
+        if (occupancyMask[cords.row][cords.col]) return currPos;
+
+        //works only if direction is normalized
+        tmax.x = offset.x / ray.direction.x;
+        tmax.y = offset.y / ray.direction.y;
+        
+        if (tmax.x < tmax.y){
+            currPos += ray.direction * tmax.x;
+        }
+        else {
+            currPos += ray.direction * tmax.y;
+        }
+
+
+        currPos.x = round(currPos.x);
+        currPos.y = round(currPos.y);
+
+        entryPos = getSquareInGrid(squareSide, currPos);
+        offset = findOffset(currPos, signs);
+        cords = realPosToMatrix(entryPos, squareSide);
         
     }
     
-    if (!hitSomething) {
-        printf("Beam didn't hit anything\n");
-        return {-1, -1};
-    }
-
-    return cords;
+    printf("Beam didn't hit anything inside the map\n");
+    return {-1, -1};
 }
