@@ -65,11 +65,11 @@ void App::handleEvents(sf::Event event){
     if (event.is<sf::Event::MouseButtonPressed>() && simulationMode == 1){
         int colMouse = int(selectedSquare.x / square_side);
         int rowMouse = int(selectedSquare.y / square_side);
-        Pair end = {colMouse, rowMouse};
+        cords end = {rowMouse, colMouse};
 
         if (map.getPassMask()[rowMouse][colMouse] != 0){
             sf::Vector2f robotPos = robot.getBodyCircle().getPosition();
-            Pair start = realPosToMatrix( 
+            cords start = realPosToMatrix(
                 getSquareInGrid(square_side, {robotPos.x, robotPos.y}), 
                 square_side
             );

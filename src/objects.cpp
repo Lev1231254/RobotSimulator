@@ -272,8 +272,8 @@ void Path::drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f e
 void Path::drawPath(sf::RenderWindow& window, int squareSide){
     for (int i = 0; i < nodes.size(); i++){
         Node node = nodes[i];
-        sf::Vector2f start = {node.parentPos.first * squareSide, node.parentPos.second * squareSide};
-        sf::Vector2f end = {node.pos.first * squareSide, node.pos.second * squareSide};
+        sf::Vector2f start = {float(node.parentPos.col * squareSide), float(node.parentPos.row * squareSide)};
+        sf::Vector2f end = {float(node.pos.col * squareSide), float(node.pos.row * squareSide)};
 
         drawLine(window, start, end);
     }

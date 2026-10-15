@@ -1,11 +1,19 @@
 #ifndef NODES_HPP
 #define NODES_HPP
 
-typedef std::pair<int, int> Pair;
+
+struct cords{
+    int row;
+    int col;
+
+    bool operator==(const cords& other) const {
+        return row == other.row && col == other.col;
+    }
+};
 
 struct Node {
-    Pair pos;
-    Pair parentPos;
+    cords pos;
+    cords parentPos;
     float f;
     float g;
 

@@ -2,11 +2,7 @@
 #define RAY_TRACER_HPP
 
 #include <utils.hpp>
-
-struct cords{
-    int row;
-    int col;
-};
+#include <nodes.hpp>
 
 struct ray{
     sf::Vector2f start;
@@ -23,8 +19,8 @@ class RayTracer {
     mask2 occupancyMask;
 
     private:
-        sf::Vector2i getSigns(ray ray);
-        sf::Vector2f findOffset(sf::Vector2f pos, sf::Vector2i signs);
+        sf::Vector2i getSigns(ray &ray);
+        sf::Vector2f findOffset(sf::Vector2f &pos, sf::Vector2i &signs);
         sf::Vector2f findDeltas(ray ray);
         sf::Vector2f getNearest(ray ray, sf::Vector2f currPos);
         
@@ -35,7 +31,7 @@ class RayTracer {
             mapSize(map.getMapSize()),
             occupancyMask(occupancyMaskInput) {};
 
-        cords getFirstHit(ray ray, Map& map)
+        cords getFirstHit(ray ray, Map& map);
         
 };
 

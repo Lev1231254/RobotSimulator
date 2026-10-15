@@ -3,7 +3,7 @@
 
 
 
-sf::Vector2f RayTracer::findOffset(sf::Vector2f pos, sf::Vector2i signs){
+sf::Vector2f RayTracer::findOffset(sf::Vector2f &pos, sf::Vector2i &signs){
     sf::Vector2f entry = getSquareInGrid(squareSide, pos);
 
     sf::Vector2f offset = entry - pos;
@@ -13,7 +13,7 @@ sf::Vector2f RayTracer::findOffset(sf::Vector2f pos, sf::Vector2i signs){
     return offset;
     
 }
-sf::Vector2i RayTracer::getSigns(ray ray){
+sf::Vector2i RayTracer::getSigns(ray &ray){
     sf::Vector2f d = ray.direction;
     sf::Vector2i res;
     res.x = (d.x >= 0) ? 1 : -1;
@@ -26,9 +26,16 @@ cords RayTracer::getFirstHit(ray ray, Map& map){
     sf::Vector2f currPos = ray.start;
     cords cords = realPosToMatrix(getSquareInGrid(squareSide, currPos), squareSide);
     sf::Vector2f entryPos;
+    bool hitSomething = 0;
 
     while (map.isOnMap(currPos) && occupancyMask[cords.row][cords.col] == 0){
-
+        
     }
     
+    if (!hitSomething) {
+        printf("Beam didn't hit anything\n");
+        return {-1, -1};
+    }
+
+    return cords;
 }

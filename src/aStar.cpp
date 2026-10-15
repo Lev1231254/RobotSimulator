@@ -11,15 +11,15 @@ Node findClosestNode(Nodes& list){
     return bestNode;
 }
 
-bool isInMatrix(Pair pos, int lenX, int lenY){
-    return 0 <= pos.first && pos.first < lenX && 0 <= pos.second && pos.second < lenY;
+bool isInMatrix(cords pos, int lenX, int lenY){
+    return 0 <= pos.col && pos.col < lenX && 0 <= pos.row && pos.row < lenY;
 }
 
-sf::Vector2f pairToVector2f(Pair pair){
-    return {float(pair.first), float(pair.second)};
+sf::Vector2f cordsToVector2f(cords position){
+    return {float(position.col), float(position.row)};
 }
 
-Nodes generateSuccessors(std::vector<std::vector<bool>>& avoidanceMatrix, Node& parent, Pair destinationPos){
+Nodes generateSuccessors(std::vector<std::vector<bool>>& avoidanceMatrix, Node& parent, cords destinationPos){
     Nodes successors;
 
     for (int dcol = -1; dcol< 2; dcol++){
@@ -27,14 +27,14 @@ Nodes generateSuccessors(std::vector<std::vector<bool>>& avoidanceMatrix, Node& 
             if (drow == 0 && dcol == 0) continue;
 
             Node successor;
-            successor.pos = { parent.pos.first + dcol, parent.pos.second + drow};
+            successor.pos = {parent.pos.row + drow, parent.pos.col + dcol};
 
             bool successorInMatrix = isInMatrix(successor.pos, avoidanceMatrix[0].size(), avoidanceMatrix.size());
 
-            if (successorInMatrix && avoidanceMatrix[successor.pos.second][successor.pos.first]){
+            if (successorInMatrix && avoidanceMatrix[successor.pos.row][successor.pos.col]){
                 successor.parentPos = parent.pos;
-                float g = getDistance(pairToVector2f(successor.pos), pairToVector2f(parent.pos)) + parent.g;
-                float h = getDistance(pairToVector2f(successor.pos), pairToVector2f(destinationPos));
+                float g = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(parent.pos)) + parent.g;
+                float h = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(destinationPos));
                 successor.f = g + h;
                 successor.g = g;
                 successors.push_back(successor);
@@ -51,19 +51,19 @@ int nodeInList(Nodes& list, Node& node){
     // checks only positions
     // return -1, if not found
     // return index, if found
-    for (int i = 0; i < list.size(); i ++){
+    for (std::size_t i = 0; i < list.size(); i ++){
         Node element = list[i];
-        if (element.pos == node.pos) return i;
+        if (element.pos == node.pos) return static_cast<int>(i);
     }
     return -1;
 }
 
-Nodes makePath(Nodes &closedList, Pair startPos, Pair destinationPos){
+Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos){
     Nodes path;
 
-    Pair childPos = destinationPos;
+    cords childPos = destinationPos;
 
-    while (childPos != startPos){
+    while (!(childPos == startPos)){
         for (Node &node : closedList){
             if (node.pos == childPos){
                 path.push_back(node);
@@ -84,7 +84,7 @@ Nodes makePath(Nodes &closedList, Pair startPos, Pair destinationPos){
 }
 
 
-Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, Pair startPos, Pair destinationPos){
+Nodes findPathAStar(std::vector<std::vector<bool>> avoidanceMatrix, cords startPos, cords destinationPos){
     bool destinationIsUnreachable = 1;
 
     int c = 0;
@@ -151,7 +151,7 @@ void printNodes(Nodes list){
     std::cout << std::endl;
 
     for (Node node : list){
-        printf("(%d, %d) : %.2f\n", node.pos.first, node.pos.second, node.f);
+        printf("(%d, %d) : %.2f\n", node.pos.row, node.pos.col, node.f);
     }
 
     std::cout << std::endl;
@@ -165,10 +165,9 @@ void testAStar(){
         {1, 1, 1, 1}
     };
 
-    Pair startPos = {0, 0};
-    Pair destinationPos = {3, 3};
+    cords startPos = {0, 0};
+    cords destinationPos = {3, 3};
 
     printNodes(findPathAStar(avoidanceMatrix, startPos, destinationPos));
 }
-
 
