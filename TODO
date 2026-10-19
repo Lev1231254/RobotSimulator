@@ -1,4 +1,4 @@
- - smooth pathing
+~~ - smooth pathing~~
  - lines dissappear after robot traversed them
  - fix path: make path from center to center
  - add radius of robot to passMatrix
