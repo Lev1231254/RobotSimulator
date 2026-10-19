@@ -26,6 +26,7 @@ add_executable(robot_simulator
     src/utils.cpp
     src/aStar.cpp
     src/rayTracer.cpp
+    src/structs.cpp
 )
 
 target_include_directories(robot_simulator

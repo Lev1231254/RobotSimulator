@@ -1,10 +1,11 @@
 #include <rayTracer.hpp>
 #include <objects.hpp>
 #include <utils.hpp>
+#include <cmath>
+#include <limits>
 
-RayTracer::RayTracer(Map& map, mask2& occupancyMaskInput)
+RayTracer::RayTracer(Map& map, const mask2& occupancyMaskInput)
     : squareSide(map.getSquareSide()),
-      mapSize(map.getMapSize()),
       occupancyMask(occupancyMaskInput) {}
 
 
@@ -18,62 +19,124 @@ ray posToRay(sf::Vector2f start, sf::Vector2f end){
     return ray;
 }
 
-sf::Vector2f RayTracer::findOffset(sf::Vector2f pos, sf::Vector2i signs){
-    sf::Vector2f entry = getSquareInGrid(squareSide, pos);
-
-    sf::Vector2f offset = entry - pos;
-    if (signs.x == 1) offset.x += squareSide;
-    if (signs.y == 1) offset.y += squareSide;
-
-    return offset;
-    
-}
-sf::Vector2i RayTracer::getSigns(ray &ray){
-    sf::Vector2f d = ray.direction;
-    sf::Vector2i res;
-    res.x = (d.x >= 0) ? 1 : -1;
-    res.y = (d.y >= 0) ? 1 : -1;
-
-    return res;
-}
-
 sf::Vector2f RayTracer::getFirstHit(ray &ray, Map& map){
+    ray.direction = normalize(ray.direction);
 
-    sf::Vector2f currPos = ray.start;
-    sf::Vector2f entryPos = getSquareInGrid(squareSide, currPos);
-    cords cords = realPosToMatrix(entryPos, squareSide);
-
-    sf::Vector2i signs = getSigns(ray);
-    sf::Vector2f offset;
-
-    sf::Vector2f tmax;
-
-    
-    while (map.isOnMap(currPos) && occupancyMask[cords.row][cords.col] == 0){
-
-        if (occupancyMask[cords.row][cords.col]) return currPos;
-
-        //works only if direction is normalized
-        tmax.x = offset.x / ray.direction.x;
-        tmax.y = offset.y / ray.direction.y;
-        
-        if (tmax.x < tmax.y){
-            currPos += ray.direction * tmax.x;
-        }
-        else {
-            currPos += ray.direction * tmax.y;
-        }
-
-
-        currPos.x = round(currPos.x);
-        currPos.y = round(currPos.y);
-
-        entryPos = getSquareInGrid(squareSide, currPos);
-        offset = findOffset(currPos, signs);
-        cords = realPosToMatrix(entryPos, squareSide);
-        
+    if (squareSide <= 0 || !map.isOnMap(ray.start)
+        || (ray.direction.x == 0.f && ray.direction.y == 0.f)) {
+        return {-1.f, -1.f}; // not on the map
     }
-    
-    printf("Beam didn't hit anything inside the map\n");
+
+    int col = static_cast<int>(ray.start.x) / squareSide;
+    int row = static_cast<int>(ray.start.y) / squareSide;
+    const int stepX = (ray.direction.x > 0.f) - (ray.direction.x < 0.f);
+    const int stepY = (ray.direction.y > 0.f) - (ray.direction.y < 0.f);
+    const float infinity = std::numeric_limits<float>::infinity();
+    const float deltaX = stepX == 0 ? infinity : squareSide / std::abs(ray.direction.x);
+    const float deltaY = stepY == 0 ? infinity : squareSide / std::abs(ray.direction.y);
+
+    if (stepX < 0 && ray.start.x == col * squareSide) --col;
+    if (stepY < 0 && ray.start.y == row * squareSide) --row;
+
+    const float nextX = stepX > 0 ? (col + 1) * squareSide : col * squareSide;
+    const float nextY = stepY > 0 ? (row + 1) * squareSide : row * squareSide;
+    float maxX = stepX == 0 ? infinity : (nextX - ray.start.x) / ray.direction.x;
+    float maxY = stepY == 0 ? infinity : (nextY - ray.start.y) / ray.direction.y;
+    float distance = 0.f;
+
+    while (true) {
+        const sf::Vector2f currentPos = {
+            ray.start.x + ray.direction.x * distance,
+            ray.start.y + ray.direction.y * distance
+        };
+        if (!map.isOnMap(currentPos)) return {-1.f, -1.f};
+
+        if (row < 0 || static_cast<std::size_t>(row) >= occupancyMask.size()
+            || col < 0 || static_cast<std::size_t>(col) >= occupancyMask[row].size()) {
+            return {-1.f, -1.f};
+        }
+
+        if (!occupancyMask[row][col]) {
+            return currentPos;
+        }
+
+        if (maxX < maxY) {
+            distance = maxX;
+            col += stepX;
+            maxX += deltaX;
+        } else if (maxY < maxX) {
+            distance = maxY;
+            row += stepY;
+            maxY += deltaY;
+        } else {
+            distance = maxX;
+            col += stepX;
+            row += stepY;
+            maxX += deltaX;
+            maxY += deltaY;
+        }
+    }
+}
+
+
+sf::Vector2f RayTracer::getFirstHitFinite(ray &ray, Map& map, sf::Vector2f end){
+    ray.direction = normalize(ray.direction);
+    if (squareSide <= 0 || !map.isOnMap(ray.start)
+        || (ray.direction.x == 0.f && ray.direction.y == 0.f)) {
+        return {-1.f, -1.f}; // not on the map
+    }
+
+    int col = static_cast<int>(ray.start.x) / squareSide;
+    int row = static_cast<int>(ray.start.y) / squareSide;
+    const int stepX = (ray.direction.x > 0.f) - (ray.direction.x < 0.f);
+    const int stepY = (ray.direction.y > 0.f) - (ray.direction.y < 0.f);
+    const float infinity = std::numeric_limits<float>::infinity();
+    const float deltaX = stepX == 0 ? infinity : squareSide / std::abs(ray.direction.x);
+    const float deltaY = stepY == 0 ? infinity : squareSide / std::abs(ray.direction.y);
+
+    if (stepX < 0 && ray.start.x == col * squareSide) --col;
+    if (stepY < 0 && ray.start.y == row * squareSide) --row;
+
+    const float nextX = stepX > 0 ? (col + 1) * squareSide : col * squareSide;
+    const float nextY = stepY > 0 ? (row + 1) * squareSide : row * squareSide;
+    float maxX = stepX == 0 ? infinity : (nextX - ray.start.x) / ray.direction.x;
+    float maxY = stepY == 0 ? infinity : (nextY - ray.start.y) / ray.direction.y;
+    float distance = 0.f;
+    float totalDistance = getDistance(ray.start, end);
+
+    while (distance < totalDistance) {
+        const sf::Vector2f currentPos = {
+            ray.start.x + ray.direction.x * distance,
+            ray.start.y + ray.direction.y * distance
+        };
+        if (!map.isOnMap(currentPos)) return {-1.f, -1.f};
+
+        if (row < 0 || static_cast<std::size_t>(row) >= occupancyMask.size()
+            || col < 0 || static_cast<std::size_t>(col) >= occupancyMask[row].size()) {
+            return {-1.f, -1.f};
+        }
+
+
+        if (!occupancyMask[row][col]) {
+            return currentPos;
+        }
+
+
+        if (maxX < maxY) {
+            distance = maxX;
+            col += stepX;
+            maxX += deltaX;
+        } else if (maxY < maxX) {
+            distance = maxY;
+            row += stepY;
+            maxY += deltaY;
+        } else {
+            distance = maxX;
+            col += stepX;
+            row += stepY;
+            maxX += deltaX;
+            maxY += deltaY;
+        }
+    }
     return {-1, -1};
 }

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <app.hpp>
 #include <mapData.hpp>
+#include <cmath>
 
 sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
 
@@ -16,13 +17,24 @@ sf::Vector2f const ROBOT_POS = {900, 500};
 float const ROBOT_RADIUS = 40;
 float const ROBOT_ANGLE_RAD = pi / 6;
 
-SensorDist sensor1()
+
 
 Map map(desktop.size, square_side, obstacles1);
 
 int main()
 {
-    Robot robot(ROBOT_POS, ROBOT_RADIUS);
+    map.computePassMask();
+
+    ray initialRay{};
+    initialRay.start = ROBOT_POS;
+    initialRay.angle = sf::radians(ROBOT_ANGLE_RAD);
+    initialRay.direction = {
+        std::cos(ROBOT_ANGLE_RAD),
+        -std::sin(ROBOT_ANGLE_RAD)
+    };
+
+    SensorDist sensorDist(initialRay, map.getPassMask(), map);
+    Robot robot(ROBOT_POS, ROBOT_RADIUS, sensorDist);
     App app(robot, map);
 
     app.setWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);

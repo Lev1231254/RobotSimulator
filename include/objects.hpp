@@ -10,28 +10,6 @@
 
 
 
-class Robot {
-    sf::CircleShape body;
-    float angleRad;
-    SensorDist sensorDist;
-    public:
-        Robot(sf::Vector2f pos, float radius, SensorDist sensorDist);
-        sf::CircleShape getBodyCircle();
-        sf::Vector2f getPosition();
-        float getAngleRad();
-        float getRadius();
-
-        void setPosition(sf::Vector2f position);
-        void setRadius(float radius);
-        void setAngleRad(float angleRadInput);
-
-        void moveRobot(bool direction, float speedPxs);
-        sf::Vector2f getFuturePos(bool direction, float speedPxs);
-        void drawRobot(sf::RenderWindow& window);
-
-};
-
-
 class Obstacle {
     sf::RectangleShape body;
 
@@ -61,7 +39,7 @@ class Map {
 
 
     public:
-        Map(sf::Vector2u mapSizeInput, int squareSideInput, std::vector<Obstacle> obstaclesInput)
+        Map(sf::Vector2u mapSizeInput={0,0}, int squareSideInput=0, std::vector<Obstacle> obstaclesInput={})
             : mapSize(mapSizeInput),
             squareSide(squareSideInput),
             obstacles(obstaclesInput) {}; 
@@ -76,7 +54,7 @@ class Map {
         void addObstacle(Obstacle obstacle);
 
         std::vector<Obstacle> getObstacles();
-        mask2 getPassMask();
+        const mask2& getPassMask() const;
         int getSquareSide();
         sf::Vector2u getMapSize();
         bool isOnMap(sf::Vector2f pos);
@@ -86,16 +64,66 @@ class Map {
 };
 
 
+class SensorDist {
+    ray rayData;
+    sf::Vector2f end;
+    Map map;
+    RayTracer tracer;
+    sf::Color color = sf::Color::Red;
+    float radius = 10;
+    float lineThickness = 5;
+
+    void updateDirection();
+
+public:
+    SensorDist(ray rayInput, const mask2& occupancyMaskInput, Map& mapInput);
+
+    ray getRay();
+    sf::Vector2f getStart();
+    sf::Vector2f getDirection();
+    sf::Angle getAngle();
+
+    void setStart(sf::Vector2f start);
+    void setAngle(sf::Angle angle);
+    void setRay(ray rayInput);
+    void setPosition(sf::Vector2f pos);
+
+    void updateEnd();
+    void drawSensor(sf::RenderWindow& window);
+};
+
+
+class Robot {
+    sf::CircleShape body;
+    float angleRad;
+    SensorDist sensorDist;
+
+public:
+    Robot(sf::Vector2f pos, float radius, SensorDist sensorDistInput);
+    sf::CircleShape getBodyCircle();
+    sf::Vector2f getPosition();
+    float getAngleRad();
+    float getRadius();
+
+    void setPosition(sf::Vector2f position);
+    void setRadius(float radius);
+    void setAngleRad(float angleRadInput);
+
+    void moveRobot(bool direction, float speedPxs);
+    sf::Vector2f getFuturePos(bool direction, float speedPxs);
+    void drawRobot(sf::RenderWindow& window);
+};
+
+
 class Path {
     Nodes nodes;
-    int lineHeight;
-    sf::Color color;
+    Map &map;
+    RayTracer tracer;
+    int lineHeight = 6;
+    sf::Color color = sf::Color(0, 0, 255, 100);
 
     public:
-        Path(Nodes nodesInput = {})
-            : nodes(nodesInput),
-            lineHeight(6),
-            color(sf::Color(0, 0, 255, 100)){};
+        Path(Nodes nodesInput, Map& mapInput);
         
         Nodes getNodes();
 
@@ -104,45 +132,10 @@ class Path {
         void drawPath(sf::RenderWindow& window, int squareSide);
         void drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end);
 
-        void smoothPath(std::vector<std::vector<bool>> avoidanceMatrix);
-};
-
-
-class SensorDist{
-    ray rayData;
-    mask2 occupancyMask;
-    sf::Vector2f end;
-    Map map;
-    RayTracer tracer;
-    sf::Color color = sf::Color::Red;
-    float radius = 10;
-    float lineThickness = 5;
-    
-
-    private:
-        void updateDirection();
-
-    public:
-        SensorDist(ray rayInput, mask2 &occupancyMaskInput, Map &mapInput)
-        : rayData(rayInput),
-        occupancyMask(occupancyMaskInput),
-        map(mapInput),
-        tracer(map, occupancyMaskInput) {};
-
-        ray getRay();
-        sf::Vector2f getStart();
-        sf::Vector2f getDirection();
-        sf::Angle getAngle();
-
-        void setStart(sf::Vector2f start);
-        void setAngle(sf::Angle angle);
-        void setRay(ray ray);
-        void setPosition(sf::Vector2f pos);
-
-        void updateEnd();
-        void drawSensor(sf::RenderWindow & window);
-        
-
+        bool isLineBlocked(Node start, Node end);
+        void deleteNode(int k);
+        void deleteNodes(int start, int end);
+        void smoothPath();
 };
 
 #endif

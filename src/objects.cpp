@@ -3,6 +3,13 @@
 
 const float pi = 3.1416;
 
+SensorDist::SensorDist(ray rayInput, const mask2& occupancyMaskInput, Map& mapInput)
+    : rayData(rayInput),
+      map(mapInput),
+      tracer(map, occupancyMaskInput) {
+    updateDirection();
+    updateEnd();
+}
 
 sf::Vector2f SensorDist::getStart(){
     return rayData.start;
@@ -23,14 +30,18 @@ sf::Angle SensorDist::getAngle(){
 void SensorDist::setAngle(sf::Angle angle){
     rayData.angle = angle;
     updateDirection();
+    updateEnd();
 }
 
 void SensorDist::setStart(sf::Vector2f start){
     rayData.start = start;
+    updateEnd();
 }
 
-void SensorDist::setRay(ray ray){
-    rayData = ray;
+void SensorDist::setRay(ray rayInput){
+    rayData = rayInput;
+    updateDirection();
+    updateEnd();
 }
 
 void SensorDist::updateEnd(){
@@ -39,38 +50,42 @@ void SensorDist::updateEnd(){
 
 void SensorDist::updateDirection(){
     rayData.direction.x = cos(rayData.angle.asRadians());
-    rayData.direction.y = sin(rayData.angle.asRadians());
+    rayData.direction.y = -sin(rayData.angle.asRadians());
 }
 
 void SensorDist::drawSensor(sf::RenderWindow & window){
-    sf::CircleShape circle(radius);
-    circle.setOrigin({radius, radius});
-    circle.setFillColor(color);
-    circle.setPosition(end);
+    if (end.x < 0 || end.y < 0) return;
 
-    sf::RectangleShape line({0, lineThickness});
-    line.setOrigin({0, lineThickness/2});
-    line.setRotation(rayData.angle);
-    line.setFillColor(color);
-    line.setPosition(rayData.start);
+    sf::CircleShape hitMarker(radius);
+    hitMarker.setOrigin({radius, radius});
+    hitMarker.setFillColor(color);
+    hitMarker.setPosition(end);
 
-    window.draw(circle);
-    window.draw(line);
+    sf::VertexArray beam(sf::PrimitiveType::Lines, 2);
+    beam[0].position = rayData.start;
+    beam[0].color = color;
+    beam[1].position = end;
+    beam[1].color = color;
 
+    window.draw(beam);
+    window.draw(hitMarker);
 }
 
 void SensorDist::setPosition(sf::Vector2f pos){
     rayData.start = pos;
+    updateEnd();
 }
 
 
 // ROBOT -----------------------------
 
-Robot::Robot(sf::Vector2f pos, float radius, SensorDist sensorDist){
+Robot::Robot(sf::Vector2f pos, float radius, SensorDist sensorDistInput)
+    : angleRad(sensorDistInput.getAngle().asRadians()),
+      sensorDist(sensorDistInput) {
     body.setPosition(pos);
     body.setRadius(radius);
-    angleRad = pi / 2;
     body.setOrigin({radius, radius});
+    sensorDist.setPosition(pos);
 }
 
 sf::Vector2f Robot::getPosition(){
@@ -92,6 +107,7 @@ float Robot::getAngleRad(){
 
 void Robot::setPosition(sf::Vector2f position){
     body.setPosition(position);
+    sensorDist.setPosition(position);
 }
 
 void Robot::setRadius(float radius){
@@ -205,6 +221,7 @@ void Obstacle::setColor(sf::Color color){
 // MAP -------------------------------
 
 void Map::computePassMask(){
+    passMask.clear();
     for (unsigned int y = 0; y < mapSize.y; y += squareSide){
         passMask.push_back({});
         for (unsigned int x = 0; x < mapSize.x; x += squareSide){
@@ -232,7 +249,6 @@ void Map::drawObstacles(sf::RenderWindow& window){
 void Map::drawAvoidanceField(sf::RenderWindow& window, sf::Image windowCopy){
     for (auto square : obstacleRects) window.draw(square);
 }
-
 
 void Map::makeAvoidanceRects(){
     for (unsigned int i = 0; i < passMask.size(); i++){
@@ -281,7 +297,7 @@ std::vector<Obstacle> Map::getObstacles(){
     return obstacles;
 }
 
-std::vector<std::vector<bool>> Map::getPassMask(){
+const mask2& Map::getPassMask() const {
     return passMask;
 }
 
@@ -299,12 +315,20 @@ bool Map::isOnMap(sf::Vector2f pos){
 
 // PATH -------------------------------------------------
 
+Path::Path(Nodes nodesInput, Map& mapInput)
+    : nodes(nodesInput),
+      map(mapInput),
+      tracer(map, map.getPassMask()) {
+}
+
 Nodes Path::getNodes(){
     return nodes;
 }
 
 void Path::setNodes(Nodes nodesInput){
     nodes = nodesInput;
+    smoothPath();
+
 }
 
 void Path::drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end){
@@ -325,7 +349,7 @@ void Path::drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f e
     line.setFillColor(color);
 
     line.setOrigin({0, lineHeight / 2});
-    line.rotate(sf::radians(atan(yDistance / xDistance)));
+    line.rotate(sf::radians(atan2(yDistance, xDistance)));
 
     
 
@@ -335,7 +359,8 @@ void Path::drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f e
 }
 
 void Path::drawPath(sf::RenderWindow& window, int squareSide){
-    for (int i = 0; i < nodes.size(); i++){
+
+    for (unsigned int i = 0; i < nodes.size(); i++){
         Node node = nodes[i];
         sf::Vector2f start = {float(node.parentPos.col * squareSide), float(node.parentPos.row * squareSide)};
         sf::Vector2f end = {float(node.pos.col * squareSide), float(node.pos.row * squareSide)};
@@ -344,13 +369,45 @@ void Path::drawPath(sf::RenderWindow& window, int squareSide){
     }
 }
 
-// void Path::smoothPath(std::vector<std::vector<bool>> avoidanceMatrix){
-//     for (int i = 0; i < nodes.size()-1; i++){
-//         Node start = nodes[i];
-//         for (int j = nodes.size()-1; j > i; j--){
-//             Node end = nodes[j];
-//             if ()
-//         }
+bool Path::isLineBlocked(Node start, Node end){
+    // initialize ray
+    auto startPos = nodeToVector2f(start, map.getSquareSide());
+    auto endPos = nodeToVector2f(end, map.getSquareSide());
+    sf::Vector2f direction = endPos - startPos;
+    sf::Angle angleRad = sf::radians(atan2(direction.y, direction.x));
+    ray ray{startPos, direction, angleRad};
 
-//     }
-// }
+    if (tracer.getFirstHitFinite(ray, map, endPos) == sf::Vector2f({-1, -1})) return false;
+    return true;
+}
+
+void Path::deleteNodes(int start, int end){
+    // delete everything between start and end
+    int len = end - start - 1;
+    while (len > 0){
+        deleteNode(start+1);
+        len--;
+    }
+}
+void Path::deleteNode(int k){
+    if (k < 0 || static_cast<std::size_t>(k) >= nodes.size()) return;
+    if (static_cast<std::size_t>(k) < nodes.size() - 1) nodes[k-1].parentPos = nodes[k+1].pos;
+    else if (static_cast<std::size_t>(k) == nodes.size() - 1) nodes[k-1].parentPos = nodes[k-1].pos;
+    nodes.erase(nodes.begin() + k);
+}
+
+
+void Path::smoothPath(){
+    for (std::size_t i = 0; i < nodes.size()-1; i++){
+        Node start = nodes[i];
+        for (std::size_t j = nodes.size()-1; j >= i + 1; j--){
+            Node end = nodes[j];
+            if (!isLineBlocked(start, end)){
+                deleteNodes(i, j);
+                break;
+            }
+        }
+
+    }
+    printf("Path is now smooth\n");
+}

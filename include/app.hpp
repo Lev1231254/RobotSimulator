@@ -36,7 +36,8 @@ class App{
     public:
         App(Robot robotInput, Map mapInput) 
             : robot(robotInput),
-            map(mapInput){};
+            map(mapInput),
+            currentPath(Nodes{}, map) {}
         void setRobot(sf::Vector2f position, float radius, float angleRad);
         void setWindow(unsigned int width, unsigned int height, std::string title);
         void setMapImage();

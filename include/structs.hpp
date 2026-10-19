@@ -26,6 +26,9 @@ struct Node {
 
 typedef std::vector<Node> Nodes;
 
+
+sf::Vector2f nodeToVector2f(Node& node, const int& squareSide);
+
 struct ray{
     sf::Vector2f start;
     sf::Vector2f direction; //normalized vector

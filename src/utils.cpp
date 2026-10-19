@@ -157,6 +157,7 @@ sf::Vector2f normalize(sf::Vector2f vec){
 }
 
 
+
 // void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide){
 //     sf::Vector2f entryPos = getSquareInGrid(squareSide, pos);
 //     pos.x = clamp(pos.x, entryPos.x, entryPos.x + squareSide - 1);

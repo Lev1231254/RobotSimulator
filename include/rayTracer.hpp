@@ -10,18 +10,13 @@ ray posToRay(sf::Vector2f start, sf::Vector2f end);
 
 class RayTracer {
     int squareSide;
-    sf::Vector2u mapSize;
-    mask2 occupancyMask;
-
-    private:
-        sf::Vector2i getSigns(ray &ray);
-        sf::Vector2f findOffset(sf::Vector2f pos, sf::Vector2i signs);
-        
+    const mask2& occupancyMask;
 
     public:
-        RayTracer(Map &map, mask2 &occupancyMaskInput);
+        RayTracer(Map& map, const mask2& occupancyMaskInput);
 
         sf::Vector2f getFirstHit(ray &ray, Map& map);
+        sf::Vector2f getFirstHitFinite(ray &ray, Map& map, sf::Vector2f end);
         
 };
 

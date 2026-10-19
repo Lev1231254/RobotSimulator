@@ -7,6 +7,7 @@
 #include <iostream>
 #include <utils.hpp>
 #include <structs.hpp>
+#include <algorithm>
 
 
 Node findClosestNode(Nodes &list);

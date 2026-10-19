@@ -78,7 +78,9 @@ Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos){
             path.push_back(node);
             break;
         }
-    }
+    }  
+
+    
 
     return path;
 }

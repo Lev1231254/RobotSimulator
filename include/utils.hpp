@@ -24,4 +24,7 @@ float devideUntilLess(float num, float step);
 sf::Vector2f normalize(sf::Vector2f vec);
 void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide);
 
+
+
+
 #endif
