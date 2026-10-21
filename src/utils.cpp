@@ -29,8 +29,6 @@ bool circleIntersectsRect(sf::CircleShape circle, sf::RectangleShape rect){
 
 
 
-
-
 sf::Image getWindowImage(sf::RenderWindow& window){
     sf::Texture texture(window.getSize());
     texture.update(window);
@@ -55,6 +53,10 @@ float getDistance(sf::Vector2f pos1, sf::Vector2f pos2){
 
 cords realPosToMatrix(sf::Vector2f pos, int squareSide){
     return {int(pos.y / squareSide), int(pos.x / squareSide)};
+}
+
+sf::Vector2f matrixPosToReal(cords cords, int squareSide){
+    return {cords.col * squareSide, cords.row * squareSide};
 }
 
 
@@ -117,7 +119,10 @@ sf::Vector2f normalize(sf::Vector2f vec){
     return {vec.x / sum, vec.y / sum};
 }
 
-
+float getAngleToPointf(sf::Vector2f start, sf::Vector2f end){
+    sf::Vector2f distances = end - start;
+    return atan2(distances.y, distances.x);
+}
 
 sf::Angle getAngleToPoint(sf::Vector2f start, sf::Vector2f end){
     sf::Vector2f distances = end - start;

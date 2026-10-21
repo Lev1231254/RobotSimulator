@@ -24,39 +24,39 @@ void App::setMapImage(){
 
 }
 
-void App::scanAndMove(Robot& robot, Map& map, float movement_speed, float turning_speed){
+void App::scanAndMove(Robot& robot, Map& map){
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
-        sf::Vector2f newPos = robot.getFuturePos(1, movement_speed);
+        sf::Vector2f newPos = robot.getFuturePos(1);
 
         Robot futureRobot = robot;
         futureRobot.setPosition(newPos);
-        
-        if (!futureRobot.collidesObsts(map.getObstacles())) robot.moveRobot(1, movement_speed);
+
+        if (!futureRobot.collidesObsts(map.getObstacles())) robot.moveRobot(1);
     }
-        
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
-        sf::Vector2f newPos = robot.getFuturePos(0, movement_speed);
+        sf::Vector2f newPos = robot.getFuturePos(0);
 
         Robot futureRobot = robot;
         futureRobot.setPosition(newPos);
-        
-        if (!futureRobot.collidesObsts(map.getObstacles())) robot.moveRobot(0, movement_speed);
+
+        if (!futureRobot.collidesObsts(map.getObstacles())) robot.moveRobot(0);
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
-        robot.setAngleRad(robot.getAngleRad() + turning_speed);
+        robot.rotateRobot(1);
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
-        robot.setAngleRad(robot.getAngleRad() - turning_speed);
+        robot.rotateRobot(0);
     }    
 }   
 
 void App::runSimulationStep(){
     while (accumulator >= dTime) {
         if (simulationMode == 0){
-            scanAndMove(robot, map, movement_speed, turning_speed);
+            scanAndMove(robot, map);
             
         }
         else if (simulationMode == 1){

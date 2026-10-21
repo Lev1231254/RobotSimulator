@@ -85,8 +85,15 @@ void SensorDist::setPosition(sf::Vector2f pos){
 
 // ROBOT -----------------------------
 
-Robot::Robot(sf::Vector2f pos, float radius, SensorDist sensorDistInput)
-    : angleRad(sensorDistInput.getAngle().asRadians()),
+Robot::Robot(
+    sf::Vector2f pos,
+    float radius,
+    SensorDist sensorDistInput,
+    float movementSpeedInput,
+    sf::Angle rotationSpeedInput)
+    : angle(sensorDistInput.getAngle()),
+      movementSpeed(movementSpeedInput),
+      rotationSpeed(rotationSpeedInput),
       sensorDist(sensorDistInput) {
     body.setPosition(pos);
     body.setRadius(radius);
@@ -107,7 +114,7 @@ sf::CircleShape Robot::getBodyCircle() {
 }
 
 float Robot::getAngleRad(){
-    return angleRad;
+    return angle.asRadians();
 }
 
 
@@ -122,18 +129,31 @@ void Robot::setRadius(float radius){
 }
 
 void Robot::setAngleRad(float angleRadInput){
-    angleRad = angleRadInput;
-    sensorDist.setAngle(sf::radians(angleRadInput));
+    angle = sf::radians(angleRadInput);
+    sensorDist.setAngle(angle);
 }
 
-void Robot::moveRobot(bool direction, float speedPxs){
+void Robot::setMovementSpeed(float speed){
+    movementSpeed = speed;
+}
+
+void Robot::setRotationSpeed(sf::Angle speed){
+    rotationSpeed = speed;
+}
+
+void Robot::rotateRobot(bool direction){
+    int direction_factor = 2 * (direction - 0.5);
+    angle += direction_factor > 0 ? rotationSpeed : -rotationSpeed;
+    sensorDist.setAngle(angle);
+}
+
+void Robot::moveRobot(bool direction){
     //moves robot in the direction it's facing
     // 1 - forwards, 0 - backwards
     int direction_factor = 2 * (direction - 0.5);
 
-
-    float xSpeed = direction_factor * cos(angleRad) * speedPxs;
-    float ySpeed = -1 * direction_factor * sin(angleRad) * speedPxs;
+    float xSpeed = direction_factor * cos(angle.asRadians()) * movementSpeed;
+    float ySpeed = -1 * direction_factor * sin(angle.asRadians()) * movementSpeed;
 
     float x = body.getPosition().x + xSpeed;
     float y = body.getPosition().y + ySpeed;
@@ -142,28 +162,21 @@ void Robot::moveRobot(bool direction, float speedPxs){
     sensorDist.setPosition({x, y});
 }
 
-float Robot::getAngleToPointf(sf::Vector2f start, sf::Vector2f end){
-    sf::Vector2f distances = end - start;
-    return atan2(distances.y, distances.x);
-}
-
-
 // void Robot::traversePath(Path& path){
-//     sf::Vector2f targetPosition = path.getNodes()[0].pos;
-//     if (angleRad != getAngleToPointf(body.getPosition(), targetPosition)){
-
+//     sf::Vector2f targetPosition = matrixPosToReal(path.getNodes()[0].pos, path.getMap().getSquareSide());
+//     sf::Angle angleToNextTarget = getAngleToPoint(body.getPosition(), targetPosition);
+//     if (angle != angleToNextTarget){
+       
 //     }
 // }
 
-
-sf::Vector2f Robot::getFuturePos(bool direction, float speedPxs){
+sf::Vector2f Robot::getFuturePos(bool direction){
     //get future position of the robot after the movement (used to do collisions)
     // direction: 1 - forwards, 0 - backwards
     int direction_factor = 2 * (direction - 0.5);
 
-
-    float xSpeed = direction_factor * cos(angleRad) * speedPxs;
-    float ySpeed = -1 * direction_factor * sin(angleRad) * speedPxs;
+    float xSpeed = direction_factor * cos(angle.asRadians()) * movementSpeed;
+    float ySpeed = -1 * direction_factor * sin(angle.asRadians()) * movementSpeed;
 
     float x = body.getPosition().x + xSpeed;
     float y = body.getPosition().y + ySpeed;
@@ -189,8 +202,8 @@ void Robot::drawRobot(sf::RenderWindow& window){
     // draw the circle and the direction line
 
     sf::Vector2f center = body.getPosition();
-    float anglePointX = center.x + body.getRadius() * cos(angleRad);
-    float anglePointY = center.y - body.getRadius() * sin(angleRad);
+    float anglePointX = center.x + body.getRadius() * cos(angle.asRadians());
+    float anglePointY = center.y - body.getRadius() * sin(angle.asRadians());
     sf::Vector2f anglePoint(anglePointX, anglePointY);
 
     sf::VertexArray line(sf::PrimitiveType::Lines, 2);
@@ -360,6 +373,11 @@ int Map::getSquareSide(){
     return squareSide;
 }
 
+int Map::getSquareSide() const{
+    return squareSide;
+}
+
+
 sf::Vector2u Map::getMapSize(){
     return mapSize;
 }
@@ -376,8 +394,12 @@ Path::Path(Nodes nodesInput, Map& mapInput)
       tracer(map, map.getPassMask()) {
 }
 
-Nodes Path::getNodes(){
+Nodes Path::getNodes() const{
     return nodes;
+}
+
+const Map& Path::getMap() const{
+    return map;
 }
 
 void Path::setNodes(Nodes nodesInput){

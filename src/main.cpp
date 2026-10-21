@@ -39,7 +39,12 @@ int main()
         map.getObstacleMask(),
         map,
         true);
-    Robot robot(ROBOT_POS, ROBOT_RADIUS, sensorDist);
+    Robot robot(
+        ROBOT_POS,
+        ROBOT_RADIUS,
+        sensorDist,
+        movement_speed,
+        sf::radians(turning_speed));
     App app(robot, map);
 
     app.setWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);

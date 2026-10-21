@@ -60,6 +60,7 @@ class Map {
         const mask2& getPassMask() const;
         const mask2& getObstacleMask() const;
         int getSquareSide();
+        int getSquareSide() const;
         sf::Vector2u getMapSize();
         bool isOnMap(sf::Vector2f pos);
 
@@ -110,7 +111,8 @@ class Path {
     public:
         Path(Nodes nodesInput, Map& mapInput);
         
-        Nodes getNodes();
+        Nodes getNodes() const;
+        const Map& getMap() const;
 
         void setNodes(Nodes nodesInput);
 
@@ -126,12 +128,17 @@ class Path {
 
 class Robot {
     sf::CircleShape body;
-    float angleRad;
+    sf::Angle angle;
+    float movementSpeed = 1;
+    sf::Angle rotationSpeed = sf::degrees(1);
     SensorDist sensorDist;
-private:
-    float getAngleToPointf(sf::Vector2f start, sf::Vector2f end);
 public:
-    Robot(sf::Vector2f pos, float radius, SensorDist sensorDistInput);
+    Robot(
+        sf::Vector2f pos,
+        float radius,
+        SensorDist sensorDistInput,
+        float movementSpeedInput,
+        sf::Angle rotationSpeedInput);
     sf::CircleShape getBodyCircle();
     sf::Vector2f getPosition();
     float getAngleRad();
@@ -140,9 +147,12 @@ public:
     void setPosition(sf::Vector2f position);
     void setRadius(float radius);
     void setAngleRad(float angleRadInput);
+    void setMovementSpeed(float speed);
+    void setRotationSpeed(sf::Angle speed);
 
-    void moveRobot(bool direction, float speedPxs);
-    sf::Vector2f getFuturePos(bool direction, float speedPxs);
+    void moveRobot(bool direction);
+    void rotateRobot(bool direction);
+    sf::Vector2f getFuturePos(bool direction);
     bool collidesObst(Obstacle obstacle);
     bool collidesObsts(std::vector<Obstacle> obstacles);
 

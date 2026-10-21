@@ -41,7 +41,7 @@ class App{
         void setRobot(sf::Vector2f position, float radius, float angleRad);
         void setWindow(unsigned int width, unsigned int height, std::string title);
         void setMapImage();
-        void scanAndMove(Robot& robot, Map& map, float movement_speed, float turning_speed);
+        void scanAndMove(Robot& robot, Map& map);
         void run();
         void runSimulationStep();
         void handleEvents(sf::Event event);
