@@ -16,9 +16,9 @@ class Obstacle {
     public:
         Obstacle(sf::Vector2f pos, sf::Vector2f size, sf::Color color);
         sf::RectangleShape getBodyRect();
-        sf::Vector2f getPosition();
-        float getWidth();
-        float getHeight();
+        sf::Vector2f getPosition() const;
+        float getWidth() const;
+        float getHeight() const;
 
         void setPosition(sf::Vector2f position);
         void setWidth(float width);
@@ -35,6 +35,7 @@ class Map {
         int squareSide;
         std::vector<Obstacle> obstacles;
         mask2 passMask;
+        mask2 obstacleMask;
         std::vector<sf::RectangleShape> obstacleRects;
 
 
@@ -48,13 +49,15 @@ class Map {
         void drawAvoidanceField(sf::RenderWindow& window, sf::Image windowCopy);
         void addColorToSquare(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
 
-        void computePassMask();
+        void computePassMask(float robotRadius);
+        void computeObstacleMask();
         void makeAvoidanceRects();
         
         void addObstacle(Obstacle obstacle);
 
         std::vector<Obstacle> getObstacles();
         const mask2& getPassMask() const;
+        const mask2& getObstacleMask() const;
         int getSquareSide();
         sf::Vector2u getMapSize();
         bool isOnMap(sf::Vector2f pos);
@@ -76,7 +79,11 @@ class SensorDist {
     void updateDirection();
 
 public:
-    SensorDist(ray rayInput, const mask2& occupancyMaskInput, Map& mapInput);
+    SensorDist(
+        ray rayInput,
+        const mask2& occupancyMaskInput,
+        Map& mapInput,
+        bool outsideMaskIsFree = false);
 
     ray getRay();
     sf::Vector2f getStart();

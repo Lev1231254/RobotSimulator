@@ -1,12 +1,18 @@
 #include <objects.hpp>
+#include <algorithm>
+#include <cmath>
 #include <math.h>
 
 const float pi = 3.1416;
 
-SensorDist::SensorDist(ray rayInput, const mask2& occupancyMaskInput, Map& mapInput)
+SensorDist::SensorDist(
+    ray rayInput,
+    const mask2& occupancyMaskInput,
+    Map& mapInput,
+    bool outsideMaskIsFree)
     : rayData(rayInput),
       map(mapInput),
-      tracer(map, occupancyMaskInput) {
+      tracer(map, occupancyMaskInput, outsideMaskIsFree) {
     updateDirection();
     updateEnd();
 }
@@ -183,15 +189,15 @@ sf::RectangleShape Obstacle::getBodyRect(){
     return body;
 }
 
-sf::Vector2f Obstacle::getPosition(){
+sf::Vector2f Obstacle::getPosition() const {
     return body.getPosition();
 }
 
-float Obstacle::getWidth(){
+float Obstacle::getWidth() const {
     return body.getSize().x;
 }
 
-float Obstacle::getHeight(){
+float Obstacle::getHeight() const {
     return body.getSize().y;
 }
 
@@ -220,17 +226,35 @@ void Obstacle::setColor(sf::Color color){
 
 // MAP -------------------------------
 
-void Map::computePassMask(){
+void Map::computePassMask(float robotRadius){
     passMask.clear();
     for (unsigned int y = 0; y < mapSize.y; y += squareSide){
         passMask.push_back({});
         for (unsigned int x = 0; x < mapSize.x; x += squareSide){
             passMask.back().push_back(1);
             for (auto obstacle : obstacles){
-                bool xInRect = obstacle.getPosition().x - squareSide <= x && x <= (obstacle.getPosition().x + obstacle.getWidth());
-                bool yInRect = obstacle.getPosition().y - squareSide <= y && y <= (obstacle.getPosition().y + obstacle.getHeight());
+                bool xInRect = obstacle.getPosition().x - robotRadius - squareSide <= x && x < (obstacle.getPosition().x + obstacle.getWidth() + robotRadius);
+                bool yInRect = obstacle.getPosition().y - robotRadius - squareSide <= y && y < (obstacle.getPosition().y + obstacle.getHeight() + robotRadius);
                 if (xInRect && yInRect) {
                     passMask.back().back() = 0;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void Map::computeObstacleMask(){
+    obstacleMask.clear();
+    for (unsigned int y = 0; y < mapSize.y; y += squareSide){
+        obstacleMask.push_back({});
+        for (unsigned int x = 0; x < mapSize.x; x += squareSide){
+            obstacleMask.back().push_back(1);
+            for (auto obstacle : obstacles){
+                bool xInRect = obstacle.getPosition().x <= x && x < (obstacle.getPosition().x + obstacle.getWidth());
+                bool yInRect = obstacle.getPosition().y <= y && y < (obstacle.getPosition().y + obstacle.getHeight());
+                if (xInRect && yInRect) {
+                    obstacleMask.back().back() = 0;
                     break;
                 }
             }
@@ -299,6 +323,10 @@ std::vector<Obstacle> Map::getObstacles(){
 
 const mask2& Map::getPassMask() const {
     return passMask;
+}
+
+const mask2& Map::getObstacleMask() const {
+    return obstacleMask;
 }
 
 int Map::getSquareSide(){

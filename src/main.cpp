@@ -23,7 +23,8 @@ Map map(desktop.size, square_side, obstacles1);
 
 int main()
 {
-    map.computePassMask();
+    map.computePassMask(ROBOT_RADIUS);
+    map.computeObstacleMask();
 
     ray initialRay{};
     initialRay.start = ROBOT_POS;
@@ -33,7 +34,11 @@ int main()
         -std::sin(ROBOT_ANGLE_RAD)
     };
 
-    SensorDist sensorDist(initialRay, map.getPassMask(), map);
+    SensorDist sensorDist(
+        initialRay,
+        map.getObstacleMask(),
+        map,
+        true);
     Robot robot(ROBOT_POS, ROBOT_RADIUS, sensorDist);
     App app(robot, map);
 

@@ -4,9 +4,13 @@
 #include <cmath>
 #include <limits>
 
-RayTracer::RayTracer(Map& map, const mask2& occupancyMaskInput)
+RayTracer::RayTracer(
+    Map& map,
+    const mask2& occupancyMaskInput,
+    bool outsideMaskIsFreeInput)
     : squareSide(map.getSquareSide()),
-      occupancyMask(occupancyMaskInput) {}
+      occupancyMask(occupancyMaskInput),
+      outsideMaskIsFree(outsideMaskIsFreeInput) {}
 
 
 ray posToRay(sf::Vector2f start, sf::Vector2f end){
@@ -51,12 +55,14 @@ sf::Vector2f RayTracer::getFirstHit(ray &ray, Map& map){
         };
         if (!map.isOnMap(currentPos)) return {-1.f, -1.f};
 
-        if (row < 0 || static_cast<std::size_t>(row) >= occupancyMask.size()
-            || col < 0 || static_cast<std::size_t>(col) >= occupancyMask[row].size()) {
-            return {-1.f, -1.f};
-        }
-
-        if (!occupancyMask[row][col]) {
+        const int maskRow = row;
+        const int maskCol = col;
+        const bool inMask = maskRow >= 0
+            && static_cast<std::size_t>(maskRow) < occupancyMask.size()
+            && maskCol >= 0
+            && static_cast<std::size_t>(maskCol) < occupancyMask[maskRow].size();
+        if (!inMask && !outsideMaskIsFree) return {-1.f, -1.f};
+        if (inMask && !occupancyMask[maskRow][maskCol]) {
             return currentPos;
         }
 
@@ -111,13 +117,14 @@ sf::Vector2f RayTracer::getFirstHitFinite(ray &ray, Map& map, sf::Vector2f end){
         };
         if (!map.isOnMap(currentPos)) return {-1.f, -1.f};
 
-        if (row < 0 || static_cast<std::size_t>(row) >= occupancyMask.size()
-            || col < 0 || static_cast<std::size_t>(col) >= occupancyMask[row].size()) {
-            return {-1.f, -1.f};
-        }
-
-
-        if (!occupancyMask[row][col]) {
+        const int maskRow = row;
+        const int maskCol = col;
+        const bool inMask = maskRow >= 0
+            && static_cast<std::size_t>(maskRow) < occupancyMask.size()
+            && maskCol >= 0
+            && static_cast<std::size_t>(maskCol) < occupancyMask[maskRow].size();
+        if (!inMask && !outsideMaskIsFree) return {-1.f, -1.f};
+        if (inMask && !occupancyMask[maskRow][maskCol]) {
             return currentPos;
         }
 

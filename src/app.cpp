@@ -82,7 +82,8 @@ void App::handleEvents(sf::Event event){
 }
 
 void App::run(){
-    map.computePassMask();
+    map.computePassMask(robot.getRadius());
+    map.computeObstacleMask();
     map.makeAvoidanceRects();
 
     while (window.isOpen()){
