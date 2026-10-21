@@ -24,6 +24,35 @@ void App::setMapImage(){
 
 }
 
+void App::scanAndMove(Robot& robot, Map& map, float movement_speed, float turning_speed){
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
+        sf::Vector2f newPos = robot.getFuturePos(1, movement_speed);
+
+        Robot futureRobot = robot;
+        futureRobot.setPosition(newPos);
+        
+        if (!futureRobot.collidesObsts(map.getObstacles())) robot.moveRobot(1, movement_speed);
+    }
+        
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
+        sf::Vector2f newPos = robot.getFuturePos(0, movement_speed);
+
+        Robot futureRobot = robot;
+        futureRobot.setPosition(newPos);
+        
+        if (!futureRobot.collidesObsts(map.getObstacles())) robot.moveRobot(0, movement_speed);
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
+        robot.setAngleRad(robot.getAngleRad() + turning_speed);
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
+        robot.setAngleRad(robot.getAngleRad() - turning_speed);
+    }    
+}   
+
 void App::runSimulationStep(){
     while (accumulator >= dTime) {
         if (simulationMode == 0){

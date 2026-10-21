@@ -142,6 +142,19 @@ void Robot::moveRobot(bool direction, float speedPxs){
     sensorDist.setPosition({x, y});
 }
 
+float Robot::getAngleToPointf(sf::Vector2f start, sf::Vector2f end){
+    sf::Vector2f distances = end - start;
+    return atan2(distances.y, distances.x);
+}
+
+
+// void Robot::traversePath(Path& path){
+//     sf::Vector2f targetPosition = path.getNodes()[0].pos;
+//     if (angleRad != getAngleToPointf(body.getPosition(), targetPosition)){
+
+//     }
+// }
+
 
 sf::Vector2f Robot::getFuturePos(bool direction, float speedPxs){
     //get future position of the robot after the movement (used to do collisions)
@@ -156,6 +169,20 @@ sf::Vector2f Robot::getFuturePos(bool direction, float speedPxs){
     float y = body.getPosition().y + ySpeed;
 
     return {x, y};
+}
+
+bool Robot::collidesObst(Obstacle obstacle){
+    sf::CircleShape circle = body;
+    sf::RectangleShape rect = obstacle.getBodyRect();
+    return circleIntersectsRect(circle, rect);
+}
+
+
+bool Robot::collidesObsts(std::vector<Obstacle> obstacles){
+    for (auto obstacle : obstacles){
+        if (collidesObst(obstacle)) return 1;
+    }
+    return 0;
 }
 
 void Robot::drawRobot(sf::RenderWindow& window){

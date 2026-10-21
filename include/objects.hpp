@@ -7,6 +7,7 @@
 #include <math.h>
 #include <structs.hpp>
 #include <rayTracer.hpp>
+#include <utils.hpp>
 
 
 
@@ -99,29 +100,6 @@ public:
     void drawSensor(sf::RenderWindow& window);
 };
 
-
-class Robot {
-    sf::CircleShape body;
-    float angleRad;
-    SensorDist sensorDist;
-
-public:
-    Robot(sf::Vector2f pos, float radius, SensorDist sensorDistInput);
-    sf::CircleShape getBodyCircle();
-    sf::Vector2f getPosition();
-    float getAngleRad();
-    float getRadius();
-
-    void setPosition(sf::Vector2f position);
-    void setRadius(float radius);
-    void setAngleRad(float angleRadInput);
-
-    void moveRobot(bool direction, float speedPxs);
-    sf::Vector2f getFuturePos(bool direction, float speedPxs);
-    void drawRobot(sf::RenderWindow& window);
-};
-
-
 class Path {
     Nodes nodes;
     Map &map;
@@ -144,5 +122,33 @@ class Path {
         void deleteNodes(int start, int end);
         void smoothPath();
 };
+
+
+class Robot {
+    sf::CircleShape body;
+    float angleRad;
+    SensorDist sensorDist;
+private:
+    float getAngleToPointf(sf::Vector2f start, sf::Vector2f end);
+public:
+    Robot(sf::Vector2f pos, float radius, SensorDist sensorDistInput);
+    sf::CircleShape getBodyCircle();
+    sf::Vector2f getPosition();
+    float getAngleRad();
+    float getRadius();
+
+    void setPosition(sf::Vector2f position);
+    void setRadius(float radius);
+    void setAngleRad(float angleRadInput);
+
+    void moveRobot(bool direction, float speedPxs);
+    sf::Vector2f getFuturePos(bool direction, float speedPxs);
+    bool collidesObst(Obstacle obstacle);
+    bool collidesObsts(std::vector<Obstacle> obstacles);
+
+    void traversePath(Path& path);
+    void drawRobot(sf::RenderWindow& window);
+};
+
 
 #endif

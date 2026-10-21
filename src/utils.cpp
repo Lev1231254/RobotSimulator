@@ -1,34 +1,7 @@
 #include <utils.hpp>
 
 
-void scanAndMove(Robot& robot, Map map, float movement_speed, float turning_speed){
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
-        sf::Vector2f newPos = robot.getFuturePos(1, movement_speed);
-
-        Robot futureRobot = robot;
-        futureRobot.setPosition(newPos);
-        
-        if (!robotCollidesObsts(futureRobot, map.getObstacles())) robot.moveRobot(1, movement_speed);
-    }
-        
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
-        sf::Vector2f newPos = robot.getFuturePos(0, movement_speed);
-
-        Robot futureRobot = robot;
-        futureRobot.setPosition(newPos);
-        
-        if (!robotCollidesObsts(futureRobot, map.getObstacles())) robot.moveRobot(0, movement_speed);
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
-        robot.setAngleRad(robot.getAngleRad() + turning_speed);
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
-        robot.setAngleRad(robot.getAngleRad() - turning_speed);
-    }    
-}   
 
 
 float clamp(float value, float min, float max){
@@ -55,19 +28,7 @@ bool circleIntersectsRect(sf::CircleShape circle, sf::RectangleShape rect){
 }
 
 
-bool robotCollidesObst(Robot robot, Obstacle obstacle){
-    sf::CircleShape circle = robot.getBodyCircle();
-    sf::RectangleShape rect = obstacle.getBodyRect();
-    return circleIntersectsRect(circle, rect);
-}
 
-
-bool robotCollidesObsts(Robot robot, std::vector<Obstacle> obstacles){
-    for (auto obstacle : obstacles){
-        if (robotCollidesObst(robot, obstacle)) return 1;
-    }
-    return 0;
-}
 
 
 sf::Image getWindowImage(sf::RenderWindow& window){
@@ -156,6 +117,12 @@ sf::Vector2f normalize(sf::Vector2f vec){
     return {vec.x / sum, vec.y / sum};
 }
 
+
+
+sf::Angle getAngleToPoint(sf::Vector2f start, sf::Vector2f end){
+    sf::Vector2f distances = end - start;
+    return sf::radians(atan2(distances.y, distances.x));
+}
 
 
 // void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide){
