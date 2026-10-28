@@ -6,67 +6,11 @@
 #include <vector>
 #include <math.h>
 #include <structs.hpp>
+#include <obstacle.hpp>
+#include <map.hpp>
 #include <rayTracer.hpp>
 #include <utils.hpp>
 
-
-
-class Obstacle {
-    sf::RectangleShape body;
-
-    public:
-        Obstacle(sf::Vector2f pos, sf::Vector2f size, sf::Color color);
-        sf::RectangleShape getBodyRect();
-        sf::Vector2f getPosition() const;
-        float getWidth() const;
-        float getHeight() const;
-
-        void setPosition(sf::Vector2f position);
-        void setWidth(float width);
-        void setHeight(float height);
-        void setSize(sf::Vector2f size);
-        void setColor(sf::Color colorInput);
-
-};
-
-
-class Map {
-    private:
-        sf::Vector2u mapSize;
-        int squareSide;
-        std::vector<Obstacle> obstacles;
-        mask2 passMask;
-        mask2 obstacleMask;
-        std::vector<sf::RectangleShape> obstacleRects;
-
-
-    public:
-        Map(sf::Vector2u mapSizeInput={0,0}, int squareSideInput=0, std::vector<Obstacle> obstaclesInput={})
-            : mapSize(mapSizeInput),
-            squareSide(squareSideInput),
-            obstacles(obstaclesInput) {}; 
-
-        void drawObstacles(sf::RenderWindow& window);
-        void drawAvoidanceField(sf::RenderWindow& window, sf::Image windowCopy);
-        void addColorToSquare(sf::RenderWindow & window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
-
-        void computePassMask(float robotRadius);
-        void computeObstacleMask();
-        void makeAvoidanceRects();
-        
-        void addObstacle(Obstacle obstacle);
-
-        std::vector<Obstacle> getObstacles();
-        const mask2& getPassMask() const;
-        const mask2& getObstacleMask() const;
-        int getSquareSide();
-        int getSquareSide() const;
-        sf::Vector2u getMapSize();
-        bool isOnMap(sf::Vector2f pos);
-
-
-        bool isLineTraversable(sf::Vector2f start, sf::Vector2f end);
-};
 
 
 class SensorDist {

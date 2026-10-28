@@ -1,6 +1,6 @@
 ~~ - smooth pathing~~
- - add traversing the path
- - path dissappear after robot traversed
+~~ - add traversing the path~~
+~~ - path dissappear after robot traversed~~
 ~~ - fix path: draw path from center to center~~
 ~~ - add radius of robot to passMatrix~~
  - add noise into sensor
