@@ -36,7 +36,7 @@ void App::scanAndMove(Robot& robot, Map& map){
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
-        sf::Vector2f newPos = robot.getFuturePos(0);
+        sf::Vector2f newPos = robot.getFuturePos(-1);
 
         Robot futureRobot = robot;
         futureRobot.setPosition(newPos);
@@ -49,7 +49,7 @@ void App::scanAndMove(Robot& robot, Map& map){
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
-        robot.rotateRobot(0);
+        robot.rotateRobot(-1);
     }    
 }   
 
@@ -62,6 +62,7 @@ void App::runSimulationStep(){
         else if (simulationMode == 1){
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             selectedSquare = getSquareInGrid(square_side, {float(mousePos.x), float(mousePos.y)});
+            robot.traversePath(currentPath);
         }
         
         accumulator -= dTime;
@@ -98,7 +99,7 @@ void App::handleEvents(sf::Event event){
 
         if (map.getPassMask()[rowMouse][colMouse] != 0){
             sf::Vector2f robotPos = robot.getBodyCircle().getPosition();
-            cords start = realPosToMatrix(
+            cords start = posToCords(
                 getSquareInGrid(map.getSquareSide(), {robotPos.x, robotPos.y}), 
                 square_side
             );
@@ -116,9 +117,10 @@ void App::run(){
     map.makeAvoidanceRects();
 
     while (window.isOpen()){
-        // change modes
-        while (const std::optional event = window.pollEvent()){
-
+        const unsigned int maxEventsPerFrame = 100;
+        for (unsigned int eventCount = 0; eventCount < maxEventsPerFrame; ++eventCount){
+            const std::optional event = window.pollEvent();
+            if (!event) break;
             handleEvents(*event);
 
         }
@@ -139,6 +141,7 @@ void App::run(){
             map.drawAvoidanceField(window, mapImage);
             if (!currentPath.getNodes().empty()) {
                 currentPath.drawPath(window, square_side);
+                robot.drawLineToPath(window, currentPath);
             }
         }
         

@@ -130,6 +130,7 @@ void Robot::setRadius(float radius){
 
 void Robot::setAngleRad(float angleRadInput){
     angle = sf::radians(angleRadInput);
+    normalizeAngle(angle);
     sensorDist.setAngle(angle);
 }
 
@@ -141,19 +142,15 @@ void Robot::setRotationSpeed(sf::Angle speed){
     rotationSpeed = speed;
 }
 
-void Robot::rotateRobot(bool direction){
-    int direction_factor = 2 * (direction - 0.5);
-    angle += direction_factor > 0 ? rotationSpeed : -rotationSpeed;
+void Robot::rotateRobot(int direction){
+    angle += rotationSpeed * direction;
     sensorDist.setAngle(angle);
 }
 
-void Robot::moveRobot(bool direction){
-    //moves robot in the direction it's facing
-    // 1 - forwards, 0 - backwards
-    int direction_factor = 2 * (direction - 0.5);
+void Robot::moveRobot(int direction){
 
-    float xSpeed = direction_factor * cos(angle.asRadians()) * movementSpeed;
-    float ySpeed = -1 * direction_factor * sin(angle.asRadians()) * movementSpeed;
+    float xSpeed = direction * cos(angle.asRadians()) * movementSpeed;
+    float ySpeed = -1 * direction * sin(angle.asRadians()) * movementSpeed;
 
     float x = body.getPosition().x + xSpeed;
     float y = body.getPosition().y + ySpeed;
@@ -161,14 +158,66 @@ void Robot::moveRobot(bool direction){
     body.setPosition({x, y});
     sensorDist.setPosition({x, y});
 }
+void Robot::turnToAngle(sf::Angle targetAngle){
+    float angleDeg = angle.asDegrees();
+    float targetDeg = targetAngle.asDegrees();
 
-// void Robot::traversePath(Path& path){
-//     sf::Vector2f targetPosition = matrixPosToReal(path.getNodes()[0].pos, path.getMap().getSquareSide());
-//     sf::Angle angleToNextTarget = getAngleToPoint(body.getPosition(), targetPosition);
-//     if (angle != angleToNextTarget){
-       
-//     }
-// }
+    float diff = targetDeg - angleDeg;
+    normalizeAngleDeg(diff);
+
+    int direction = sign(diff);
+
+    // if the difference is small enough, just clips robot to that angle
+    if (abs(diff) < rotationSpeed.asDegrees() * 10) {
+        angle = targetAngle;
+        normalizeAngle(angle);
+        sensorDist.setAngle(angle);
+    }
+    // else turn the robot
+    else rotateRobot(direction);
+}
+
+void Robot::moveToTarget(sf::Vector2f target){
+    float distance = getDistance(body.getPosition(), target);
+    
+    if (distance == 0) return;
+    
+    if (distance < movementSpeed) setPosition(target);
+    
+    else moveRobot(1);
+}
+
+void Robot::goToNode(Node node, int squareSide){
+    sf::Vector2f targetPosition = cordsToPos(node.pos, squareSide);
+    sf::Angle targetAngle = -getAngleToPos(body.getPosition(), targetPosition);
+    
+    turnToAngle(targetAngle);
+    if (anglesEqual(angle, targetAngle)) moveToTarget(targetPosition);
+}
+
+bool Robot::isAtNode(Node node, int squareSide){
+    sf::Vector2f targetPosition = cordsToPos(node.pos, squareSide);
+    //sf::Angle targetAngle = getAngleToPos(body.getPosition(), targetPosition);
+    if (getDistance(body.getPosition(), targetPosition) <= squareSide / 2) return 1;
+    return 0;
+}
+
+void Robot::traversePath(Path& path){
+    
+    if (path.getNodes().size() == 0) return;    
+    if (isAtNode(path.getNodes().back(), path.getMap().getSquareSide())) {
+        printf("Node %d reached\n", path.getTraversedNodes());
+        path.traversedNodesInc();
+        path.deleteNode(path.getNodes().size()-1);
+    }
+    else goToNode(path.getNodes().back(), path.getMap().getSquareSide());
+
+    // if we traversed the last node show the total amount of traversed nodes
+    if (path.getNodes().size() == 0) {
+        printf("Traversed total of %d nodes\n", path.getTraversedNodes());
+        path.setTraversedNodes(0);
+    }
+}
 
 sf::Vector2f Robot::getFuturePos(bool direction){
     //get future position of the robot after the movement (used to do collisions)
@@ -215,6 +264,14 @@ void Robot::drawRobot(sf::RenderWindow& window){
     window.draw(body);
     window.draw(line);
     sensorDist.drawSensor(window);
+}
+
+void Robot::drawLineToPath(sf::RenderWindow &window, Path &path){
+    if (path.getNodes().size() == 0) return;
+
+    sf::Vector2f start = body.getPosition();
+    sf::Vector2f end = cordsToPos(path.getNodes().back().pos, path.getMap().getSquareSide());
+    path.drawLine(window, start, end);
 }
 
 
@@ -394,8 +451,19 @@ Path::Path(Nodes nodesInput, Map& mapInput)
       tracer(map, map.getPassMask()) {
 }
 
-Nodes Path::getNodes() const{
+const Nodes& Path::getNodes() const{
     return nodes;
+}
+
+const int Path::getTraversedNodes() const {
+    return traversedNodes;
+}
+
+void Path::setTraversedNodes(int num){
+    traversedNodes = num;
+}
+void Path::traversedNodesInc() {
+    traversedNodes++;
 }
 
 const Map& Path::getMap() const{
@@ -405,7 +473,7 @@ const Map& Path::getMap() const{
 void Path::setNodes(Nodes nodesInput){
     nodes = nodesInput;
     smoothPath();
-
+    traversedNodes = 0;
 }
 
 void Path::drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end){
@@ -430,7 +498,8 @@ void Path::drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f e
 
     
 
-    line.setPosition(start + sf::Vector2f({map.getSquareSide()/2, map.getSquareSide()/2}));
+    //line.setPosition(start + sf::Vector2f({map.getSquareSide()/2, map.getSquareSide()/2}));
+    line.setPosition(start);
     
     window.draw(line);
 }
@@ -468,14 +537,25 @@ void Path::deleteNodes(int start, int end){
 }
 void Path::deleteNode(int k){
     if (k < 0 || static_cast<std::size_t>(k) >= nodes.size()) return;
-    if (static_cast<std::size_t>(k) < nodes.size() - 1) nodes[k-1].parentPos = nodes[k+1].pos;
+    
+    if (nodes.size()==1){
+        nodes = {};
+        return;
+    }
+    if (static_cast<std::size_t>(k) == 0) {
+        nodes.erase(nodes.begin() + k);
+        return;
+    }   
+    else if (static_cast<std::size_t>(k) < nodes.size() - 1) nodes[k-1].parentPos = nodes[k+1].pos;
     else if (static_cast<std::size_t>(k) == nodes.size() - 1) nodes[k-1].parentPos = nodes[k-1].pos;
     nodes.erase(nodes.begin() + k);
 }
 
 
 void Path::smoothPath(){
-    for (std::size_t i = 0; i < nodes.size()-1; i++){
+    if (nodes.size() < 2) return;
+
+    for (std::size_t i = 0; i + 1 < nodes.size(); i++){
         Node start = nodes[i];
         for (std::size_t j = nodes.size()-1; j >= i + 1; j--){
             Node end = nodes[j];

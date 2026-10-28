@@ -63,14 +63,19 @@ Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos){
 
     cords childPos = destinationPos;
 
-    while (!(childPos == startPos)){
+    for (std::size_t steps = 0; !(childPos == startPos); steps++){
+        if (steps >= closedList.size()) return {};
+
+        bool foundParent = false;
         for (Node &node : closedList){
             if (node.pos == childPos){
                 path.push_back(node);
                 childPos = node.parentPos;
+                foundParent = true;
                 break;
             }
         }
+        if (!foundParent) return {};
     }
 
     for (Node &node : closedList){
@@ -145,7 +150,7 @@ Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords
     }
 
     Nodes path = makePath(closedList, startPos, destinationPos);
-    printf("Processed %d nodes\n", c);
+    printf("Processed total of %d nodes\n", c);
     return path;
 }
 

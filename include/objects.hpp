@@ -103,7 +103,8 @@ public:
 
 class Path {
     Nodes nodes;
-    Map &map;
+    int traversedNodes = 0;
+    Map& map;
     RayTracer tracer;
     int lineHeight = 6;
     sf::Color color = sf::Color(0, 0, 255, 100);
@@ -111,10 +112,13 @@ class Path {
     public:
         Path(Nodes nodesInput, Map& mapInput);
         
-        Nodes getNodes() const;
+        const Nodes& getNodes() const;
         const Map& getMap() const;
+        const int getTraversedNodes() const;
 
         void setNodes(Nodes nodesInput);
+        void setTraversedNodes(int num);
+        void traversedNodesInc();
 
         void drawPath(sf::RenderWindow& window, int squareSide);
         void drawLine(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end);
@@ -132,6 +136,7 @@ class Robot {
     float movementSpeed = 1;
     sf::Angle rotationSpeed = sf::degrees(1);
     SensorDist sensorDist;
+
 public:
     Robot(
         sf::Vector2f pos,
@@ -139,6 +144,7 @@ public:
         SensorDist sensorDistInput,
         float movementSpeedInput,
         sf::Angle rotationSpeedInput);
+
     sf::CircleShape getBodyCircle();
     sf::Vector2f getPosition();
     float getAngleRad();
@@ -149,15 +155,21 @@ public:
     void setAngleRad(float angleRadInput);
     void setMovementSpeed(float speed);
     void setRotationSpeed(sf::Angle speed);
+    
+    void moveRobot(int direction);
+    void moveToTarget(sf::Vector2f target);
+    void rotateRobot(int direction);
+    void turnToAngle(sf::Angle targetAngle);
+    void goToNode(Node node, int squareSide);
+    bool isAtNode(Node node, int squareSide);
+    void traversePath(Path& path);
 
-    void moveRobot(bool direction);
-    void rotateRobot(bool direction);
     sf::Vector2f getFuturePos(bool direction);
     bool collidesObst(Obstacle obstacle);
     bool collidesObsts(std::vector<Obstacle> obstacles);
 
-    void traversePath(Path& path);
     void drawRobot(sf::RenderWindow& window);
+    void drawLineToPath(sf::RenderWindow &window, Path &path);
 };
 
 

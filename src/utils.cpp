@@ -2,7 +2,9 @@
 
 
 
-
+int sign(float num){
+    return (num >= 0) ? 1 : -1;
+}
 
 float clamp(float value, float min, float max){
     if (value < min) return min;
@@ -51,11 +53,11 @@ float getDistance(sf::Vector2f pos1, sf::Vector2f pos2){
     return sqrt( pow(xDistance, 2) + pow(yDistance, 2) );
 }
 
-cords realPosToMatrix(sf::Vector2f pos, int squareSide){
+cords posToCords(sf::Vector2f pos, int squareSide){
     return {int(pos.y / squareSide), int(pos.x / squareSide)};
 }
 
-sf::Vector2f matrixPosToReal(cords cords, int squareSide){
+sf::Vector2f cordsToPos(cords cords, int squareSide){
     return {cords.col * squareSide, cords.row * squareSide};
 }
 
@@ -124,11 +126,28 @@ float getAngleToPointf(sf::Vector2f start, sf::Vector2f end){
     return atan2(distances.y, distances.x);
 }
 
-sf::Angle getAngleToPoint(sf::Vector2f start, sf::Vector2f end){
+sf::Angle getAngleToPos(sf::Vector2f start, sf::Vector2f end){
     sf::Vector2f distances = end - start;
     return sf::radians(atan2(distances.y, distances.x));
 }
 
+
+bool anglesEqual(sf::Angle angle1, sf::Angle angle2){
+    // the 0.5 degree difference is almost nothing
+    if (abs(angle1.asDegrees() - angle2.asDegrees()) < 0.5) return true;
+    return false;
+}
+
+void normalizeAngle(sf::Angle &angle){
+    float angleDeg = angle.asDegrees();
+    normalizeAngleDeg(angleDeg);
+    angle = sf::degrees(angleDeg);
+}
+
+void normalizeAngleDeg(float &angle){
+    while (angle > 180) angle -= 360;
+    while (angle < -180) angle += 360;
+}
 
 // void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide){
 //     sf::Vector2f entryPos = getSquareInGrid(squareSide, pos);
