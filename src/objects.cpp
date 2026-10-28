@@ -198,7 +198,7 @@ void Robot::goToNode(Node node, int squareSide){
 bool Robot::isAtNode(Node node, int squareSide){
     sf::Vector2f targetPosition = cordsToPos(node.pos, squareSide);
     //sf::Angle targetAngle = getAngleToPos(body.getPosition(), targetPosition);
-    if (getDistance(body.getPosition(), targetPosition) <= squareSide / 2) return 1;
+    if (getDistance(body.getPosition(), targetPosition) <= squareSide * sqrt(2)) return 1;
     return 0;
 }
 
