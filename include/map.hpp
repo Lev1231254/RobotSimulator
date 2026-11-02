@@ -23,11 +23,11 @@ public:
     Map(sf::Vector2u mapSizeInput = {0, 0}, int squareSideInput = 0, std::vector<Obstacle> obstaclesInput = {});
 
     void drawObstacles(sf::RenderWindow& window);
-    void drawAvoidanceField(sf::RenderWindow& window, const sf::Image& windowCopy);
+    void drawAvoidanceField(sf::RenderWindow& window);
     void addColorToSquare(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
 
     void setMiniMap(sf::Vector2f topLeft, sf::Vector2f size);
-    //void drawBackgroundMiniMap(sf::RenderWindow& window, sf::Vector2f topLeft, sf::Vector2f size);
+    void drawRobotMiniMap(sf::RenderWindow& window);
     void drawObstaclesMiniMap(sf::RenderWindow& window);
     void drawMiniMap(sf::RenderWindow& window);
 
@@ -43,8 +43,9 @@ public:
     int getSquareSide();
     int getSquareSide() const;
     sf::Vector2u getMapSize();
-    bool isOnMap(sf::Vector2f pos);
+    const sf::RectangleShape& getMiniMap() const;
 
+    bool isOnMap(sf::Vector2f pos);
     bool isLineTraversable(sf::Vector2f start, sf::Vector2f end);
 
 };

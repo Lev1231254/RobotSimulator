@@ -157,6 +157,13 @@ sf::Vector2f vec_u_to_f(sf::Vector2u vec){
     return {float(vec.x), float(vec.y)};
 }
 
+sf::Vector2f posToMiniMap(sf::Vector2f pos, sf::Vector2u size, const sf::RectangleShape& miniMap){
+    int factor = size.x / miniMap.getSize().x;
+    sf::Vector2f miniPos = {pos.x / factor, pos.y / factor};
+    miniPos = miniPos + miniMap.getPosition();
+    return miniPos;
+}
+
 // void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide){
 //     sf::Vector2f entryPos = getSquareInGrid(squareSide, pos);
 //     pos.x = clamp(pos.x, entryPos.x, entryPos.x + squareSide - 1);

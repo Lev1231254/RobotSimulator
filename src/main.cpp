@@ -17,6 +17,9 @@ sf::Vector2f const ROBOT_POS = {900, 500};
 float const ROBOT_RADIUS = 40;
 float const ROBOT_ANGLE_RAD = pi / 6;
 
+sf::Vector2f miniMapSize = {desktop.size.x / 4, desktop.size.y / 4};
+float miniMapMargin = 5;
+sf::Vector2f miniMapPosition = {desktop.size.x * 3 / 4 - miniMapMargin, miniMapMargin};
 
 
 Map map(desktop.size, square_side, obstacles1);
@@ -25,7 +28,7 @@ int main()
 {
     map.computePassMask(ROBOT_RADIUS);
     map.computeObstacleMask();
-    map.setMiniMap({desktop.size.x * 3 / 4, 0}, {desktop.size.x / 4, desktop.size.y / 4});
+    map.setMiniMap(miniMapPosition, miniMapSize);
 
     ray initialRay{};
     initialRay.start = ROBOT_POS;

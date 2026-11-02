@@ -11,6 +11,8 @@
 #include <rayTracer.hpp>
 #include <utils.hpp>
 
+class ChatLog;
+
 
 
 class SensorDist {
@@ -60,7 +62,7 @@ class Path {
         const Map& getMap() const;
         const int getTraversedNodes() const;
 
-        void setNodes(Nodes nodesInput);
+        void setNodes(Nodes nodesInput, ChatLog& chatLog);
         void setTraversedNodes(int num);
         void traversedNodesInc();
 
@@ -70,7 +72,7 @@ class Path {
         bool isLineBlocked(Node start, Node end);
         void deleteNode(int k);
         void deleteNodes(int start, int end);
-        void smoothPath();
+        void smoothPath(ChatLog& chatLog);
 };
 
 
@@ -106,12 +108,13 @@ public:
     void turnToAngle(sf::Angle targetAngle);
     void goToNode(Node node, int squareSide);
     bool isAtNode(Node node, int squareSide);
-    void traversePath(Path& path);
+    void traversePath(Path& path, ChatLog& chatLog);
 
     sf::Vector2f getFuturePos(bool direction);
     bool collidesObst(Obstacle obstacle);
     bool collidesObsts(std::vector<Obstacle> obstacles);
 
+    void drawRobotMiniMap(sf::RenderWindow& window, const sf::RectangleShape& miniMap);
     void drawRobot(sf::RenderWindow& window);
     void drawLineToPath(sf::RenderWindow &window, Path &path);
 };

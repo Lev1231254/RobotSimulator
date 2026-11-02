@@ -32,5 +32,6 @@ void normalizeAngleDeg(float &angle);
 void normalizeAngle(sf::Angle &angle);
 sf::Vector2u vec_f_to_u(sf::Vector2f vec);
 sf::Vector2f vec_u_to_f(sf::Vector2u vec);
+sf::Vector2f posToMiniMap(sf::Vector2f pos, sf::Vector2u size, const sf::RectangleShape& miniMap);
 
 #endif

@@ -48,7 +48,7 @@ void Map::drawObstacles(sf::RenderWindow& window){
     }
 }
 
-void Map::drawAvoidanceField(sf::RenderWindow& window, const sf::Image& windowCopy){
+void Map::drawAvoidanceField(sf::RenderWindow& window){
     for (auto square : obstacleRects) window.draw(square);
 }
 
@@ -57,6 +57,8 @@ void Map::setMiniMap(sf::Vector2f topLeft, sf::Vector2f size){
     miniMapBG.setSize(size);
     miniMapBG.setPosition(topLeft);
     miniMapBG.setFillColor(sf::Color::Blue);
+    miniMapBG.setOutlineColor(sf::Color::White);
+    miniMapBG.setOutlineThickness(3);
 }
 
 void Map::drawObstaclesMiniMap(sf::RenderWindow& window){
@@ -145,6 +147,10 @@ int Map::getSquareSide() const{
 
 sf::Vector2u Map::getMapSize(){
     return mapSize;
+}
+
+const sf::RectangleShape& Map::getMiniMap() const{
+    return miniMapBG;
 }
 
 bool Map::isOnMap(sf::Vector2f pos){

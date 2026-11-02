@@ -1,4 +1,5 @@
 #include <objects.hpp>
+#include <chat.hpp>
 #include <algorithm>
 #include <cmath>
 #include <math.h>
@@ -202,11 +203,11 @@ bool Robot::isAtNode(Node node, int squareSide){
     return 0;
 }
 
-void Robot::traversePath(Path& path){
+void Robot::traversePath(Path& path, ChatLog& chatLog){
     
     if (path.getNodes().size() == 0) return;    
     if (isAtNode(path.getNodes().back(), path.getMap().getSquareSide())) {
-        printf("Node %d reached\n", path.getTraversedNodes());
+        chatLog.addMessage("Node " + std::to_string(path.getTraversedNodes()) + " reached");
         path.traversedNodesInc();
         path.deleteNode(path.getNodes().size()-1);
     }
@@ -214,7 +215,7 @@ void Robot::traversePath(Path& path){
 
     // if we traversed the last node show the total amount of traversed nodes
     if (path.getNodes().size() == 0) {
-        printf("Traversed total of %d nodes\n", path.getTraversedNodes());
+        chatLog.addMessage("Traversed total of " + std::to_string(path.getTraversedNodes()) + " nodes");
         path.setTraversedNodes(0);
     }
 }
@@ -247,6 +248,17 @@ bool Robot::collidesObsts(std::vector<Obstacle> obstacles){
     return 0;
 }
 
+void Robot::drawRobotMiniMap(sf::RenderWindow& window, const sf::RectangleShape& miniMap){
+    int factor = window.getSize().x / miniMap.getSize().x;
+
+    sf::CircleShape miniBody(body);
+    miniBody.setRadius(getRadius() / factor);
+    miniBody.setOrigin({miniBody.getRadius(), miniBody.getRadius()});
+    miniBody.setPosition(posToMiniMap(body.getPosition(),window.getSize(), miniMap));
+
+    window.draw(miniBody);
+}
+
 void Robot::drawRobot(sf::RenderWindow& window){
     // draw the circle and the direction line
 
@@ -264,6 +276,8 @@ void Robot::drawRobot(sf::RenderWindow& window){
     window.draw(body);
     window.draw(line);
     sensorDist.drawSensor(window);
+
+        
 }
 
 void Robot::drawLineToPath(sf::RenderWindow &window, Path &path){
@@ -348,9 +362,9 @@ const Map& Path::getMap() const{
     return map;
 }
 
-void Path::setNodes(Nodes nodesInput){
+void Path::setNodes(Nodes nodesInput, ChatLog& chatLog){
     nodes = nodesInput;
-    smoothPath();
+    smoothPath(chatLog);
     traversedNodes = 0;
 }
 
@@ -430,7 +444,7 @@ void Path::deleteNode(int k){
 }
 
 
-void Path::smoothPath(){
+void Path::smoothPath(ChatLog& chatLog){
     if (nodes.size() < 2) return;
 
     for (std::size_t i = 0; i + 1 < nodes.size(); i++){
@@ -444,5 +458,5 @@ void Path::smoothPath(){
         }
 
     }
-    printf("Path is now smooth\n");
+    chatLog.addMessage("Smoothed path");
 }

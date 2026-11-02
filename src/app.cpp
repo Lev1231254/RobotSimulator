@@ -62,7 +62,7 @@ void App::runSimulationStep(){
         else if (simulationMode == 1){
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             selectedSquare = getSquareInGrid(square_side, {float(mousePos.x), float(mousePos.y)});
-            robot.traversePath(currentPath);
+            robot.traversePath(currentPath, chatLog);
         }
         
         accumulator -= dTime;
@@ -81,10 +81,10 @@ void App::handleEvents(sf::Event event){
         if (key->scancode == sf::Keyboard::Scancode::LShift){
             if (simulationMode == 1) {
                 simulationMode = 0;
-                std::cout << "Mode - 0" << std::endl;
+                chatLog.addMessage("Mode - 0");
             }
             else if (simulationMode == 0){
-                std::cout << "Mode - 1" << std::endl;
+                chatLog.addMessage("Mode - 1");
                 simulationMode = 1;
             } 
         }
@@ -104,10 +104,10 @@ void App::handleEvents(sf::Event event){
                 square_side
             );
 
-            currentPath.setNodes(findPathAStar(map.getPassMask(), start, end));
+            currentPath.setNodes(findPathAStar(map.getPassMask(), start, end), chatLog);
         }
 
-        else printf("Robot can't go there");
+        else chatLog.addMessage("Robot can't go there");
     }
 }
 
@@ -134,19 +134,22 @@ void App::run(){
         window.clear(sf::Color::Black);
 
         robot.drawRobot(window);
+        
         map.drawObstacles(window);
+
+        map.drawMiniMap(window);
+        robot.drawRobotMiniMap(window, map.getMiniMap());
 
         if (simulationMode == 1){
             map.addColorToSquare(window, mapImage, selectedSquare, sf::Color::Green);
-            map.drawAvoidanceField(window, mapImage);
+            map.drawAvoidanceField(window);
             if (!currentPath.getNodes().empty()) {
                 currentPath.drawPath(window, square_side);
                 robot.drawLineToPath(window, currentPath);
             }
-            map.drawMiniMap(window);
         }
         
-        
+        chatLog.drawChat(window);
 
         window.display();
     }

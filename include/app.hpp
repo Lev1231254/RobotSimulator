@@ -5,7 +5,7 @@
 #include <optional>
 #include <objects.hpp>
 #include <utils.hpp>
-#include <iostream>
+#include <chat.hpp>
 #include <string>
 #include <vector>
 #include <aStar.hpp>
@@ -31,13 +31,25 @@ class App{
     int simulationMode = 0;
     sf::Vector2f selectedSquare;
     Path currentPath;
+    ChatLog chatLog;
     
 
     public:
         App(Robot robotInput, Map mapInput) 
             : robot(robotInput),
             map(mapInput),
-            currentPath(Nodes{}, map) {}
+            currentPath(Nodes{}, map),
+            chatLog(
+                {
+                    map.getMiniMap().getPosition().x,
+                    map.getMiniMap().getPosition().y + map.getMiniMap().getSize().y
+                },
+                {
+                    map.getMiniMap().getSize().x,
+                    160
+                }
+
+            ) {}
         void setRobot(sf::Vector2f position, float radius, float angleRad);
         void setWindow(unsigned int width, unsigned int height, std::string title);
         void setMapImage();
