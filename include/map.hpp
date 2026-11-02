@@ -5,6 +5,8 @@
 #include <vector>
 #include <obstacle.hpp>
 #include <structs.hpp>
+#include <utils.hpp>
+
 
 class Map {
 private:
@@ -14,13 +16,20 @@ private:
     mask2 passMask;
     mask2 obstacleMask;
     std::vector<sf::RectangleShape> obstacleRects;
+    sf::RectangleShape miniMapBG;
+
 
 public:
     Map(sf::Vector2u mapSizeInput = {0, 0}, int squareSideInput = 0, std::vector<Obstacle> obstaclesInput = {});
 
     void drawObstacles(sf::RenderWindow& window);
-    void drawAvoidanceField(sf::RenderWindow& window, sf::Image windowCopy);
-    void addColorToSquare(sf::RenderWindow& window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
+    void drawAvoidanceField(sf::RenderWindow& window, const sf::Image& windowCopy);
+    void addColorToSquare(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
+
+    void setMiniMap(sf::Vector2f topLeft, sf::Vector2f size);
+    //void drawBackgroundMiniMap(sf::RenderWindow& window, sf::Vector2f topLeft, sf::Vector2f size);
+    void drawObstaclesMiniMap(sf::RenderWindow& window);
+    void drawMiniMap(sf::RenderWindow& window);
 
     void computePassMask(float robotRadius);
     void computeObstacleMask();
@@ -37,6 +46,20 @@ public:
     bool isOnMap(sf::Vector2f pos);
 
     bool isLineTraversable(sf::Vector2f start, sf::Vector2f end);
+
+};
+
+
+class MiniMap : public Map{
+    Map map;
+    int squareSide = 4;
+    sf::Vector2u topLeft = {0, 1980 - 1980 / 4};
+    sf::Vector2u mapSize = {1980 / 4, 1024 / 4};
+
+    public:
+        MiniMap();
+        void drawObstacles(sf::RenderWindow& window);
+        void drawMap(sf::RenderWindow& window);
 };
 
 #endif

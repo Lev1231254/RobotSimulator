@@ -149,6 +149,14 @@ void normalizeAngleDeg(float &angle){
     while (angle < -180) angle += 360;
 }
 
+sf::Vector2u vec_f_to_u(sf::Vector2f vec){
+    return {u_int(vec.x), u_int(vec.y)};
+}
+
+sf::Vector2f vec_u_to_f(sf::Vector2u vec){
+    return {float(vec.x), float(vec.y)};
+}
+
 // void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide){
 //     sf::Vector2f entryPos = getSquareInGrid(squareSide, pos);
 //     pos.x = clamp(pos.x, entryPos.x, entryPos.x + squareSide - 1);

@@ -25,6 +25,7 @@ int main()
 {
     map.computePassMask(ROBOT_RADIUS);
     map.computeObstacleMask();
+    map.setMiniMap({desktop.size.x * 3 / 4, 0}, {desktop.size.x / 4, desktop.size.y / 4});
 
     ray initialRay{};
     initialRay.start = ROBOT_POS;

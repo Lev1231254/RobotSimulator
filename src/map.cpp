@@ -48,8 +48,37 @@ void Map::drawObstacles(sf::RenderWindow& window){
     }
 }
 
-void Map::drawAvoidanceField(sf::RenderWindow& window, sf::Image windowCopy){
+void Map::drawAvoidanceField(sf::RenderWindow& window, const sf::Image& windowCopy){
     for (auto square : obstacleRects) window.draw(square);
+}
+
+
+void Map::setMiniMap(sf::Vector2f topLeft, sf::Vector2f size){
+    miniMapBG.setSize(size);
+    miniMapBG.setPosition(topLeft);
+    miniMapBG.setFillColor(sf::Color::Blue);
+}
+
+void Map::drawObstaclesMiniMap(sf::RenderWindow& window){
+
+    int factor = mapSize.x / miniMapBG.getSize().x; // must always be integer number
+    int squareSideMini = squareSide / factor;
+
+    for (int row = 0; row < obstacleMask.size(); row++){
+        for (int col = 0; col < obstacleMask[0].size(); col++){
+            if (!obstacleMask[row][col]){
+                sf::RectangleShape square({squareSideMini, squareSideMini});
+                square.setPosition({miniMapBG.getPosition().x + col * squareSideMini, miniMapBG.getPosition().y + row * squareSideMini});
+                square.setFillColor(sf::Color::White);
+                window.draw(square);
+            }
+        }
+    }
+}
+
+void Map::drawMiniMap(sf::RenderWindow& window){
+    window.draw(miniMapBG);
+    drawObstaclesMiniMap(window);
 }
 
 void Map::makeAvoidanceRects(){
@@ -69,7 +98,7 @@ void Map::makeAvoidanceRects(){
     }
 }
 
-void Map::addColorToSquare(sf::RenderWindow& window, sf::Image windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd){
+void Map::addColorToSquare(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd){
     int x = leftTop.x;
     int y = leftTop.y;
 

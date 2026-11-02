@@ -143,6 +143,7 @@ void App::run(){
                 currentPath.drawPath(window, square_side);
                 robot.drawLineToPath(window, currentPath);
             }
+            map.drawMiniMap(window);
         }
         
         

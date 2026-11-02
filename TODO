@@ -5,8 +5,9 @@
 ~~ - add radius of robot to passMatrix~~
  - add noise into sensor
  - add second sensor
- - add minimap
+~~ - add minimap~~
  - add generation of map based on surroundings
  - add smoothness to shapes
  - add log window
  - add mini controls guide
+ - add color grading to newly discoverd objects

@@ -30,6 +30,7 @@ sf::Angle getAngleToPos(sf::Vector2f start, sf::Vector2f end);
 bool anglesEqual(sf::Angle angle1, sf::Angle angle2);
 void normalizeAngleDeg(float &angle);
 void normalizeAngle(sf::Angle &angle);
-
+sf::Vector2u vec_f_to_u(sf::Vector2f vec);
+sf::Vector2f vec_u_to_f(sf::Vector2u vec);
 
 #endif
