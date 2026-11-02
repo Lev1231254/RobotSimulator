@@ -35,8 +35,9 @@ public:
 
     ray getRay();
     sf::Vector2f getStart();
+    sf::Vector2f getEnd() const;
     sf::Vector2f getDirection();
-    sf::Angle getAngle();
+    sf::Angle getAngle() const;
 
     void setStart(sf::Vector2f start);
     void setAngle(sf::Angle angle);
@@ -81,7 +82,14 @@ class Robot {
     sf::Angle angle;
     float movementSpeed = 1;
     sf::Angle rotationSpeed = sf::degrees(1);
-    SensorDist sensorDist;
+    std::vector<SensorDist> sensors;
+
+    void updateSensorAngles();
+    void drawSensors(sf::RenderWindow& window);
+    void drawMiniMapSensors(
+        sf::RenderWindow& window,
+        const sf::RectangleShape& miniMap,
+        const sf::CircleShape& miniBody);
 
 public:
     Robot(

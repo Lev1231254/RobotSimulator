@@ -22,6 +22,10 @@ sf::Vector2f SensorDist::getStart(){
     return rayData.start;
 }
 
+sf::Vector2f SensorDist::getEnd() const {
+    return end;
+}
+
 ray SensorDist::getRay(){
     return rayData;
 }
@@ -30,7 +34,7 @@ sf::Vector2f SensorDist::getDirection(){
     return rayData.direction;
 }
 
-sf::Angle SensorDist::getAngle(){
+sf::Angle SensorDist::getAngle() const {
     return rayData.angle;
 }
 
@@ -95,11 +99,20 @@ Robot::Robot(
     : angle(sensorDistInput.getAngle()),
       movementSpeed(movementSpeedInput),
       rotationSpeed(rotationSpeedInput),
-      sensorDist(sensorDistInput) {
+      sensors(3, sensorDistInput) {
     body.setPosition(pos);
     body.setRadius(radius);
     body.setOrigin({radius, radius});
-    sensorDist.setPosition(pos);
+    for (std::size_t i = 0; i < sensors.size(); ++i) {
+        sensors[i].setPosition(pos);
+        sensors[i].setAngle(angle + sf::degrees(30.f * (static_cast<float>(i) - 1.f)));
+    }
+}
+
+void Robot::updateSensorAngles() {
+    for (std::size_t i = 0; i < sensors.size(); ++i) {
+        sensors[i].setAngle(angle + sf::degrees(30.f * (static_cast<float>(i) - 1.f)));
+    }
 }
 
 sf::Vector2f Robot::getPosition(){
@@ -121,7 +134,9 @@ float Robot::getAngleRad(){
 
 void Robot::setPosition(sf::Vector2f position){
     body.setPosition(position);
-    sensorDist.setPosition(position);
+    for (SensorDist& sensor : sensors) {
+        sensor.setPosition(position);
+    }
 }
 
 void Robot::setRadius(float radius){
@@ -132,7 +147,7 @@ void Robot::setRadius(float radius){
 void Robot::setAngleRad(float angleRadInput){
     angle = sf::radians(angleRadInput);
     normalizeAngle(angle);
-    sensorDist.setAngle(angle);
+    updateSensorAngles();
 }
 
 void Robot::setMovementSpeed(float speed){
@@ -145,7 +160,7 @@ void Robot::setRotationSpeed(sf::Angle speed){
 
 void Robot::rotateRobot(int direction){
     angle += rotationSpeed * direction;
-    sensorDist.setAngle(angle);
+    updateSensorAngles();
 }
 
 void Robot::moveRobot(int direction){
@@ -157,7 +172,9 @@ void Robot::moveRobot(int direction){
     float y = body.getPosition().y + ySpeed;
 
     body.setPosition({x, y});
-    sensorDist.setPosition({x, y});
+    for (SensorDist& sensor : sensors) {
+        sensor.setPosition({x, y});
+    }
 }
 void Robot::turnToAngle(sf::Angle targetAngle){
     float angleDeg = angle.asDegrees();
@@ -172,7 +189,7 @@ void Robot::turnToAngle(sf::Angle targetAngle){
     if (abs(diff) < rotationSpeed.asDegrees() * 10) {
         angle = targetAngle;
         normalizeAngle(angle);
-        sensorDist.setAngle(angle);
+        updateSensorAngles();
     }
     // else turn the robot
     else rotateRobot(direction);
@@ -248,6 +265,43 @@ bool Robot::collidesObsts(std::vector<Obstacle> obstacles){
     return 0;
 }
 
+void Robot::drawMiniMapSensors(
+    sf::RenderWindow& window,
+    const sf::RectangleShape& miniMap,
+    const sf::CircleShape& miniBody){
+    for (const SensorDist& sensor : sensors) {
+        sf::Vector2f end = sensor.getEnd();
+        if (end.x < 0 || end.y < 0) continue;
+
+        sf::VertexArray beam(sf::PrimitiveType::Lines, 2);
+        beam[0].position = miniBody.getPosition();
+        beam[0].color = sf::Color::Red;
+        beam[1].position = posToMiniMap(end, window.getSize(), miniMap);
+        beam[1].color = sf::Color::Red;
+        window.draw(beam);
+
+        sf::RectangleShape sensorLine({miniBody.getRadius(), 2.f});
+        sensorLine.setOrigin({0.f, 1.f});
+        sensorLine.setPosition(miniBody.getPosition());
+        sensorLine.setRotation(sf::radians(-sensor.getAngle().asRadians()));
+        sensorLine.setFillColor(sf::Color::Red);
+        window.draw(sensorLine);
+    }
+}
+
+void Robot::drawSensors(sf::RenderWindow& window){
+    sf::Vector2f center = body.getPosition();
+    for (SensorDist& sensor : sensors) {
+        sf::RectangleShape sensorLine({body.getRadius(), 3.f});
+        sensorLine.setOrigin({0.f, 1.5f});
+        sensorLine.setPosition(center);
+        sensorLine.setRotation(sf::radians(-sensor.getAngle().asRadians()));
+        sensorLine.setFillColor(sf::Color::Red);
+        window.draw(sensorLine);
+        sensor.drawSensor(window);
+    }
+}
+
 void Robot::drawRobotMiniMap(sf::RenderWindow& window, const sf::RectangleShape& miniMap){
     int factor = window.getSize().x / miniMap.getSize().x;
 
@@ -257,6 +311,7 @@ void Robot::drawRobotMiniMap(sf::RenderWindow& window, const sf::RectangleShape&
     miniBody.setPosition(posToMiniMap(body.getPosition(),window.getSize(), miniMap));
 
     window.draw(miniBody);
+    drawMiniMapSensors(window, miniMap, miniBody);
 }
 
 void Robot::drawRobot(sf::RenderWindow& window){
@@ -267,16 +322,17 @@ void Robot::drawRobot(sf::RenderWindow& window){
     float anglePointY = center.y - body.getRadius() * sin(angle.asRadians());
     sf::Vector2f anglePoint(anglePointX, anglePointY);
 
-    sf::VertexArray line(sf::PrimitiveType::Lines, 2);
-    line[0].position = center;
-    line[0].color = sf::Color::Red;
-    line[1].position = anglePoint;
-    line[1].color = sf::Color::Red;
+    // sf::RectangleShape line({body.getRadius(), 6.f});
+    // line.setOrigin({0.f, 3.f});
+    // line.setPosition(center);
+    // line.setRotation(sf::radians(std::atan2(
+    //     anglePoint.y - center.y,
+    //     anglePoint.x - center.x)));
+    // line.setFillColor(sf::Color::Blue);
 
     window.draw(body);
-    window.draw(line);
-    sensorDist.drawSensor(window);
-
+    // window.draw(line);
+    drawSensors(window);
         
 }
 
