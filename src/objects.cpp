@@ -22,8 +22,12 @@ sf::Vector2f SensorDist::getStart(){
     return rayData.start;
 }
 
-sf::Vector2f SensorDist::getEnd() const {
+sf::Vector2f SensorDist::getEndPos() const {
     return end;
+}
+
+cords SensorDist::getEndCords() const{ 
+    return endCords;
 }
 
 ray SensorDist::getRay(){
@@ -56,7 +60,8 @@ void SensorDist::setRay(ray rayInput){
 }
 
 void SensorDist::updateEnd(){
-    end = tracer.getFirstHit(rayData, map);
+    end = tracer.getFirstHitPos(rayData, map);
+    endCords = tracer.getHitCords(rayData, map, end);
 }
 
 void SensorDist::updateDirection(){
@@ -95,24 +100,30 @@ Robot::Robot(
     float radius,
     SensorDist sensorDistInput,
     float movementSpeedInput,
-    sf::Angle rotationSpeedInput)
+    sf::Angle rotationSpeedInput,
+    Map innerMapInput
+)
     : angle(sensorDistInput.getAngle()),
       movementSpeed(movementSpeedInput),
       rotationSpeed(rotationSpeedInput),
       sensors(3, sensorDistInput) {
-    body.setPosition(pos);
-    body.setRadius(radius);
-    body.setOrigin({radius, radius});
-    for (std::size_t i = 0; i < sensors.size(); ++i) {
-        sensors[i].setPosition(pos);
-        sensors[i].setAngle(angle + sf::degrees(30.f * (static_cast<float>(i) - 1.f)));
-    }
+        
+        body.setPosition(pos);
+        body.setRadius(radius);
+        body.setOrigin({radius, radius});
+        for (std::size_t i = 0; i < sensors.size(); ++i) {
+            sensors[i].setPosition(pos);
+            sensors[i].setAngle(angle + sf::degrees(30.f * (static_cast<float>(i) - 1.f)));
+        }
+        innerMap = innerMapInput;
+
 }
 
 void Robot::updateSensorAngles() {
     for (std::size_t i = 0; i < sensors.size(); ++i) {
         sensors[i].setAngle(angle + sf::degrees(30.f * (static_cast<float>(i) - 1.f)));
     }
+    updateInnerMap();
 }
 
 sf::Vector2f Robot::getPosition(){
@@ -129,6 +140,10 @@ sf::CircleShape Robot::getBodyCircle() {
 
 float Robot::getAngleRad(){
     return angle.asRadians();
+}
+
+const Map& Robot::getInnerMap() const {
+    return innerMap;
 }
 
 
@@ -265,12 +280,20 @@ bool Robot::collidesObsts(std::vector<Obstacle> obstacles){
     return 0;
 }
 
+void Robot::updateInnerMap(){
+    cords nullCords{-1, -1};
+    for (auto sensor : sensors){
+        if (sensor.getEndCords() == nullCords) continue;
+        innerMap.setObstMaskAt(sensor.getEndCords(), 0);
+    }
+}
+
 void Robot::drawMiniMapSensors(
     sf::RenderWindow& window,
     const sf::RectangleShape& miniMap,
     const sf::CircleShape& miniBody){
     for (const SensorDist& sensor : sensors) {
-        sf::Vector2f end = sensor.getEnd();
+        sf::Vector2f end = sensor.getEndPos();
         if (end.x < 0 || end.y < 0) continue;
 
         sf::VertexArray beam(sf::PrimitiveType::Lines, 2);
@@ -302,7 +325,8 @@ void Robot::drawSensors(sf::RenderWindow& window){
     }
 }
 
-void Robot::drawRobotMiniMap(sf::RenderWindow& window, const sf::RectangleShape& miniMap){
+void Robot::drawRobotMiniMap(sf::RenderWindow& window){
+    auto miniMap = innerMap.getMiniMap();
     int factor = window.getSize().x / miniMap.getSize().x;
 
     sf::CircleShape miniBody(body);
@@ -342,6 +366,11 @@ void Robot::drawLineToPath(sf::RenderWindow &window, Path &path){
     sf::Vector2f start = body.getPosition();
     sf::Vector2f end = cordsToPos(path.getNodes().back().pos, path.getMap().getSquareSide());
     path.drawLine(window, start, end);
+}
+
+void Robot::drawMiniMap(sf::RenderWindow& window){
+    innerMap.drawMiniMap(window);
+    drawRobotMiniMap(window);
 }
 
 

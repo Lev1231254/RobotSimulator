@@ -23,7 +23,7 @@ ray posToRay(sf::Vector2f start, sf::Vector2f end){
     return ray;
 }
 
-sf::Vector2f RayTracer::getFirstHit(ray &ray, Map& map){
+sf::Vector2f RayTracer::getFirstHitPos(ray &ray, Map& map){
     ray.direction = normalize(ray.direction);
 
     if (squareSide <= 0 || !map.isOnMap(ray.start)
@@ -83,6 +83,20 @@ sf::Vector2f RayTracer::getFirstHit(ray &ray, Map& map){
         }
     }
 }
+
+cords RayTracer::getHitCords(ray &ray, Map& map, sf::Vector2f hitPos){
+    //find point a little bit further from the hit, to get to the inner of the square
+    cords nullCords{-1, -1};
+    if (hitPos == sf::Vector2f{-1, -1}) return nullCords;
+    sf::Vector2f furtherPos = hitPos + sf::Vector2f{ray.direction.x * 0.5, ray.direction.y * 0.5};
+    return posToCords(getSquareInGrid(map.getSquareSide(), furtherPos), map.getSquareSide());
+}
+
+cords RayTracer::getFirstHitCords(ray &ray, Map& map){
+    sf::Vector2f hitPos = getFirstHitPos(ray, map);
+    return getHitCords(ray, map, hitPos);
+}
+
 
 
 sf::Vector2f RayTracer::getFirstHitFinite(ray &ray, Map& map, sf::Vector2f end){

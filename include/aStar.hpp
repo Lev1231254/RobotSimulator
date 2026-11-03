@@ -8,6 +8,7 @@
 #include <utils.hpp>
 #include <structs.hpp>
 #include <algorithm>
+#include <chat.hpp>
 
 
 Node findClosestNode(Nodes &list);
@@ -16,7 +17,7 @@ sf::Vector2f cordsToVector2f(cords position);
 Nodes generateSuccessors(const std::vector<std::vector<bool>> &avoidanceMatrix, Node &parent, cords &destinationPos);
 int nodeInList(Nodes &list, Node &node);
 Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos);
-Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords &startPos, cords &destinationPos);
+Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords &startPos, cords &destinationPos, ChatLog* chatLog = nullptr);
 void printNodes(Nodes list);
 void testAStar();
 

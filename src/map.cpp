@@ -6,7 +6,7 @@ Map::Map(sf::Vector2u mapSizeInput, int squareSideInput, std::vector<Obstacle> o
       obstacles(obstaclesInput) {
 }
 
-void Map::computePassMask(float robotRadius){
+void Map::setupPassMask(float robotRadius){
     passMask.clear();
     for (unsigned int y = 0; y < mapSize.y; y += squareSide){
         passMask.push_back({});
@@ -24,7 +24,7 @@ void Map::computePassMask(float robotRadius){
     }
 }
 
-void Map::computeObstacleMask(){
+void Map::setupObstacleMask(){
     obstacleMask.clear();
     for (unsigned int y = 0; y < mapSize.y; y += squareSide){
         obstacleMask.push_back({});
@@ -59,6 +59,10 @@ void Map::setMiniMap(sf::Vector2f topLeft, sf::Vector2f size){
     miniMapBG.setFillColor(sf::Color::Blue);
     miniMapBG.setOutlineColor(sf::Color::White);
     miniMapBG.setOutlineThickness(3);
+}
+
+void Map::setObstMaskAt(cords cords, bool value){
+    obstacleMask[cords.row][cords.col] = value;
 }
 
 void Map::drawObstaclesMiniMap(sf::RenderWindow& window){

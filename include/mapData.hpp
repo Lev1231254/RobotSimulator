@@ -20,4 +20,6 @@ std::vector<Obstacle> obstacles1 = {
     Obstacle({160 + 96 - 16, 160}, {16, 96}, obstacleColor)
 };  
 
+std::vector<Obstacle> emptyMap = {};
+
 #endif

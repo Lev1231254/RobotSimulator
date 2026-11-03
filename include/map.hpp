@@ -22,20 +22,22 @@ private:
 public:
     Map(sf::Vector2u mapSizeInput = {0, 0}, int squareSideInput = 0, std::vector<Obstacle> obstaclesInput = {});
 
-    void drawObstacles(sf::RenderWindow& window);
+    void drawObstacles(sf::RenderWindow& window); //draw using <vector> obstacles
     void drawAvoidanceField(sf::RenderWindow& window);
     void addColorToSquare(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
-
-    void setMiniMap(sf::Vector2f topLeft, sf::Vector2f size);
-    void drawRobotMiniMap(sf::RenderWindow& window);
-    void drawObstaclesMiniMap(sf::RenderWindow& window);
+    void drawRobotMiniMap(sf::RenderWindow& window); 
+    void drawObstaclesMiniMap(sf::RenderWindow& window); //draw using mask2 obstacleMask
     void drawMiniMap(sf::RenderWindow& window);
 
-    void computePassMask(float robotRadius);
-    void computeObstacleMask();
+
+    void setMiniMap(sf::Vector2f topLeft, sf::Vector2f size);
+    void setObstMaskAt(cords cords, bool value);
+    void addObstacle(Obstacle obstacle);
+
+    void setupPassMask(float robotRadius);
+    void setupObstacleMask();
     void makeAvoidanceRects();
 
-    void addObstacle(Obstacle obstacle);
 
     std::vector<Obstacle> getObstacles();
     const mask2& getPassMask() const;
@@ -46,7 +48,6 @@ public:
     const sf::RectangleShape& getMiniMap() const;
 
     bool isOnMap(sf::Vector2f pos);
-    bool isLineTraversable(sf::Vector2f start, sf::Vector2f end);
 
 };
 

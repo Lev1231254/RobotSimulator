@@ -19,8 +19,13 @@ class RayTracer {
             const mask2& occupancyMaskInput,
             bool outsideMaskIsFreeInput = false);
 
-        sf::Vector2f getFirstHit(ray &ray, Map& map);
-        sf::Vector2f getFirstHitFinite(ray &ray, Map& map, sf::Vector2f end);
+        sf::Vector2f getFirstHitPos(ray &ray, Map& map);
+        cords getHitCords(ray &ray, Map& map, sf::Vector2f hitPos);
+        cords getFirstHitCords(ray &ray, Map& map);
+
+        sf::Vector2f getFirstHitFinite(ray &ray, Map& map, sf::Vector2f end); 
+        //Used only for path finding purposes. 
+        //Checks obstacles between nodes
         
 };
 

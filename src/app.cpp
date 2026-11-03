@@ -104,17 +104,15 @@ void App::handleEvents(sf::Event event){
                 square_side
             );
 
-            currentPath.setNodes(findPathAStar(map.getPassMask(), start, end), chatLog);
+            currentPath.setNodes(findPathAStar(map.getPassMask(), start, end, &chatLog), chatLog);
         }
 
-        else chatLog.addMessage("Robot can't go there");
+        else chatLog.addMessage("Unreachable destination");
     }
 }
 
 void App::run(){
-    map.computePassMask(robot.getRadius());
-    map.computeObstacleMask();
-    map.makeAvoidanceRects();
+    
 
     while (window.isOpen()){
         const unsigned int maxEventsPerFrame = 100;
@@ -137,8 +135,7 @@ void App::run(){
         
         map.drawObstacles(window);
 
-        map.drawMiniMap(window);
-        robot.drawRobotMiniMap(window, map.getMiniMap());
+        robot.drawMiniMap(window);
 
         if (simulationMode == 1){
             map.addColorToSquare(window, mapImage, selectedSquare, sf::Color::Green);

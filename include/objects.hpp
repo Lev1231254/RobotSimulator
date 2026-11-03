@@ -18,6 +18,7 @@ class ChatLog;
 class SensorDist {
     ray rayData;
     sf::Vector2f end;
+    cords endCords;
     Map map;
     RayTracer tracer;
     sf::Color color = sf::Color::Red;
@@ -35,7 +36,8 @@ public:
 
     ray getRay();
     sf::Vector2f getStart();
-    sf::Vector2f getEnd() const;
+    sf::Vector2f getEndPos() const;
+    cords getEndCords() const;
     sf::Vector2f getDirection();
     sf::Angle getAngle() const;
 
@@ -83,13 +85,10 @@ class Robot {
     float movementSpeed = 1;
     sf::Angle rotationSpeed = sf::degrees(1);
     std::vector<SensorDist> sensors;
-
+    Map innerMap;
+private:
+    void updateInnerMap();
     void updateSensorAngles();
-    void drawSensors(sf::RenderWindow& window);
-    void drawMiniMapSensors(
-        sf::RenderWindow& window,
-        const sf::RectangleShape& miniMap,
-        const sf::CircleShape& miniBody);
 
 public:
     Robot(
@@ -97,18 +96,21 @@ public:
         float radius,
         SensorDist sensorDistInput,
         float movementSpeedInput,
-        sf::Angle rotationSpeedInput);
+        sf::Angle rotationSpeedInput,
+        Map innerMapInput);
 
     sf::CircleShape getBodyCircle();
     sf::Vector2f getPosition();
     float getAngleRad();
     float getRadius();
+    const Map& getInnerMap() const;
 
     void setPosition(sf::Vector2f position);
     void setRadius(float radius);
     void setAngleRad(float angleRadInput);
     void setMovementSpeed(float speed);
     void setRotationSpeed(sf::Angle speed);
+    
     
     void moveRobot(int direction);
     void moveToTarget(sf::Vector2f target);
@@ -122,9 +124,16 @@ public:
     bool collidesObst(Obstacle obstacle);
     bool collidesObsts(std::vector<Obstacle> obstacles);
 
-    void drawRobotMiniMap(sf::RenderWindow& window, const sf::RectangleShape& miniMap);
+
+    void drawRobotMiniMap(sf::RenderWindow& window);
     void drawRobot(sf::RenderWindow& window);
     void drawLineToPath(sf::RenderWindow &window, Path &path);
+    void drawSensors(sf::RenderWindow& window);
+    void drawMiniMapSensors(
+        sf::RenderWindow& window,
+        const sf::RectangleShape& miniMap,
+        const sf::CircleShape& miniBody);
+    void drawMiniMap(sf::RenderWindow& window);
 };
 
 

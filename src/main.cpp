@@ -23,12 +23,19 @@ sf::Vector2f miniMapPosition = {desktop.size.x * 3 / 4 - miniMapMargin, miniMapM
 
 
 Map map(desktop.size, square_side, obstacles1);
+Map robotMap(desktop.size, square_side, emptyMap);
 
 int main()
 {
-    map.computePassMask(ROBOT_RADIUS);
-    map.computeObstacleMask();
-    map.setMiniMap(miniMapPosition, miniMapSize);
+    map.setupPassMask(ROBOT_RADIUS);
+    map.setupObstacleMask();
+    map.makeAvoidanceRects();
+    //map.setMiniMap(miniMapPosition, miniMapSize);
+
+    robotMap.setupPassMask(ROBOT_RADIUS);
+    robotMap.setupObstacleMask();
+    robotMap.setMiniMap(miniMapPosition, miniMapSize);
+
 
     ray initialRay{};
     initialRay.start = ROBOT_POS;
@@ -48,7 +55,8 @@ int main()
         ROBOT_RADIUS,
         sensorDist,
         movement_speed,
-        sf::radians(turning_speed));
+        sf::radians(turning_speed),
+        robotMap);
     App app(robot, map);
 
     app.setWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);

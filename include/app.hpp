@@ -41,11 +41,11 @@ class App{
             currentPath(Nodes{}, map),
             chatLog(
                 {
-                    map.getMiniMap().getPosition().x,
-                    map.getMiniMap().getPosition().y + map.getMiniMap().getSize().y
+                    robot.getInnerMap().getMiniMap().getPosition().x,
+                    robot.getInnerMap().getMiniMap().getPosition().y + robot.getInnerMap().getMiniMap().getSize().y
                 },
                 {
-                    map.getMiniMap().getSize().x,
+                    robot.getInnerMap().getMiniMap().getSize().x,
                     160
                 }
 

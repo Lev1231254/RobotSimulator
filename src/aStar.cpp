@@ -1,5 +1,5 @@
 #include <aStar.hpp>
-
+#include <iomanip>
 
 Node findClosestNode(Nodes& list){
     Node bestNode = list[0];
@@ -91,7 +91,7 @@ Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos){
 }
 
 
-Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords &startPos, cords &destinationPos){
+Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords &startPos, cords &destinationPos, ChatLog* chatLog){
     bool destinationIsUnreachable = 1;
 
     int c = 0;
@@ -145,12 +145,16 @@ Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords
     }
 
     if (destinationIsUnreachable) {
-        printf("Destination is unreachable\n");
+        if (chatLog != nullptr) {
+            chatLog->addMessage("Unreachable destination");
+        }
         return {};
     }
 
     Nodes path = makePath(closedList, startPos, destinationPos);
-    printf("Processed total of %d nodes\n", c);
+    if (chatLog != nullptr) {
+        chatLog->addMessage("Processed total of " + std::to_string(c) + " nodes");
+    }
     return path;
 }
 
@@ -158,7 +162,8 @@ void printNodes(Nodes list){
     std::cout << std::endl;
 
     for (Node node : list){
-        printf("(%d, %d) : %.2f\n", node.pos.row, node.pos.col, node.f);
+        std::cout << "(" << node.pos.row << ", " << node.pos.col << ") : "
+                  << std::fixed << std::setprecision(2) << node.f << '\n';
     }
 
     std::cout << std::endl;
