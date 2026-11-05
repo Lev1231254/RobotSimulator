@@ -11,6 +11,7 @@ class ChatLog {
     sf::Text text;
     std::deque<std::string> messages;
     sf::Vector2f topLeft;
+    int counter;
 
 public:
     explicit ChatLog(const sf::Vector2f& topLeft, const sf::Vector2f& size);

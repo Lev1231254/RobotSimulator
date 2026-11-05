@@ -5,7 +5,6 @@
 #include <optional>
 #include <objects.hpp>
 #include <utils.hpp>
-#include <chat.hpp>
 #include <string>
 #include <vector>
 #include <aStar.hpp>
@@ -22,7 +21,7 @@ sf::Vector2f const window_size = {window_width, window_height};
 
 
 class App{
-    sf::RenderWindow window;
+    sf::RenderWindow& window;
     Robot robot;
     Map map;
     sf::Image mapImage;
@@ -31,27 +30,15 @@ class App{
     int simulationMode = 0;
     sf::Vector2f selectedSquare;
     Path currentPath;
-    ChatLog chatLog;
     
 
     public:
-        App(Robot robotInput, Map mapInput) 
-            : robot(robotInput),
+        App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput)
+            : window(windowInput),
+            robot(robotInput),
             map(mapInput),
-            currentPath(Nodes{}, map),
-            chatLog(
-                {
-                    robot.getInnerMap().getMiniMap().getPosition().x,
-                    robot.getInnerMap().getMiniMap().getPosition().y + robot.getInnerMap().getMiniMap().getSize().y
-                },
-                {
-                    robot.getInnerMap().getMiniMap().getSize().x,
-                    160
-                }
-
-            ) {}
+            currentPath(Nodes{}, map) {}
         void setRobot(sf::Vector2f position, float radius, float angleRad);
-        void setWindow(unsigned int width, unsigned int height, std::string title);
         void setMapImage();
         void scanAndMove(Robot& robot, Map& map);
         void run();

@@ -7,33 +7,44 @@
 #include <mapData.hpp>
 #include <cmath>
 
-sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-
-unsigned int const WINDOW_WIDTH = desktop.size.x;
-unsigned int const WINDOW_HEIGHT = desktop.size.y;
 std::string WINDOW_TITLE = "Robot simulator";
+
 
 sf::Vector2f const ROBOT_POS = {900, 500};
 float const ROBOT_RADIUS = 40;
 float const ROBOT_ANGLE_RAD = pi / 6;
 
-sf::Vector2f miniMapSize = {desktop.size.x / 4, desktop.size.y / 4};
-float miniMapMargin = 5;
-sf::Vector2f miniMapPosition = {desktop.size.x * 3 / 4 - miniMapMargin, miniMapMargin};
-
-
-Map map(desktop.size, square_side, obstacles1);
-Map robotMap(desktop.size, square_side, emptyMap);
-
 int main()
 {
-    map.setupPassMask(ROBOT_RADIUS);
+    sf::RenderWindow window(
+        sf::VideoMode::getDesktopMode(),
+        WINDOW_TITLE,
+        sf::Style::Close,
+        sf::State::Fullscreen);
+    window.setVerticalSyncEnabled(true);
+    window.setKeyRepeatEnabled(false);
+
+    const sf::Vector2u windowSize = window.getSize();
+    const sf::Vector2f miniMapSize = {
+        windowSize.x / 4.f,
+        windowSize.y / 4.f
+    };
+    constexpr float miniMapMargin = 5.f;
+    const sf::Vector2f miniMapPosition = {
+        windowSize.x * 3.f / 4.f - miniMapMargin,
+        miniMapMargin
+    };
+
+    Map map(windowSize, square_side, obstacles1);
+    Map robotMap(windowSize, square_side, emptyMap);
+
     map.setupObstacleMask();
+    map.setupPassMask(ROBOT_RADIUS);
     map.makeAvoidanceRects();
     //map.setMiniMap(miniMapPosition, miniMapSize);
 
-    robotMap.setupPassMask(ROBOT_RADIUS);
     robotMap.setupObstacleMask();
+    robotMap.setupPassMask(ROBOT_RADIUS);
     robotMap.setMiniMap(miniMapPosition, miniMapSize);
 
 
@@ -50,16 +61,24 @@ int main()
         map.getObstacleMask(),
         map,
         true);
+    ChatLog chatLog(
+        {
+            robotMap.getMiniMap().getPosition().x,
+            robotMap.getMiniMap().getPosition().y + robotMap.getMiniMap().getSize().y
+        },
+        {
+            robotMap.getMiniMap().getSize().x,
+            160
+        });
     Robot robot(
         ROBOT_POS,
         ROBOT_RADIUS,
         sensorDist,
         movement_speed,
         sf::radians(turning_speed),
-        robotMap);
-    App app(robot, map);
-
-    app.setWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+        robotMap,
+        chatLog);
+    App app(window, robot, map);
     
     app.setMapImage();
 

@@ -27,6 +27,7 @@ public:
     void addColorToSquare(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
     void drawRobotMiniMap(sf::RenderWindow& window); 
     void drawObstaclesMiniMap(sf::RenderWindow& window); //draw using mask2 obstacleMask
+    void drawPassMaskMiniMap(sf::RenderWindow& window);
     void drawMiniMap(sf::RenderWindow& window);
 
 
@@ -34,7 +35,9 @@ public:
     void setObstMaskAt(cords cords, bool value);
     void addObstacle(Obstacle obstacle);
 
+    void passMaskOnes();
     void setupPassMask(float robotRadius);
+    void updatePassMask(float robotRadius);
     void setupObstacleMask();
     void makeAvoidanceRects();
 
@@ -42,6 +45,7 @@ public:
     std::vector<Obstacle> getObstacles();
     const mask2& getPassMask() const;
     const mask2& getObstacleMask() const;
+    const bool getObstMaskAt(cords cords) const;
     int getSquareSide();
     int getSquareSide() const;
     sf::Vector2u getMapSize();

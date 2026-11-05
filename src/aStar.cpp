@@ -182,4 +182,3 @@ void testAStar(){
 
     printNodes(findPathAStar(avoidanceMatrix, startPos, destinationPos));
 }
-

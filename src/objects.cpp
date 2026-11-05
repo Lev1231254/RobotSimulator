@@ -1,5 +1,6 @@
 #include <objects.hpp>
 #include <chat.hpp>
+#include <aStar.hpp>
 #include <algorithm>
 #include <cmath>
 #include <math.h>
@@ -101,12 +102,15 @@ Robot::Robot(
     SensorDist sensorDistInput,
     float movementSpeedInput,
     sf::Angle rotationSpeedInput,
-    Map innerMapInput
+    Map innerMapInput,
+    ChatLog& chatLogInput
 )
     : angle(sensorDistInput.getAngle()),
       movementSpeed(movementSpeedInput),
       rotationSpeed(rotationSpeedInput),
-      sensors(3, sensorDistInput) {
+      sensors(3, sensorDistInput),
+      innerMap(innerMapInput),
+      chatLog(chatLogInput) {
         
         body.setPosition(pos);
         body.setRadius(radius);
@@ -115,8 +119,6 @@ Robot::Robot(
             sensors[i].setPosition(pos);
             sensors[i].setAngle(angle + sf::degrees(30.f * (static_cast<float>(i) - 1.f)));
         }
-        innerMap = innerMapInput;
-
 }
 
 void Robot::updateSensorAngles() {
@@ -144,6 +146,10 @@ float Robot::getAngleRad(){
 
 const Map& Robot::getInnerMap() const {
     return innerMap;
+}
+
+ChatLog& Robot::getChatLog() const {
+    return chatLog;
 }
 
 
@@ -222,7 +228,7 @@ void Robot::moveToTarget(sf::Vector2f target){
 
 void Robot::goToNode(Node node, int squareSide){
     sf::Vector2f targetPosition = cordsToPos(node.pos, squareSide);
-    sf::Angle targetAngle = -getAngleToPos(body.getPosition(), targetPosition);
+    sf::Angle targetAngle = -angleToPos(body.getPosition(), targetPosition);
     
     turnToAngle(targetAngle);
     if (anglesEqual(angle, targetAngle)) moveToTarget(targetPosition);
@@ -235,7 +241,8 @@ bool Robot::isAtNode(Node node, int squareSide){
     return 0;
 }
 
-void Robot::traversePath(Path& path, ChatLog& chatLog){
+void Robot::traversePath(Path& path){
+    updateInnerMap();
     
     if (path.getNodes().size() == 0) return;    
     if (isAtNode(path.getNodes().back(), path.getMap().getSquareSide())) {
@@ -266,6 +273,10 @@ sf::Vector2f Robot::getFuturePos(bool direction){
     return {x, y};
 }
 
+bool Robot::foundNewObstacle() const{
+    return foundNewObst;
+}
+
 bool Robot::collidesObst(Obstacle obstacle){
     sf::CircleShape circle = body;
     sf::RectangleShape rect = obstacle.getBodyRect();
@@ -281,11 +292,17 @@ bool Robot::collidesObsts(std::vector<Obstacle> obstacles){
 }
 
 void Robot::updateInnerMap(){
+    foundNewObst = false;
     cords nullCords{-1, -1};
+
     for (auto sensor : sensors){
-        if (sensor.getEndCords() == nullCords) continue;
+        cords endCords = sensor.getEndCords();
+        if (endCords == nullCords || innerMap.getObstMaskAt(endCords) == false) continue;
         innerMap.setObstMaskAt(sensor.getEndCords(), 0);
+        foundNewObst = true;
+        chatLog.addMessage("Inner map updated");
     }
+    innerMap.updatePassMask(body.getRadius());
 }
 
 void Robot::drawMiniMapSensors(
@@ -436,6 +453,16 @@ const int Path::getTraversedNodes() const {
     return traversedNodes;
 }
 
+sf::Vector2f Path::getEndPos() const{
+    if (nodes.size() == 0) return {-1, -1};
+    return cordsToPos(nodes[0].pos, map.getSquareSide());
+}
+
+cords Path::getEndCords() const{
+    if (nodes.size() == 0) return cords{-1, -1};
+    return nodes[0].pos;
+}
+
 void Path::setTraversedNodes(int num){
     traversedNodes = num;
 }
@@ -540,8 +567,8 @@ void Path::smoothPath(ChatLog& chatLog){
                 deleteNodes(i, j);
                 break;
             }
+            chatLog.addMessage("Smoothed path");
         }
 
     }
-    chatLog.addMessage("Smoothed path");
 }

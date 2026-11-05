@@ -7,16 +7,6 @@ void App::setRobot(sf::Vector2f position, float radius, float angleRad){
     robot.setAngleRad(angleRad);
 }
 
-void App::setWindow(unsigned int width, unsigned int height, std::string title){
-    window.create(
-        sf::VideoMode({width, height}),
-        title,
-        sf::Style::Close
-    );
-    window.setVerticalSyncEnabled(true);
-    window.setKeyRepeatEnabled(false);
-}
-
 void App::setMapImage(){
     map.drawObstacles(window);
     mapImage = getWindowImage(window);
@@ -60,9 +50,17 @@ void App::runSimulationStep(){
             
         }
         else if (simulationMode == 1){
+            // before changing the current path, check the path's existance and new obstacles
+            if (currentPath.getNodes().size() != 0 && robot.foundNewObstacle()){
+                cords start = posToCords(robot.getPosition(), map.getSquareSide());
+                cords end = currentPath.getEndCords();
+                currentPath.setNodes(
+                    findPathAStar(robot.getInnerMap().getPassMask(), start, end, &robot.getChatLog()),
+                    robot.getChatLog());
+            }
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             selectedSquare = getSquareInGrid(square_side, {float(mousePos.x), float(mousePos.y)});
-            robot.traversePath(currentPath, chatLog);
+            robot.traversePath(currentPath);
         }
         
         accumulator -= dTime;
@@ -70,6 +68,7 @@ void App::runSimulationStep(){
     }
 
 }
+
 
 void App::handleEvents(sf::Event event){
     if (event.is<sf::Event::Closed>()){
@@ -81,10 +80,10 @@ void App::handleEvents(sf::Event event){
         if (key->scancode == sf::Keyboard::Scancode::LShift){
             if (simulationMode == 1) {
                 simulationMode = 0;
-                chatLog.addMessage("Mode - 0");
+                robot.getChatLog().addMessage("Mode - 0");
             }
             else if (simulationMode == 0){
-                chatLog.addMessage("Mode - 1");
+                robot.getChatLog().addMessage("Mode - 1");
                 simulationMode = 1;
             } 
         }
@@ -97,17 +96,19 @@ void App::handleEvents(sf::Event event){
         int rowMouse = int(selectedSquare.y / square_side);
         cords end = {rowMouse, colMouse};
 
-        if (map.getPassMask()[rowMouse][colMouse] != 0){
+        if (robot.getInnerMap().getPassMask()[rowMouse][colMouse] != 0){
             sf::Vector2f robotPos = robot.getBodyCircle().getPosition();
             cords start = posToCords(
-                getSquareInGrid(map.getSquareSide(), {robotPos.x, robotPos.y}), 
+                getSquareInGrid(robot.getInnerMap().getSquareSide(), {robotPos.x, robotPos.y}),
                 square_side
             );
 
-            currentPath.setNodes(findPathAStar(map.getPassMask(), start, end, &chatLog), chatLog);
+            currentPath.setNodes(
+                findPathAStar(robot.getInnerMap().getPassMask(), start, end, &robot.getChatLog()),
+                robot.getChatLog());
         }
 
-        else chatLog.addMessage("Unreachable destination");
+        else robot.getChatLog().addMessage("Unreachable destination");
     }
 }
 
@@ -146,7 +147,7 @@ void App::run(){
             }
         }
         
-        chatLog.drawChat(window);
+        robot.getChatLog().drawChat(window);
 
         window.display();
     }

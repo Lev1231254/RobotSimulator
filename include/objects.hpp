@@ -2,18 +2,14 @@
 #define OBJECTS_H
 
 #include <SFML/Graphics.hpp>
-#include <memory>
 #include <vector>
 #include <math.h>
+#include <chat.hpp>
 #include <structs.hpp>
 #include <obstacle.hpp>
 #include <map.hpp>
 #include <rayTracer.hpp>
 #include <utils.hpp>
-
-class ChatLog;
-
-
 
 class SensorDist {
     ray rayData;
@@ -64,6 +60,8 @@ class Path {
         const Nodes& getNodes() const;
         const Map& getMap() const;
         const int getTraversedNodes() const;
+        sf::Vector2f getEndPos() const;
+        cords getEndCords() const;
 
         void setNodes(Nodes nodesInput, ChatLog& chatLog);
         void setTraversedNodes(int num);
@@ -86,6 +84,8 @@ class Robot {
     sf::Angle rotationSpeed = sf::degrees(1);
     std::vector<SensorDist> sensors;
     Map innerMap;
+    ChatLog& chatLog;
+    bool foundNewObst = 0;
 private:
     void updateInnerMap();
     void updateSensorAngles();
@@ -97,13 +97,16 @@ public:
         SensorDist sensorDistInput,
         float movementSpeedInput,
         sf::Angle rotationSpeedInput,
-        Map innerMapInput);
+        Map innerMapInput,
+        ChatLog& chatLogInput);
 
     sf::CircleShape getBodyCircle();
     sf::Vector2f getPosition();
     float getAngleRad();
     float getRadius();
     const Map& getInnerMap() const;
+    ChatLog& getChatLog() const;
+    bool foundNewObstacle() const;
 
     void setPosition(sf::Vector2f position);
     void setRadius(float radius);
@@ -118,7 +121,7 @@ public:
     void turnToAngle(sf::Angle targetAngle);
     void goToNode(Node node, int squareSide);
     bool isAtNode(Node node, int squareSide);
-    void traversePath(Path& path, ChatLog& chatLog);
+    void traversePath(Path& path);
 
     sf::Vector2f getFuturePos(bool direction);
     bool collidesObst(Obstacle obstacle);

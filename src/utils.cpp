@@ -121,12 +121,12 @@ sf::Vector2f normalize(sf::Vector2f vec){
     return {vec.x / sum, vec.y / sum};
 }
 
-float getAngleToPointf(sf::Vector2f start, sf::Vector2f end){
+float angleToPointf(sf::Vector2f start, sf::Vector2f end){
     sf::Vector2f distances = end - start;
     return atan2(distances.y, distances.x);
 }
 
-sf::Angle getAngleToPos(sf::Vector2f start, sf::Vector2f end){
+sf::Angle angleToPos(sf::Vector2f start, sf::Vector2f end){
     sf::Vector2f distances = end - start;
     return sf::radians(atan2(distances.y, distances.x));
 }
@@ -164,16 +164,11 @@ sf::Vector2f posToMiniMap(sf::Vector2f pos, sf::Vector2u size, const sf::Rectang
     return miniPos;
 }
 
-// void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide){
-//     sf::Vector2f entryPos = getSquareInGrid(squareSide, pos);
-//     pos.x = clamp(pos.x, entryPos.x, entryPos.x + squareSide - 1);
-//     pos.y = clamp(pos.y, entryPos.y, entryPos.y + squareSide - 1);
-// }
+bool cordsInMask(mask2& mask, cords cords){
+    if (mask.size() == 0 || mask[0].size() == 0) return 0;
 
-// void clampToGrid(sf::Vector2f &pos, int &squareSide){
-//     float restX = (int(pos.x) / squareSide) * squareSide - pos.x;
-//     float restY = (int(pos.y) / squareSide) * squareSide - pos.y;
+    int rowMax = mask.size();
+    int colMax = mask[0].size();
 
-//     pos.x = (abs(restX) < 0.5) ? pos.x 
-
-// }
+    return (0 <= cords.row && cords.row < rowMax) && (0 <= cords.col && cords.col < colMax);
+}

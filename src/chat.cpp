@@ -13,6 +13,7 @@ ChatLog::ChatLog(const sf::Vector2f& topLeft, const sf::Vector2f& size)
     if (!font.openFromFile(fontPath)) {
         throw std::runtime_error(std::string("Failed to load chat font: ") + fontPath);
     }
+    counter = 0;
 
     background.setSize(size);
     background.setPosition({topLeft.x, topLeft.y + margin});
@@ -23,8 +24,10 @@ ChatLog::ChatLog(const sf::Vector2f& topLeft, const sf::Vector2f& size)
     text.setPosition({topLeft.x + margin, topLeft.y + margin + 8.f});
 }
 
+
 void ChatLog::addMessage(const std::string& message) {
-    messages.push_back(message);
+    counter++;
+    messages.push_back(message + "  (" + std::to_string(counter) + ")");
     if (messages.size() > maxMessages) {
         messages.pop_front();
     }
