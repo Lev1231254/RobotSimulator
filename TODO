@@ -13,3 +13,6 @@
  - add color grading to newly discoverd objects
  - make robot always be inside the map. (or at least mini robot should not be outside of the minimap)
  - add exit button
+ - add internal timers to check efficiency
+ - change all (type &) to (type& )
+ 

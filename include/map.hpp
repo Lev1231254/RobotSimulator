@@ -33,6 +33,7 @@ public:
 
     void setMiniMap(sf::Vector2f topLeft, sf::Vector2f size);
     void setObstMaskAt(cords cords, bool value);
+    void setPassMaskAt(cords cords, bool value);
     void addObstacle(Obstacle obstacle);
 
     void passMaskOnes();
@@ -45,7 +46,8 @@ public:
     std::vector<Obstacle> getObstacles();
     const mask2& getPassMask() const;
     const mask2& getObstacleMask() const;
-    const bool getObstMaskAt(cords cords) const;
+    bool getObstMaskAt(cords cords) const;
+    bool getPassMaskAt(cords cords) const;
     int getSquareSide();
     int getSquareSide() const;
     sf::Vector2u getMapSize();

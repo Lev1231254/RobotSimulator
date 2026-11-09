@@ -134,7 +134,7 @@ sf::Angle angleToPos(sf::Vector2f start, sf::Vector2f end){
 
 bool anglesEqual(sf::Angle angle1, sf::Angle angle2){
     // the 0.5 degree difference is almost nothing
-    if (abs(angle1.asDegrees() - angle2.asDegrees()) < 0.5) return true;
+    if (abs(angle1.asDegrees() - angle2.asDegrees()) < 0.5f) return true;
     return false;
 }
 
@@ -164,7 +164,7 @@ sf::Vector2f posToMiniMap(sf::Vector2f pos, sf::Vector2u size, const sf::Rectang
     return miniPos;
 }
 
-bool cordsInMask(mask2& mask, cords cords){
+bool cordsInMask(const mask2& mask, cords cords){
     if (mask.size() == 0 || mask[0].size() == 0) return 0;
 
     int rowMax = mask.size();

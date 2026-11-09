@@ -12,7 +12,7 @@ float clamp(float value, float min, float max);
 
 bool circleIntersectsRect(sf::CircleShape circle, sf::RectangleShape rect);
 bool anglesEqual(sf::Angle angle1, sf::Angle angle2);
-bool cordsInMask(mask2& mask, cords cords);
+bool cordsInMask(const mask2& mask, cords cords);
 
 
 sf::Image getWindowImage(sf::RenderWindow& window);

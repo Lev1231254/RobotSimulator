@@ -87,7 +87,6 @@ class Robot {
     ChatLog& chatLog;
     bool foundNewObst = 0;
 private:
-    void updateInnerMap();
     void updateSensorAngles();
 
 public:
@@ -100,19 +99,23 @@ public:
         Map innerMapInput,
         ChatLog& chatLogInput);
 
+    void updateInnerMap();
+    bool foundNewObstacle() const;
+
     sf::CircleShape getBodyCircle();
     sf::Vector2f getPosition();
     float getAngleRad();
     float getRadius();
     const Map& getInnerMap() const;
     ChatLog& getChatLog() const;
-    bool foundNewObstacle() const;
+    
 
     void setPosition(sf::Vector2f position);
     void setRadius(float radius);
     void setAngleRad(float angleRadInput);
     void setMovementSpeed(float speed);
     void setRotationSpeed(sf::Angle speed);
+    void setFoundNewObstacle(bool b);
     
     
     void moveRobot(int direction);

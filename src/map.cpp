@@ -88,6 +88,12 @@ void Map::setObstMaskAt(cords cords, bool value){
     else printf("setObstMaskAt(): wrong cords given\n");
 }
 
+void Map::setPassMaskAt(cords cords, bool value){
+    if (cordsInMask(passMask, cords))
+        passMask[cords.row][cords.col] = value;
+    else printf("setPassMaskAt(): wrong cords given\n");
+}
+
 void Map::drawObstaclesMiniMap(sf::RenderWindow& window){
 
     int factor = mapSize.x / miniMapBG.getSize().x; // must always be integer number
@@ -181,10 +187,17 @@ const mask2& Map::getObstacleMask() const {
     return obstacleMask;
 }
 
-const bool Map::getObstMaskAt(cords cords) const{
+bool Map::getObstMaskAt(cords cords) const{
     if (0 <= cords.row && cords.row < obstacleMask.size() && 0 <= cords.col && cords.col < obstacleMask[0].size())
         return obstacleMask[cords.row][cords.col];
     printf("getObstMaskAt(): wrong cords given\n");
+    return 0;
+}
+
+bool Map::getPassMaskAt(cords cords) const{
+    if (cordsInMask(passMask, cords))
+        return passMask[cords.row][cords.col];
+    printf("getPassMaskAt(): wrong cords given\n");
     return 0;
 }
 

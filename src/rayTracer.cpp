@@ -4,6 +4,17 @@
 #include <cmath>
 #include <limits>
 
+namespace {
+bool normalizeDirection(sf::Vector2f& direction) {
+    const float length = std::hypot(direction.x, direction.y);
+    if (!(length > 0.f) || !std::isfinite(length)) return false;
+
+    direction.x /= length;
+    direction.y /= length;
+    return true;
+}
+}
+
 RayTracer::RayTracer(
     Map& map,
     const mask2& occupancyMaskInput,
@@ -17,17 +28,19 @@ ray posToRay(sf::Vector2f start, sf::Vector2f end){
     ray ray;
     ray.start = start;
     ray.direction = end - start;
-    ray.direction = normalize(ray.direction);
-    ray.angle = sf::radians(atan(ray.direction.y / ray.direction.x));
+    if (!normalizeDirection(ray.direction)) {
+        ray.direction = {0.f, 0.f};
+        ray.angle = sf::radians(0.f);
+        return ray;
+    }
+    ray.angle = sf::radians(std::atan2(-ray.direction.y, ray.direction.x));
 
     return ray;
 }
 
 sf::Vector2f RayTracer::getFirstHitPos(ray &ray, Map& map){
-    ray.direction = normalize(ray.direction);
-
     if (squareSide <= 0 || !map.isOnMap(ray.start)
-        || (ray.direction.x == 0.f && ray.direction.y == 0.f)) {
+        || !normalizeDirection(ray.direction)) {
         return {-1.f, -1.f}; // not on the map
     }
 
@@ -86,9 +99,8 @@ sf::Vector2f RayTracer::getFirstHitPos(ray &ray, Map& map){
 
 cords RayTracer::getHitCords(ray &ray, Map& map, sf::Vector2f hitPos){
     //find point a little bit further from the hit, to get to the inner of the square
-    cords nullCords{-1, -1};
     if (hitPos == sf::Vector2f{-1, -1}) return nullCords;
-    sf::Vector2f furtherPos = hitPos + sf::Vector2f{ray.direction.x * 0.5, ray.direction.y * 0.5};
+    sf::Vector2f furtherPos = hitPos + sf::Vector2f{ray.direction.x * 0.5f, ray.direction.y * 0.5f};
     return posToCords(getSquareInGrid(map.getSquareSide(), furtherPos), map.getSquareSide());
 }
 
@@ -100,9 +112,8 @@ cords RayTracer::getFirstHitCords(ray &ray, Map& map){
 
 
 sf::Vector2f RayTracer::getFirstHitFinite(ray &ray, Map& map, sf::Vector2f end){
-    ray.direction = normalize(ray.direction);
     if (squareSide <= 0 || !map.isOnMap(ray.start)
-        || (ray.direction.x == 0.f && ray.direction.y == 0.f)) {
+        || !normalizeDirection(ray.direction)) {
         return {-1.f, -1.f}; // not on the map
     }
 

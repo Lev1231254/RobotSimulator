@@ -5,7 +5,7 @@
 #include <cmath>
 #include <math.h>
 
-const float pi = 3.1416;
+const float pi = 3.1416f;
 
 SensorDist::SensorDist(
     ray rayInput,
@@ -236,21 +236,21 @@ void Robot::goToNode(Node node, int squareSide){
 
 bool Robot::isAtNode(Node node, int squareSide){
     sf::Vector2f targetPosition = cordsToPos(node.pos, squareSide);
-    //sf::Angle targetAngle = getAngleToPos(body.getPosition(), targetPosition);
+    //if (body.getPosition() == targetPosition) return 1;
     if (getDistance(body.getPosition(), targetPosition) <= squareSide * sqrt(2)) return 1;
     return 0;
 }
 
+
 void Robot::traversePath(Path& path){
-    updateInnerMap();
-    
+    int squareSide = path.getMap().getSquareSide();
     if (path.getNodes().size() == 0) return;    
-    if (isAtNode(path.getNodes().back(), path.getMap().getSquareSide())) {
+    else if (isAtNode(path.getNodes().back(), squareSide)) {
         chatLog.addMessage("Node " + std::to_string(path.getTraversedNodes()) + " reached");
         path.traversedNodesInc();
         path.deleteNode(path.getNodes().size()-1);
     }
-    else goToNode(path.getNodes().back(), path.getMap().getSquareSide());
+    else goToNode(path.getNodes().back(), squareSide);
 
     // if we traversed the last node show the total amount of traversed nodes
     if (path.getNodes().size() == 0) {
@@ -262,7 +262,7 @@ void Robot::traversePath(Path& path){
 sf::Vector2f Robot::getFuturePos(bool direction){
     //get future position of the robot after the movement (used to do collisions)
     // direction: 1 - forwards, 0 - backwards
-    int direction_factor = 2 * (direction - 0.5);
+    int direction_factor = 2 * (direction - 0.5f);
 
     float xSpeed = direction_factor * cos(angle.asRadians()) * movementSpeed;
     float ySpeed = -1 * direction_factor * sin(angle.asRadians()) * movementSpeed;
@@ -275,6 +275,10 @@ sf::Vector2f Robot::getFuturePos(bool direction){
 
 bool Robot::foundNewObstacle() const{
     return foundNewObst;
+}
+
+void Robot::setFoundNewObstacle(bool b){
+    foundNewObst = b;
 }
 
 bool Robot::collidesObst(Obstacle obstacle){
@@ -292,8 +296,7 @@ bool Robot::collidesObsts(std::vector<Obstacle> obstacles){
 }
 
 void Robot::updateInnerMap(){
-    foundNewObst = false;
-    cords nullCords{-1, -1};
+    //foundNewObst = false;
 
     for (auto sensor : sensors){
         cords endCords = sensor.getEndCords();
@@ -558,7 +561,6 @@ void Path::deleteNode(int k){
 
 void Path::smoothPath(ChatLog& chatLog){
     if (nodes.size() < 2) return;
-
     for (std::size_t i = 0; i + 1 < nodes.size(); i++){
         Node start = nodes[i];
         for (std::size_t j = nodes.size()-1; j >= i + 1; j--){
@@ -567,8 +569,9 @@ void Path::smoothPath(ChatLog& chatLog){
                 deleteNodes(i, j);
                 break;
             }
-            chatLog.addMessage("Smoothed path");
+            
         }
 
     }
+    chatLog.addMessage("Smoothed path");
 }

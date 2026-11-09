@@ -13,6 +13,8 @@ struct cords{
     }
 };
 
+inline const cords nullCords{-1, -1};
+
 struct Node {
     cords pos;
     cords parentPos;

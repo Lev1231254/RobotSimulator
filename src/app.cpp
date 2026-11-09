@@ -51,24 +51,31 @@ void App::runSimulationStep(){
         }
         else if (simulationMode == 1){
             // before changing the current path, check the path's existance and new obstacles
-            if (currentPath.getNodes().size() != 0 && robot.foundNewObstacle()){
+            if (!currentPath.getNodes().empty() && robot.foundNewObstacle() &&
+                pathFindingAccumulator >= pathFindingInterval){
                 cords start = posToCords(robot.getPosition(), map.getSquareSide());
                 cords end = currentPath.getEndCords();
                 currentPath.setNodes(
                     findPathAStar(robot.getInnerMap().getPassMask(), start, end, &robot.getChatLog()),
                     robot.getChatLog());
+                pathFindingAccumulator = 0.f;
             }
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             selectedSquare = getSquareInGrid(square_side, {float(mousePos.x), float(mousePos.y)});
+            robot.setFoundNewObstacle(false);
+            robot.updateInnerMap();
             robot.traversePath(currentPath);
         }
         
         accumulator -= dTime;
-
     }
 
 }
 
+void App::accumulate(float time){
+    accumulator += time;
+    pathFindingAccumulator += time;
+}
 
 void App::handleEvents(sf::Event event){
     if (event.is<sf::Event::Closed>()){
@@ -126,7 +133,7 @@ void App::run(){
             
         // simulation
         float frameTime = clock.restart().asSeconds();
-        accumulator += frameTime;
+        accumulate(frameTime);
         runSimulationStep();
     
         // drawing

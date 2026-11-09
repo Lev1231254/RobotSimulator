@@ -19,6 +19,25 @@ sf::Vector2f cordsToVector2f(cords position){
     return {float(position.col), float(position.row)};
 }
 
+Node generateNextNode(const std::vector<std::vector<bool>>& avoidanceMatrix, Node& parent, cords &nextNodeCords, cords& endCords){
+    Node successor;
+    successor.pos = nextNodeCords;
+
+    bool successorInMatrix = isInMatrix(successor.pos, avoidanceMatrix[0].size(), avoidanceMatrix.size());
+
+    if (successorInMatrix && avoidanceMatrix[successor.pos.row][successor.pos.col]){
+        successor.parentPos = parent.pos;
+        float g = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(parent.pos)) + parent.g;
+        float h = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(endCords));
+        successor.f = g + h;
+        successor.g = g;
+        return successor;
+    }
+    printf("Tried to generate node at false cords\n");
+    Node node;
+    return node;
+}
+
 Nodes generateSuccessors(const std::vector<std::vector<bool>>& avoidanceMatrix, Node& parent, cords &destinationPos){
     Nodes successors;
 
@@ -90,8 +109,66 @@ Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos){
     return path;
 }
 
+cords searchFree(const mask2& passMask, cords originCords){
+    if (passMask.empty() || passMask[0].empty()) return nullCords;
+
+    const int maxRadius = static_cast<int>(std::max(passMask.size(), passMask[0].size()));
+    for (int radius = 1; radius <= maxRadius; radius++){
+        for (int drow = -radius; drow < radius + 1; drow++){
+            for (int dcol = -radius; dcol < radius + 1; dcol++){
+                if (drow != -radius && drow != radius && dcol != -radius && dcol != radius) continue;
+
+                cords cords{originCords.row + drow, originCords.col + dcol};
+                if (cordsInMask(passMask, cords) && passMask[cords.row][cords.col] == 1) return cords;
+            }
+        }
+    }
+    return nullCords;
+}
+
+void addFree(const mask2& passMask, Node& originNode, cords endCords, Nodes& nodesList){
+    cords freeCords = searchFree(passMask, originNode.pos);
+    if (freeCords == nullCords) return;
+
+    Node freeNode = generateNextNode(passMask, originNode, freeCords, endCords);
+    nodesList.push_back(freeNode);
+}
+
+namespace {
+struct PathStart {
+    cords position;
+    bool selectedFreeSquare;
+};
+
+PathStart selectPathStart(const mask2& passMask, cords startPos){
+    // cordsInMask(passMask, startPos) && passMask[startPos.row][startPos.col]
+    if (cordsInMask(passMask, startPos)) {
+        return {startPos, false};
+    }
+
+    cords freeCords = searchFree(passMask, startPos);
+    if (freeCords == nullCords) return {startPos, false};
+
+    bool nearFree = (
+        startPos.row - 1 <= freeCords.row && freeCords.row <= startPos.row + 1 &&
+        startPos.col - 1 <= freeCords.col && freeCords.col <= startPos.col + 1);
+    if (nearFree) return {startPos, false};
+
+    return {freeCords, true};
+}
+}
 
 Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords &startPos, cords &destinationPos, ChatLog* chatLog){
+    PathStart selectedStart = selectPathStart(avoidanceMatrix, startPos);
+    cords pathStartPos = selectedStart.position;
+
+    if (selectedStart.selectedFreeSquare && pathStartPos == destinationPos) {
+        Node startNode{};
+        startNode.pos = pathStartPos;
+        startNode.parentPos = pathStartPos;
+        return {startNode};
+    }
+
     bool destinationIsUnreachable = 1;
 
     int c = 0;
@@ -99,8 +176,8 @@ Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords
     Nodes closedList = {};
 
     Node startNode;
-    startNode.pos= startPos;
-    startNode.parentPos = startPos;
+    startNode.pos = pathStartPos;
+    startNode.parentPos = pathStartPos;
     startNode.f = 0;
     startNode.g = 0;
     openList.push_back(startNode);
@@ -151,7 +228,7 @@ Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords
         return {};
     }
 
-    Nodes path = makePath(closedList, startPos, destinationPos);
+    Nodes path = makePath(closedList, pathStartPos, destinationPos);
     if (chatLog != nullptr) {
         chatLog->addMessage("Processed total of " + std::to_string(c) + " nodes");
     }
