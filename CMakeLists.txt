@@ -9,6 +9,8 @@ project(RobotSimulator
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(ROBOT_SIMULATOR_ENABLE_PROFILING "Build with GNU gprof instrumentation" OFF)
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -47,4 +49,13 @@ if (MSVC)
     target_compile_options(robot_simulator PRIVATE /W4)
 else()
     target_compile_options(robot_simulator PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+if (ROBOT_SIMULATOR_ENABLE_PROFILING)
+    if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        message(FATAL_ERROR "ROBOT_SIMULATOR_ENABLE_PROFILING requires the GNU C++ compiler and gprof")
+    endif()
+
+    target_compile_options(robot_simulator PRIVATE -pg)
+    target_link_options(robot_simulator PRIVATE -pg)
 endif()

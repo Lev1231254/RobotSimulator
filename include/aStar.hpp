@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#include <iostream>
 #include <utils.hpp>
 #include <structs.hpp>
 #include <algorithm>
@@ -18,9 +17,7 @@ Node generateNextNode(const mask2& avoidanceMatrix, Node& parent, cords& nextNod
 Nodes generateSuccessors(const mask2& avoidanceMatrix, Node& parent, cords& destinationPos);
 int nodeInList(Nodes &list, Node &node);
 Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos);
-Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords &startPos, cords &destinationPos, ChatLog* chatLog = nullptr);
-void printNodes(Nodes list);
-void testAStar();
+Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords &startPos, cords &destinationPos, ChatLog& chatLog);
 cords searchFree(const mask2& passMask, cords originCords);
 void addFree(const mask2& passMask, Node& originNode, cords endCords, Nodes& nodesList);
 

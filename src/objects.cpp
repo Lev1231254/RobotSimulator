@@ -297,15 +297,15 @@ bool Robot::collidesObsts(std::vector<Obstacle> obstacles){
 
 void Robot::updateInnerMap(){
     //foundNewObst = false;
-
     for (auto sensor : sensors){
         cords endCords = sensor.getEndCords();
         if (endCords == nullCords || innerMap.getObstMaskAt(endCords) == false) continue;
         innerMap.setObstMaskAt(sensor.getEndCords(), 0);
         foundNewObst = true;
+        innerMap.updatePassMaskAt(body.getRadius(), endCords);
         chatLog.addMessage("Inner map updated");
     }
-    innerMap.updatePassMask(body.getRadius());
+    //innerMap.updatePassMask(body.getRadius());
 }
 
 void Robot::drawMiniMapSensors(
@@ -366,16 +366,7 @@ void Robot::drawRobot(sf::RenderWindow& window){
     float anglePointY = center.y - body.getRadius() * sin(angle.asRadians());
     sf::Vector2f anglePoint(anglePointX, anglePointY);
 
-    // sf::RectangleShape line({body.getRadius(), 6.f});
-    // line.setOrigin({0.f, 3.f});
-    // line.setPosition(center);
-    // line.setRotation(sf::radians(std::atan2(
-    //     anglePoint.y - center.y,
-    //     anglePoint.x - center.x)));
-    // line.setFillColor(sf::Color::Blue);
-
     window.draw(body);
-    // window.draw(line);
     drawSensors(window);
         
 }

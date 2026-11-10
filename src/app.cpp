@@ -56,13 +56,14 @@ void App::runSimulationStep(){
                 cords start = posToCords(robot.getPosition(), map.getSquareSide());
                 cords end = currentPath.getEndCords();
                 currentPath.setNodes(
-                    findPathAStar(robot.getInnerMap().getPassMask(), start, end, &robot.getChatLog()),
+                    findPathAStar(robot.getInnerMap().getPassMask(), start, end, robot.getChatLog()),
                     robot.getChatLog());
                 pathFindingAccumulator = 0.f;
+                robot.setFoundNewObstacle(false);
             }
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             selectedSquare = getSquareInGrid(square_side, {float(mousePos.x), float(mousePos.y)});
-            robot.setFoundNewObstacle(false);
+            
             robot.updateInnerMap();
             robot.traversePath(currentPath);
         }
@@ -103,7 +104,7 @@ void App::handleEvents(sf::Event event){
         int rowMouse = int(selectedSquare.y / square_side);
         cords end = {rowMouse, colMouse};
 
-        if (robot.getInnerMap().getPassMask()[rowMouse][colMouse] != 0){
+        if (robot.getInnerMap().getPassMask()[rowMouse][colMouse] ==  1){
             sf::Vector2f robotPos = robot.getBodyCircle().getPosition();
             cords start = posToCords(
                 getSquareInGrid(robot.getInnerMap().getSquareSide(), {robotPos.x, robotPos.y}),
@@ -111,7 +112,7 @@ void App::handleEvents(sf::Event event){
             );
 
             currentPath.setNodes(
-                findPathAStar(robot.getInnerMap().getPassMask(), start, end, &robot.getChatLog()),
+                findPathAStar(robot.getInnerMap().getPassMask(), start, end, robot.getChatLog()),
                 robot.getChatLog());
         }
 

@@ -24,6 +24,24 @@ void Map::passMaskOnes(){
         }
     }
 }
+
+void Map::updatePassMaskAt(float robotRadius, cords cordsInput){
+    float minDistance = robotRadius + squareSide;
+    int minSquares = int(minDistance) / squareSide + 2;
+    int row = cordsInput.row;
+    int col = cordsInput.col;
+
+    if (obstacleMask[row][col] == 0){
+        for (int drow = -minSquares + 1; drow < minSquares; drow++){
+            for (int dcol = -minSquares + 1 ; dcol < minSquares; dcol++){
+                if (cordsInMask(obstacleMask, cords{row+drow, col+dcol}))
+                    passMask[row + drow][col + dcol] = 0;
+            }
+        }
+    }
+}
+
+
 void Map::updatePassMask(float robotRadius){
     passMaskOnes();
     float minDistance = robotRadius + squareSide;
@@ -70,7 +88,7 @@ void Map::drawObstacles(sf::RenderWindow& window){
 }
 
 void Map::drawAvoidanceField(sf::RenderWindow& window){
-    for (auto square : obstacleRects) window.draw(square);
+    for (auto &square : obstacleRects) window.draw(square);
 }
 
 

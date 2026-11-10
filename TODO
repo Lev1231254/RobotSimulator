@@ -3,11 +3,14 @@
 ~~ - path dissappear after robot traversed~~
 ~~ - fix path: draw path from center to center~~
 ~~ - add radius of robot to passMatrix~~
- - add noise into sensor
 ~~ - add second sensor~~
 ~~ - add minimap~~
- - add generation of map based on surroundings
+~~ - add generation of map based on surroundings~~
+ - add min priority queue instead of vector in pathFinding
+ - make updatePassMask() in updateInnerMap() faster
+ - change pathfinding, so it can start from red squares
  - add smoothness to shapes
+ - add a bunch of toggles (for example toggle for red squares)
 ~~ - add log window~~
  - add mini controls guide
  - add color grading to newly discoverd objects

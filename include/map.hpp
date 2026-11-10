@@ -39,6 +39,7 @@ public:
     void passMaskOnes();
     void setupPassMask(float robotRadius);
     void updatePassMask(float robotRadius);
+    void updatePassMaskAt(float robotRadius, cords cords);
     void setupObstacleMask();
     void makeAvoidanceRects();
 

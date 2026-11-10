@@ -1,5 +1,4 @@
 #include <aStar.hpp>
-#include <iomanip>
 
 Node findClosestNode(Nodes& list){
     Node bestNode = list[0];
@@ -19,13 +18,13 @@ sf::Vector2f cordsToVector2f(cords position){
     return {float(position.col), float(position.row)};
 }
 
-Node generateNextNode(const std::vector<std::vector<bool>>& avoidanceMatrix, Node& parent, cords &nextNodeCords, cords& endCords){
+Node generateNextNode(const std::vector<std::vector<bool>>& passMask, Node& parent, cords &nextNodeCords, cords& endCords){
     Node successor;
     successor.pos = nextNodeCords;
 
-    bool successorInMatrix = isInMatrix(successor.pos, avoidanceMatrix[0].size(), avoidanceMatrix.size());
+    bool successorInMatrix = isInMatrix(successor.pos, passMask[0].size(), passMask.size());
 
-    if (successorInMatrix && avoidanceMatrix[successor.pos.row][successor.pos.col]){
+    if (successorInMatrix && passMask[successor.pos.row][successor.pos.col]){
         successor.parentPos = parent.pos;
         float g = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(parent.pos)) + parent.g;
         float h = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(endCords));
@@ -38,7 +37,7 @@ Node generateNextNode(const std::vector<std::vector<bool>>& avoidanceMatrix, Nod
     return node;
 }
 
-Nodes generateSuccessors(const std::vector<std::vector<bool>>& avoidanceMatrix, Node& parent, cords &destinationPos){
+Nodes generateSuccessors(const std::vector<std::vector<bool>>& passMask, Node& parent, cords &destinationPos){
     Nodes successors;
 
     for (int dcol = -1; dcol< 2; dcol++){
@@ -48,9 +47,9 @@ Nodes generateSuccessors(const std::vector<std::vector<bool>>& avoidanceMatrix, 
             Node successor;
             successor.pos = {parent.pos.row + drow, parent.pos.col + dcol};
 
-            bool successorInMatrix = isInMatrix(successor.pos, avoidanceMatrix[0].size(), avoidanceMatrix.size());
+            bool successorInMatrix = isInMatrix(successor.pos, passMask[0].size(), passMask.size());
 
-            if (successorInMatrix && avoidanceMatrix[successor.pos.row][successor.pos.col]){
+            if (successorInMatrix && passMask[successor.pos.row][successor.pos.col]){
                 successor.parentPos = parent.pos;
                 float g = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(parent.pos)) + parent.g;
                 float h = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(destinationPos));
@@ -158,8 +157,8 @@ PathStart selectPathStart(const mask2& passMask, cords startPos){
 }
 }
 
-Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords &startPos, cords &destinationPos, ChatLog* chatLog){
-    PathStart selectedStart = selectPathStart(avoidanceMatrix, startPos);
+Nodes findPathAStar(const mask2& passMask, cords &startPos, cords &destinationPos, ChatLog& chatLog){
+    PathStart selectedStart = selectPathStart(passMask, startPos);
     cords pathStartPos = selectedStart.position;
 
     if (selectedStart.selectedFreeSquare && pathStartPos == destinationPos) {
@@ -186,7 +185,7 @@ Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords
         Node q = findClosestNode(openList);
         openList.erase(find(openList.begin(), openList.end(), q));
 
-        Nodes successors = generateSuccessors(avoidanceMatrix, q, destinationPos);
+        Nodes successors = generateSuccessors(passMask, q, destinationPos);
 
         for (Node &successor : successors){
             if (successor.pos == destinationPos) {
@@ -222,19 +221,16 @@ Nodes findPathAStar(const std::vector<std::vector<bool>> &avoidanceMatrix, cords
     }
 
     if (destinationIsUnreachable) {
-        if (chatLog != nullptr) {
-            chatLog->addMessage("Unreachable destination");
-        }
+        chatLog.addMessage("Unreachable destination");
         return {};
     }
 
     Nodes path = makePath(closedList, pathStartPos, destinationPos);
-    if (chatLog != nullptr) {
-        chatLog->addMessage("Processed total of " + std::to_string(c) + " nodes");
-    }
+    chatLog.addMessage("Processed total of " + std::to_string(c) + " nodes");
     return path;
 }
 
+/*
 void printNodes(Nodes list){
     std::cout << std::endl;
 
@@ -247,7 +243,7 @@ void printNodes(Nodes list){
 }
 
 void testAStar(){
-    std::vector<std::vector<bool>> avoidanceMatrix = {
+    std::vector<std::vector<bool>> passMask = {
         {1, 1, 1, 1},
         {1, 0, 0, 1},
         {1, 0, 0, 1},
@@ -257,5 +253,6 @@ void testAStar(){
     cords startPos = {0, 0};
     cords destinationPos = {3, 3};
 
-    printNodes(findPathAStar(avoidanceMatrix, startPos, destinationPos));
+    printNodes(findPathAStar(passMask, startPos, destinationPos));
 }
+*/
