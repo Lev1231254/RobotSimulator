@@ -125,7 +125,7 @@ void Robot::updateSensorAngles() {
     for (std::size_t i = 0; i < sensors.size(); ++i) {
         sensors[i].setAngle(angle + sf::degrees(30.f * (static_cast<float>(i) - 1.f)));
     }
-    updateInnerMap();
+    //updateInnerMap();
 }
 
 sf::Vector2f Robot::getPosition(){
@@ -196,6 +196,8 @@ void Robot::moveRobot(int direction){
     for (SensorDist& sensor : sensors) {
         sensor.setPosition({x, y});
     }
+
+    updateInnerMap();
 }
 void Robot::turnToAngle(sf::Angle targetAngle){
     float angleDeg = angle.asDegrees();
@@ -213,10 +215,14 @@ void Robot::turnToAngle(sf::Angle targetAngle){
         updateSensorAngles();
     }
     // else turn the robot
-    else rotateRobot(direction);
+    else {
+        rotateRobot(direction);
+        updateInnerMap();
+    }
 }
 
 void Robot::moveToTarget(sf::Vector2f target){
+    
     float distance = getDistance(body.getPosition(), target);
     
     if (distance == 0) return;
@@ -232,6 +238,7 @@ void Robot::goToNode(Node node, int squareSide){
     
     turnToAngle(targetAngle);
     if (anglesEqual(angle, targetAngle)) moveToTarget(targetPosition);
+    //updateInnerMap();
 }
 
 bool Robot::isAtNode(Node node, int squareSide){

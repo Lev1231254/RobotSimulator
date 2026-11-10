@@ -112,7 +112,7 @@ cords searchFree(const mask2& passMask, cords originCords){
     if (passMask.empty() || passMask[0].empty()) return nullCords;
 
     const int maxRadius = static_cast<int>(std::max(passMask.size(), passMask[0].size()));
-    for (int radius = 1; radius <= maxRadius; radius++){
+    for (int radius = 2; radius <= maxRadius; radius++){
         for (int drow = -radius; drow < radius + 1; drow++){
             for (int dcol = -radius; dcol < radius + 1; dcol++){
                 if (drow != -radius && drow != radius && dcol != -radius && dcol != radius) continue;
