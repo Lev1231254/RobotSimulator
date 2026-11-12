@@ -21,6 +21,7 @@ App::App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput)
         "CONTROLS GUIDE\n\n"
         "LSHIFT  -  switch modes\n"
         "R       -  toggle red zone\n"
+        "P       -  toggle path drawing\n"
         "ESC     -  exit program\n\n"
         "MOVEMENT MODE:\n"
         "  WASD  -  move\n\n"
@@ -132,9 +133,15 @@ void App::handleKeyPressed(const sf::Event::KeyPressed* key){
     }
 
     else if (key->scancode == sf::Keyboard::Scancode::R){
+        redZoneOn = !redZoneOn;
+        robot.getChatLog().addMessage(redZoneOn ? "Red zone enabled" : "Red zone disabled");
+        return;
+    }
 
-        if (redZoneOn) redZoneOn = 0;
-        else redZoneOn = 1;
+    else if (key->scancode == sf::Keyboard::Scancode::P){
+        pathDrawingOn = !pathDrawingOn;
+        robot.getChatLog().addMessage(
+            pathDrawingOn ? "Path drawing enabled" : "Path drawing disabled");
         return;
     }
 
@@ -151,7 +158,7 @@ void App::handleMouseButtonPressed(){
         int rowMouse = int(selectedSquare.y / square_side);
         cords end = {rowMouse, colMouse};
 
-        if (isMaskSet(robot.getInnerMap().getPassMask()[rowMouse][colMouse])){
+        //if (isMaskSet(robot.getInnerMap().getPassMask()[rowMouse][colMouse])){
             sf::Vector2f robotPos = robot.getBodyCircle().getPosition();
 
             cords start = posToCords(
@@ -162,9 +169,9 @@ void App::handleMouseButtonPressed(){
             currentPath.setNodes(
                 findPathAStar(robot.getInnerMap().getPassMask(), start, end, robot.getChatLog()),
                 robot.getChatLog());
-        }
+        //}
 
-        else robot.getChatLog().addMessage("Unreachable destination");
+        //else robot.getChatLog().addMessage("Unreachable destination");
     }
 }
 
@@ -207,7 +214,7 @@ void App::drawAll(){
         robot.getChatLog().drawChat(window);
 
         map.drawCursor(window, mapImage, selectedSquare, sf::Color::Green);
-        if (!currentPath.getNodes().empty()) {
+        if (pathDrawingOn && !currentPath.getNodes().empty()) {
             currentPath.drawPath(window, square_side);
             robot.drawLineToPath(window, currentPath);
         }

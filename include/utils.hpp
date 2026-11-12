@@ -19,6 +19,7 @@ bool cordsInMask(const mask2& mask, cords cords);
 sf::Image getWindowImage(sf::RenderWindow& window);
 sf::Vector2f getSquareInGrid(int squareSide, sf::Vector2f position);
 float getDistance(sf::Vector2f pos1, sf::Vector2f pos2);
+float getDistance(cords pos1, cords pos2);
 
 cords posToCords(sf::Vector2f pos, int squareSide);
 sf::Vector2f cordsToPos(cords cords, int squareSide);

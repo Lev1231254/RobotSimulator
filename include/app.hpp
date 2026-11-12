@@ -37,6 +37,7 @@ class App{
 
     std::string simulationMode = "CONTROLS_GUIDE";
     bool redZoneOn = 0;
+    bool pathDrawingOn = true;
     bool controlsWindowOn = 1;
 
     private:

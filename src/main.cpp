@@ -35,7 +35,7 @@ int main()
         miniMapMargin
     };
 
-    Map map(windowSize, square_side, labyrinthMap);
+    Map map(windowSize, square_side, obstacles1);
     Map robotMap(windowSize, square_side, emptyMap);
 
     map.setupObstacleMask();

@@ -62,6 +62,12 @@ float getDistance(sf::Vector2f pos1, sf::Vector2f pos2){
     return sqrt( pow(xDistance, 2) + pow(yDistance, 2) );
 }
 
+float getDistance(cords pos1, cords pos2){
+    float colDistance = pos1.col - pos2.col;
+    float rowDistance = pos1.row - pos2.row;
+    return sqrt(pow(colDistance, 2) + pow(rowDistance, 2));
+}
+
 cords posToCords(sf::Vector2f pos, int squareSide){
     return {int(pos.y / squareSide), int(pos.x / squareSide)};
 }

@@ -10,6 +10,20 @@ Node findClosestNode(Nodes& list){
     return bestNode;
 }
 
+Node& findClosestNodeToCords(Nodes& list, cords cords){
+    Node& bestNode = list[0];
+    float shortestDistance = 999999;
+
+    for (Node& node : list){
+        if (getDistance(node.pos, cords) < shortestDistance) {
+            bestNode = node;
+            shortestDistance = getDistance(node.pos, cords);
+        }
+    }
+
+    return bestNode;
+}
+
 bool isInMatrix(cords pos, int lenX, int lenY){
     return 0 <= pos.col && pos.col < lenX && 0 <= pos.row && pos.row < lenY;
 }
@@ -37,7 +51,7 @@ Node generateNextNode(const mask2& passMask, Node& parent, cords& nextNodeCords,
     return node;
 }
 
-Nodes generateSuccessors(const mask2& passMask, Node& parent, cords& destinationPos){
+Nodes generateSuccessors(const mask2& passMask, Node& parent, cords& destinationCords){
     Nodes successors;
 
     for (int dcol = -1; dcol< 2; dcol++){
@@ -52,7 +66,7 @@ Nodes generateSuccessors(const mask2& passMask, Node& parent, cords& destination
             if (successorInMatrix && isMaskSet(passMask[successor.pos.row][successor.pos.col])){
                 successor.parentPos = parent.pos;
                 float g = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(parent.pos)) + parent.g;
-                float h = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(destinationPos));
+                float h = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(destinationCords));
                 successor.f = g + h;
                 successor.g = g;
                 successors.push_back(successor);
@@ -76,12 +90,12 @@ int nodeInList(Nodes& list, Node& node){
     return -1;
 }
 
-Nodes makePath(Nodes& closedList, cords startPos, cords destinationPos){
+Nodes makePath(Nodes& closedList, cords startCords, cords destinationCords){
     Nodes path;
 
-    cords childPos = destinationPos;
+    cords childPos = destinationCords;
 
-    for (std::size_t steps = 0; !(childPos == startPos); steps++){
+    for (std::size_t steps = 0; !(childPos == startCords); steps++){
         if (steps >= closedList.size()) return {};
 
         bool foundParent = false;
@@ -97,7 +111,7 @@ Nodes makePath(Nodes& closedList, cords startPos, cords destinationPos){
     }
 
     for (Node& node : closedList){
-        if (node.pos == startPos){
+        if (node.pos == startCords){
             path.push_back(node);
             break;
         }
@@ -139,33 +153,33 @@ struct PathStart {
     bool selectedFreeSquare;
 };
 
-PathStart selectPathStart(const mask2& passMask, cords startPos){
+PathStart selectPathStart(const mask2& passMask, cords startCords){
     // 
-    if (cordsInMask(passMask, startPos) && isMaskSet(passMask[startPos.row][startPos.col])) {
-        return {startPos, true};
+    if (cordsInMask(passMask, startCords) && isMaskSet(passMask[startCords.row][startCords.col])) {
+        return {startCords, true};
     }
 
 
-    cords freeCords = searchFree(passMask, startPos);
-    if (freeCords == nullCords) return {startPos, false};
+    cords freeCords = searchFree(passMask, startCords);
+    if (freeCords == nullCords) return {startCords, false};
 
     bool nearFree = (
-        startPos.row - 1 <= freeCords.row && freeCords.row <= startPos.row + 1 &&
-        startPos.col - 1 <= freeCords.col && freeCords.col <= startPos.col + 1);
+        startCords.row - 1 <= freeCords.row && freeCords.row <= startCords.row + 1 &&
+        startCords.col - 1 <= freeCords.col && freeCords.col <= startCords.col + 1);
     if (nearFree) return {freeCords, false};
 
     return {freeCords, true};
 }
 }
 
-Nodes findPathAStar(const mask2& passMask, cords& startPos, cords& destinationPos, ChatLog& chatLog){
-    PathStart selectedStart = selectPathStart(passMask, startPos);
-    cords pathStartPos = selectedStart.position;
+Nodes findPathAStar(const mask2& passMask, cords startCords, cords destinationCords, ChatLog& chatLog){
+    PathStart selectedStart = selectPathStart(passMask, startCords);
+    cords pathstartCords = selectedStart.position;
 
-    if (selectedStart.selectedFreeSquare && pathStartPos == destinationPos) {
+    if (selectedStart.selectedFreeSquare && pathstartCords == destinationCords) {
         Node freeStartNode{};
-        freeStartNode.pos = pathStartPos;
-        freeStartNode.parentPos = pathStartPos;
+        freeStartNode.pos = pathstartCords;
+        freeStartNode.parentPos = pathstartCords;
         return {freeStartNode};
     }
 
@@ -176,8 +190,8 @@ Nodes findPathAStar(const mask2& passMask, cords& startPos, cords& destinationPo
     Nodes closedList = {};
 
     Node freeStartNode;
-    freeStartNode.pos = pathStartPos;
-    freeStartNode.parentPos = pathStartPos;
+    freeStartNode.pos = pathstartCords;
+    freeStartNode.parentPos = pathstartCords;
     freeStartNode.f = 0;
     freeStartNode.g = 0;
     openList.push_back(freeStartNode);
@@ -186,10 +200,10 @@ Nodes findPathAStar(const mask2& passMask, cords& startPos, cords& destinationPo
         Node q = findClosestNode(openList);
         openList.erase(find(openList.begin(), openList.end(), q));
 
-        Nodes successors = generateSuccessors(passMask, q, destinationPos);
+        Nodes successors = generateSuccessors(passMask, q, destinationCords);
 
         for (Node& successor : successors){
-            if (successor.pos == destinationPos) {
+            if (successor.pos == destinationCords) {
                 closedList.push_back(successor);
                 openList = {}; // empty the list
                 destinationIsUnreachable = 0;
@@ -218,20 +232,22 @@ Nodes findPathAStar(const mask2& passMask, cords& startPos, cords& destinationPo
         }
 
         c++;
+        if (c >= 4000) break;
         closedList.push_back(q);
     }
 
     if (destinationIsUnreachable) {
         chatLog.addMessage("Unreachable destination");
-        return {};
+        Node closestToDestination = findClosestNodeToCords(closedList, destinationCords);
+        destinationCords = closestToDestination.pos;
     }
 
 
-    Nodes path = makePath(closedList, pathStartPos, destinationPos);
+    Nodes path = makePath(closedList, pathstartCords, destinationCords);
 
     // if the start cords are near free space, build the path from the free space and replace free space with initial cords
     if (selectedStart.selectedFreeSquare == 0){
-        Node startNode = {startPos, startPos, 0, 0};
+        Node startNode = {startCords, startCords, 0, 0};
         path.pop_back();
         path.push_back(startNode);
     }
@@ -259,9 +275,9 @@ void testAStar(){
         {1, 1, 1, 1}
     };
 
-    cords startPos = {0, 0};
-    cords destinationPos = {3, 3};
+    cords startCords = {0, 0};
+    cords destinationCords = {3, 3};
 
-    printNodes(findPathAStar(passMask, startPos, destinationPos));
+    printNodes(findPathAStar(passMask, startCords, destinationCords));
 }
 */

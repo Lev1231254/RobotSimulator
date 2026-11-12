@@ -17,7 +17,7 @@ Node generateNextNode(const mask2& passMask, Node& parent, cords& nextNodeCords,
 Nodes generateSuccessors(const mask2& passMask, Node& parent, cords& destinationPos);
 int nodeInList(Nodes& list, Node& node);
 Nodes makePath(Nodes& closedList, cords startPos, cords destinationPos);
-Nodes findPathAStar(const mask2& passMask, cords& startPos, cords& destinationPos, ChatLog& chatLog);
+Nodes findPathAStar(const mask2& passMask, cords startPos, cords destinationPos, ChatLog& chatLog);
 cords searchFree(const mask2& passMask, cords originCords);
 void addFree(const mask2& passMask, Node& originNode, cords endCords, Nodes& nodesList);
 
