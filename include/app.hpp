@@ -27,24 +27,30 @@ class App{
     Map map;
     sf::Image mapImage;
     sf::Clock clock;
+    sf::Font controlsFont;
+    sf::Text controlsText;
+    sf::RectangleShape controlsBackground;
     float accumulator = 0.f;
     float pathFindingAccumulator = 0.f;
-    int simulationMode = 0;
     sf::Vector2f selectedSquare;
     Path currentPath;
+
+    std::string simulationMode = "CONTROLS_GUIDE";
+    bool redZoneOn = 0;
+    bool controlsWindowOn = 1;
 
     private:
         void accumulate(float time);
         void scanAndMove(Robot& robot, Map& map);
         void runSimulationStep();
         void handleEvents(sf::Event event);
+        void handleKeyPressed(const sf::Event::KeyPressed* key);
+        void handleMouseButtonPressed();
+        void drawAll();
+        void drawControlsWindow();
 
     public:
-        App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput)
-            : window(windowInput),
-            robot(robotInput),
-            map(mapInput),
-            currentPath(Nodes{}, map) {}
+        App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput);
         
         void run();
         void setRobot(sf::Vector2f position, float radius, float angleRad);

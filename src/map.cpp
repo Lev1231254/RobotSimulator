@@ -126,7 +126,7 @@ void Map::drawObstacles(sf::RenderWindow& window){
     }
 }
 
-void Map::drawAvoidanceField(sf::RenderWindow& window){
+void Map::drawRedZone(sf::RenderWindow& window){
     for (auto& square : obstacleRects) window.draw(square);
 }
 

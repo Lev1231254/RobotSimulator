@@ -10,13 +10,14 @@
 ~~ - make updatePassMask() in updateInnerMap() faster~~
 ~~ - change pathfinding, so it can start from red squares~~
  - add smoothness to shapes
- - add a bunch of toggles (for example toggle for red squares)
+~~ - add a bunch of toggles (for example toggle for red squares)~~
 ~~ - add log window~~
- - add mini controls guide
- - add color grading to newly discoverd objects
+~~ - add mini controls guide~~
+~~ - add color grading to newly discoverd objects~~
  - make robot always be inside the map. (or at least mini robot should not be outside of the minimap)
- - add exit button
+~~ - add exit button~~
  - add internal timers to check efficiency
 ~~ - change all (type &) to (type& )~~
  - watch a few simulation to find the ways to imrpove the visuals
- - draw red zone before minimap
+~~ - draw red zone before minimap~~
+ - stop path when exit the mode

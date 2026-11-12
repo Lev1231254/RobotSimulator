@@ -29,7 +29,7 @@ public:
     Map(sf::Vector2u mapSizeInput = {0, 0}, int squareSideInput = 0, std::vector<Obstacle> obstaclesInput = {});
 
     void drawObstacles(sf::RenderWindow& window); //draw using <vector> obstacles
-    void drawAvoidanceField(sf::RenderWindow& window);
+    void drawRedZone(sf::RenderWindow& window);
     void drawCursor(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
     void drawRobotMiniMap(sf::RenderWindow& window); 
     void drawObstaclesMiniMap(sf::RenderWindow& window); //draw using mask2 obstacleMask
