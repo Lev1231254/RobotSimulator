@@ -20,7 +20,7 @@ int main()
         sf::VideoMode::getDesktopMode(),
         WINDOW_TITLE,
         sf::Style::Close,
-        sf::State::Fullscreen);
+        sf::State::Windowed);
     window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(false);
 
@@ -35,7 +35,7 @@ int main()
         miniMapMargin
     };
 
-    Map map(windowSize, square_side, labyrinthMap);
+    Map map(windowSize, square_side, obstacles1);
     Map robotMap(windowSize, square_side, emptyMap);
 
     map.setupObstacleMask();

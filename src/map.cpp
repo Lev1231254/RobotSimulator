@@ -1,9 +1,19 @@
 #include <map.hpp>
 
+#include <stdexcept>
+#include <string>
+
+namespace {
+const char* cursorFontPath = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+}
+
 Map::Map(sf::Vector2u mapSizeInput, int squareSideInput, std::vector<Obstacle> obstaclesInput)
     : mapSize(mapSizeInput),
       squareSide(squareSideInput),
       obstacles(obstaclesInput) {
+    if (!cursorFont.openFromFile(cursorFontPath)) {
+        throw std::runtime_error(std::string("Failed to load cursor font: ") + cursorFontPath);
+    }
 }
 
 void Map::setupPassMask(float robotRadius){
@@ -168,7 +178,9 @@ void Map::makeAvoidanceRects(){
     }
 }
 
-void Map::addColorToSquare(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd){
+void Map::drawCursor(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd){
+    if (squareSide <= 0) return;
+
     int x = leftTop.x;
     int y = leftTop.y;
 
@@ -187,6 +199,29 @@ void Map::addColorToSquare(sf::RenderWindow& window, const sf::Image& windowCopy
     square.setFillColor(color);
 
     window.draw(square);
+
+    const cords gridCords = posToCords(leftTop, squareSide);
+    sf::Text coordinates(
+        cursorFont,
+        "(" + std::to_string(gridCords.row) + ", " + std::to_string(gridCords.col) + ")",
+        14);
+    coordinates.setFillColor(sf::Color::White);
+    coordinates.setOutlineColor(sf::Color::Black);
+    coordinates.setOutlineThickness(1.f);
+
+    const sf::Vector2f textSize = coordinates.getLocalBounds().size;
+    sf::Vector2f textPosition{leftTop.x + squareSide + 4.f, leftTop.y};
+    if (textPosition.x + textSize.x > window.getSize().x) {
+        textPosition.x = leftTop.x - textSize.x - 4.f;
+    }
+    if (textPosition.y + textSize.y > window.getSize().y) {
+        textPosition.y = leftTop.y + squareSide - textSize.y;
+    }
+    if (textPosition.x < 0.f) textPosition.x = 0.f;
+    if (textPosition.y < 0.f) textPosition.y = 0.f;
+
+    coordinates.setPosition(textPosition);
+    window.draw(coordinates);
 }
 
 void Map::addObstacle(Obstacle obstacle){

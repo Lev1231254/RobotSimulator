@@ -112,7 +112,7 @@ cords searchFree(const mask2& passMask, cords originCords){
     if (passMask.empty() || passMask[0].empty()) return nullCords;
 
     const int maxRadius = static_cast<int>(std::max(passMask.size(), passMask[0].size()));
-    for (int radius = 2; radius <= maxRadius; radius++){
+    for (int radius = 1; radius <= maxRadius; radius++){
         for (int drow = -radius; drow < radius + 1; drow++){
             for (int dcol = -radius; dcol < radius + 1; dcol++){
                 if (drow != -radius && drow != radius && dcol != -radius && dcol != radius) continue;
@@ -140,10 +140,11 @@ struct PathStart {
 };
 
 PathStart selectPathStart(const mask2& passMask, cords startPos){
-    // cordsInMask(passMask, startPos) && passMask[startPos.row][startPos.col]
-    if (cordsInMask(passMask, startPos)) {
-        return {startPos, false};
+    // 
+    if (cordsInMask(passMask, startPos) && passMask[startPos.row][startPos.col]) {
+        return {startPos, true};
     }
+
 
     cords freeCords = searchFree(passMask, startPos);
     if (freeCords == nullCords) return {startPos, false};
@@ -151,7 +152,7 @@ PathStart selectPathStart(const mask2& passMask, cords startPos){
     bool nearFree = (
         startPos.row - 1 <= freeCords.row && freeCords.row <= startPos.row + 1 &&
         startPos.col - 1 <= freeCords.col && freeCords.col <= startPos.col + 1);
-    if (nearFree) return {startPos, false};
+    if (nearFree) return {freeCords, false};
 
     return {freeCords, true};
 }
@@ -162,10 +163,10 @@ Nodes findPathAStar(const mask2& passMask, cords &startPos, cords &destinationPo
     cords pathStartPos = selectedStart.position;
 
     if (selectedStart.selectedFreeSquare && pathStartPos == destinationPos) {
-        Node startNode{};
-        startNode.pos = pathStartPos;
-        startNode.parentPos = pathStartPos;
-        return {startNode};
+        Node freeStartNode{};
+        freeStartNode.pos = pathStartPos;
+        freeStartNode.parentPos = pathStartPos;
+        return {freeStartNode};
     }
 
     bool destinationIsUnreachable = 1;
@@ -174,12 +175,12 @@ Nodes findPathAStar(const mask2& passMask, cords &startPos, cords &destinationPo
     Nodes openList = {};
     Nodes closedList = {};
 
-    Node startNode;
-    startNode.pos = pathStartPos;
-    startNode.parentPos = pathStartPos;
-    startNode.f = 0;
-    startNode.g = 0;
-    openList.push_back(startNode);
+    Node freeStartNode;
+    freeStartNode.pos = pathStartPos;
+    freeStartNode.parentPos = pathStartPos;
+    freeStartNode.f = 0;
+    freeStartNode.g = 0;
+    openList.push_back(freeStartNode);
 
     while (!openList.empty()){
         Node q = findClosestNode(openList);
@@ -225,7 +226,15 @@ Nodes findPathAStar(const mask2& passMask, cords &startPos, cords &destinationPo
         return {};
     }
 
+
     Nodes path = makePath(closedList, pathStartPos, destinationPos);
+
+    // if the start cords are near free space, build the path from the free space and replace free space with initial cords
+    if (selectedStart.selectedFreeSquare == 0){
+        Node startNode = {startPos, startPos, 0, 0};
+        path.pop_back();
+        path.push_back(startNode);
+    }
     chatLog.addMessage("Processed total of " + std::to_string(c) + " nodes");
     return path;
 }

@@ -17,6 +17,7 @@ private:
     mask2 obstacleMask;
     std::vector<sf::RectangleShape> obstacleRects;
     sf::RectangleShape miniMapBG;
+    sf::Font cursorFont;
 
 
 public:
@@ -24,7 +25,7 @@ public:
 
     void drawObstacles(sf::RenderWindow& window); //draw using <vector> obstacles
     void drawAvoidanceField(sf::RenderWindow& window);
-    void addColorToSquare(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
+    void drawCursor(sf::RenderWindow& window, const sf::Image& windowCopy, sf::Vector2f leftTop, sf::Color colorToAdd);
     void drawRobotMiniMap(sf::RenderWindow& window); 
     void drawObstaclesMiniMap(sf::RenderWindow& window); //draw using mask2 obstacleMask
     void drawPassMaskMiniMap(sf::RenderWindow& window);

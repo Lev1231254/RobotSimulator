@@ -158,6 +158,7 @@ void Robot::setPosition(sf::Vector2f position){
     for (SensorDist& sensor : sensors) {
         sensor.setPosition(position);
     }
+    updateInnerMap();
 }
 
 void Robot::setRadius(float radius){
@@ -182,6 +183,7 @@ void Robot::setRotationSpeed(sf::Angle speed){
 void Robot::rotateRobot(int direction){
     angle += rotationSpeed * direction;
     updateSensorAngles();
+    updateInnerMap();
 }
 
 void Robot::moveRobot(int direction){
@@ -217,7 +219,6 @@ void Robot::turnToAngle(sf::Angle targetAngle){
     // else turn the robot
     else {
         rotateRobot(direction);
-        updateInnerMap();
     }
 }
 

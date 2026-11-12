@@ -17,21 +17,21 @@ void App::setMapImage(){
 void App::scanAndMove(Robot& robot, Map& map){
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
+        sf::Vector2f oldPos = robot.getPosition();
         sf::Vector2f newPos = robot.getFuturePos(1);
 
-        Robot futureRobot = robot;
-        futureRobot.setPosition(newPos);
+        robot.setPosition(newPos);
 
-        if (!futureRobot.collidesObsts(map.getObstacles())) robot.moveRobot(1);
+        if (robot.collidesObsts(map.getObstacles())) robot.setPosition(oldPos);
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
-        sf::Vector2f newPos = robot.getFuturePos(-1);
+        sf::Vector2f oldPos = robot.getPosition();
+        sf::Vector2f newPos = robot.getFuturePos(0);
 
-        Robot futureRobot = robot;
-        futureRobot.setPosition(newPos);
+        robot.setPosition(newPos);
 
-        if (!futureRobot.collidesObsts(map.getObstacles())) robot.moveRobot(0);
+        if (robot.collidesObsts(map.getObstacles())) robot.setPosition(oldPos);
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
@@ -147,7 +147,7 @@ void App::run(){
         robot.drawMiniMap(window);
 
         if (simulationMode == 1){
-            map.addColorToSquare(window, mapImage, selectedSquare, sf::Color::Green);
+            map.drawCursor(window, mapImage, selectedSquare, sf::Color::Green);
             map.drawAvoidanceField(window);
             if (!currentPath.getNodes().empty()) {
                 currentPath.drawPath(window, square_side);
