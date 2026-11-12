@@ -133,7 +133,7 @@ public:
 
     void drawRobotMiniMap(sf::RenderWindow& window);
     void drawRobot(sf::RenderWindow& window);
-    void drawLineToPath(sf::RenderWindow &window, Path &path);
+    void drawLineToPath(sf::RenderWindow& window, Path& path);
     void drawSensors(sf::RenderWindow& window);
     void drawMiniMapSensors(
         sf::RenderWindow& window,

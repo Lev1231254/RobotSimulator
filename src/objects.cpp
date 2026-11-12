@@ -70,7 +70,7 @@ void SensorDist::updateDirection(){
     rayData.direction.y = -sin(rayData.angle.asRadians());
 }
 
-void SensorDist::drawSensor(sf::RenderWindow & window){
+void SensorDist::drawSensor(sf::RenderWindow& window){
     if (end.x < 0 || end.y < 0) return;
 
     sf::CircleShape hitMarker(radius);
@@ -308,7 +308,7 @@ void Robot::updateInnerMap(){
     for (auto sensor : sensors){
         cords endCords = sensor.getEndCords();
         if (endCords == nullCords || innerMap.getObstMaskAt(endCords) == false) continue;
-        innerMap.setObstMaskAt(sensor.getEndCords(), 0);
+        innerMap.markObstacleFound(endCords);
         foundNewObst = true;
         innerMap.updatePassMaskAt(body.getRadius(), endCords);
         chatLog.addMessage("Inner map updated");
@@ -379,7 +379,7 @@ void Robot::drawRobot(sf::RenderWindow& window){
         
 }
 
-void Robot::drawLineToPath(sf::RenderWindow &window, Path &path){
+void Robot::drawLineToPath(sf::RenderWindow& window, Path& path){
     if (path.getNodes().size() == 0) return;
 
     sf::Vector2f start = body.getPosition();

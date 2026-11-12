@@ -12,6 +12,15 @@ float clamp(float value, float min, float max){
     return value;
 }
 
+float exponentialTransition(float value, float cap){
+    if (cap <= 0.f) return 1.f;
+
+    const float progress = clamp(value / cap, 0.f, 1.f);
+    constexpr float curveStrength = 3.5;
+    return -std::expm1(-curveStrength * progress)
+        / -std::expm1(-curveStrength);
+}
+
 
 bool circleIntersectsRect(sf::CircleShape circle, sf::RectangleShape rect){
     sf::Vector2f rectTopLeft = rect.getPosition();
@@ -138,13 +147,13 @@ bool anglesEqual(sf::Angle angle1, sf::Angle angle2){
     return false;
 }
 
-void normalizeAngle(sf::Angle &angle){
+void normalizeAngle(sf::Angle& angle){
     float angleDeg = angle.asDegrees();
     normalizeAngleDeg(angleDeg);
     angle = sf::degrees(angleDeg);
 }
 
-void normalizeAngleDeg(float &angle){
+void normalizeAngleDeg(float& angle){
     while (angle > 180) angle -= 360;
     while (angle < -180) angle += 360;
 }

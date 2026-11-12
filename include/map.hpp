@@ -2,6 +2,7 @@
 #define MAP_HPP
 
 #include <SFML/Graphics.hpp>
+#include <chrono>
 #include <vector>
 #include <obstacle.hpp>
 #include <structs.hpp>
@@ -18,6 +19,10 @@ private:
     std::vector<sf::RectangleShape> obstacleRects;
     sf::RectangleShape miniMapBG;
     sf::Font cursorFont;
+    std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
+
+    int getElapsedSeconds() const;
+    float getElapsedTimeSeconds() const;
 
 
 public:
@@ -33,8 +38,9 @@ public:
 
 
     void setMiniMap(sf::Vector2f topLeft, sf::Vector2f size);
-    void setObstMaskAt(cords cords, bool value);
-    void setPassMaskAt(cords cords, bool value);
+    void setObstMaskAt(cords cords, int value);
+    void markObstacleFound(cords cords);
+    void setPassMaskAt(cords cords, int value);
     void addObstacle(Obstacle obstacle);
 
     void passMaskOnes();

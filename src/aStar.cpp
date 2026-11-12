@@ -18,13 +18,13 @@ sf::Vector2f cordsToVector2f(cords position){
     return {float(position.col), float(position.row)};
 }
 
-Node generateNextNode(const std::vector<std::vector<bool>>& passMask, Node& parent, cords &nextNodeCords, cords& endCords){
+Node generateNextNode(const mask2& passMask, Node& parent, cords& nextNodeCords, cords& endCords){
     Node successor;
     successor.pos = nextNodeCords;
 
     bool successorInMatrix = isInMatrix(successor.pos, passMask[0].size(), passMask.size());
 
-    if (successorInMatrix && passMask[successor.pos.row][successor.pos.col]){
+    if (successorInMatrix && isMaskSet(passMask[successor.pos.row][successor.pos.col])){
         successor.parentPos = parent.pos;
         float g = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(parent.pos)) + parent.g;
         float h = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(endCords));
@@ -37,7 +37,7 @@ Node generateNextNode(const std::vector<std::vector<bool>>& passMask, Node& pare
     return node;
 }
 
-Nodes generateSuccessors(const std::vector<std::vector<bool>>& passMask, Node& parent, cords &destinationPos){
+Nodes generateSuccessors(const mask2& passMask, Node& parent, cords& destinationPos){
     Nodes successors;
 
     for (int dcol = -1; dcol< 2; dcol++){
@@ -49,7 +49,7 @@ Nodes generateSuccessors(const std::vector<std::vector<bool>>& passMask, Node& p
 
             bool successorInMatrix = isInMatrix(successor.pos, passMask[0].size(), passMask.size());
 
-            if (successorInMatrix && passMask[successor.pos.row][successor.pos.col]){
+            if (successorInMatrix && isMaskSet(passMask[successor.pos.row][successor.pos.col])){
                 successor.parentPos = parent.pos;
                 float g = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(parent.pos)) + parent.g;
                 float h = getDistance(cordsToVector2f(successor.pos), cordsToVector2f(destinationPos));
@@ -76,7 +76,7 @@ int nodeInList(Nodes& list, Node& node){
     return -1;
 }
 
-Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos){
+Nodes makePath(Nodes& closedList, cords startPos, cords destinationPos){
     Nodes path;
 
     cords childPos = destinationPos;
@@ -85,7 +85,7 @@ Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos){
         if (steps >= closedList.size()) return {};
 
         bool foundParent = false;
-        for (Node &node : closedList){
+        for (Node& node : closedList){
             if (node.pos == childPos){
                 path.push_back(node);
                 childPos = node.parentPos;
@@ -96,7 +96,7 @@ Nodes makePath(Nodes &closedList, cords startPos, cords destinationPos){
         if (!foundParent) return {};
     }
 
-    for (Node &node : closedList){
+    for (Node& node : closedList){
         if (node.pos == startPos){
             path.push_back(node);
             break;
@@ -118,7 +118,7 @@ cords searchFree(const mask2& passMask, cords originCords){
                 if (drow != -radius && drow != radius && dcol != -radius && dcol != radius) continue;
 
                 cords cords{originCords.row + drow, originCords.col + dcol};
-                if (cordsInMask(passMask, cords) && passMask[cords.row][cords.col] == 1) return cords;
+                if (cordsInMask(passMask, cords) && isMaskSet(passMask[cords.row][cords.col])) return cords;
             }
         }
     }
@@ -141,7 +141,7 @@ struct PathStart {
 
 PathStart selectPathStart(const mask2& passMask, cords startPos){
     // 
-    if (cordsInMask(passMask, startPos) && passMask[startPos.row][startPos.col]) {
+    if (cordsInMask(passMask, startPos) && isMaskSet(passMask[startPos.row][startPos.col])) {
         return {startPos, true};
     }
 
@@ -158,7 +158,7 @@ PathStart selectPathStart(const mask2& passMask, cords startPos){
 }
 }
 
-Nodes findPathAStar(const mask2& passMask, cords &startPos, cords &destinationPos, ChatLog& chatLog){
+Nodes findPathAStar(const mask2& passMask, cords& startPos, cords& destinationPos, ChatLog& chatLog){
     PathStart selectedStart = selectPathStart(passMask, startPos);
     cords pathStartPos = selectedStart.position;
 
@@ -188,7 +188,7 @@ Nodes findPathAStar(const mask2& passMask, cords &startPos, cords &destinationPo
 
         Nodes successors = generateSuccessors(passMask, q, destinationPos);
 
-        for (Node &successor : successors){
+        for (Node& successor : successors){
             if (successor.pos == destinationPos) {
                 closedList.push_back(successor);
                 openList = {}; // empty the list
@@ -252,7 +252,7 @@ void printNodes(Nodes list){
 }
 
 void testAStar(){
-    std::vector<std::vector<bool>> passMask = {
+    mask2 passMask = {
         {1, 1, 1, 1},
         {1, 0, 0, 1},
         {1, 0, 0, 1},

@@ -37,6 +37,10 @@ struct ray{
     sf::Angle angle;
 };
 
-typedef std::vector<std::vector<bool>> mask2;
+typedef std::vector<std::vector<int>> mask2;
+
+inline bool isMaskSet(int value) {
+    return value > 0;
+}
 
 #endif

@@ -38,7 +38,7 @@ ray posToRay(sf::Vector2f start, sf::Vector2f end){
     return ray;
 }
 
-sf::Vector2f RayTracer::getFirstHitPos(ray &ray, Map& map){
+sf::Vector2f RayTracer::getFirstHitPos(ray& ray, Map& map){
     if (squareSide <= 0 || !map.isOnMap(ray.start)
         || !normalizeDirection(ray.direction)) {
         return {-1.f, -1.f}; // not on the map
@@ -75,7 +75,7 @@ sf::Vector2f RayTracer::getFirstHitPos(ray &ray, Map& map){
             && maskCol >= 0
             && static_cast<std::size_t>(maskCol) < occupancyMask[maskRow].size();
         if (!inMask && !outsideMaskIsFree) return {-1.f, -1.f};
-        if (inMask && !occupancyMask[maskRow][maskCol]) {
+        if (inMask && !isMaskSet(occupancyMask[maskRow][maskCol])) {
             return currentPos;
         }
 
@@ -97,21 +97,21 @@ sf::Vector2f RayTracer::getFirstHitPos(ray &ray, Map& map){
     }
 }
 
-cords RayTracer::getHitCords(ray &ray, Map& map, sf::Vector2f hitPos){
+cords RayTracer::getHitCords(ray& ray, Map& map, sf::Vector2f hitPos){
     //find point a little bit further from the hit, to get to the inner of the square
     if (hitPos == sf::Vector2f{-1, -1}) return nullCords;
     sf::Vector2f furtherPos = hitPos + sf::Vector2f{ray.direction.x * 0.5f, ray.direction.y * 0.5f};
     return posToCords(getSquareInGrid(map.getSquareSide(), furtherPos), map.getSquareSide());
 }
 
-cords RayTracer::getFirstHitCords(ray &ray, Map& map){
+cords RayTracer::getFirstHitCords(ray& ray, Map& map){
     sf::Vector2f hitPos = getFirstHitPos(ray, map);
     return getHitCords(ray, map, hitPos);
 }
 
 
 
-sf::Vector2f RayTracer::getFirstHitFinite(ray &ray, Map& map, sf::Vector2f end){
+sf::Vector2f RayTracer::getFirstHitFinite(ray& ray, Map& map, sf::Vector2f end){
     if (squareSide <= 0 || !map.isOnMap(ray.start)
         || !normalizeDirection(ray.direction)) {
         return {-1.f, -1.f}; // not on the map
@@ -149,7 +149,7 @@ sf::Vector2f RayTracer::getFirstHitFinite(ray &ray, Map& map, sf::Vector2f end){
             && maskCol >= 0
             && static_cast<std::size_t>(maskCol) < occupancyMask[maskRow].size();
         if (!inMask && !outsideMaskIsFree) return {-1.f, -1.f};
-        if (inMask && !occupancyMask[maskRow][maskCol]) {
+        if (inMask && !isMaskSet(occupancyMask[maskRow][maskCol])) {
             return currentPos;
         }
 

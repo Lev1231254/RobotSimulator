@@ -9,6 +9,7 @@
 
 int sign(float num);
 float clamp(float value, float min, float max);
+float exponentialTransition(float value, float cap);
 
 bool circleIntersectsRect(sf::CircleShape circle, sf::RectangleShape rect);
 bool anglesEqual(sf::Angle angle1, sf::Angle angle2);
@@ -29,9 +30,9 @@ sf::Vector2f posToMiniMap(sf::Vector2f pos, sf::Vector2u size, const sf::Rectang
 
 float devideUntilLess(float num, float step);
 sf::Vector2f normalize(sf::Vector2f vec);
-void clampToSquare(sf::Vector2f &pos, sf::Vector2f &entryPos, int &squareSide);
-void normalizeAngleDeg(float &angle);
-void normalizeAngle(sf::Angle &angle);
+void clampToSquare(sf::Vector2f& pos, sf::Vector2f& entryPos, int& squareSide);
+void normalizeAngleDeg(float& angle);
+void normalizeAngle(sf::Angle& angle);
 
 
 #endif

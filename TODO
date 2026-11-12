@@ -7,8 +7,8 @@
 ~~ - add minimap~~
 ~~ - add generation of map based on surroundings~~
  - add min priority queue instead of vector in pathFinding
- - make updatePassMask() in updateInnerMap() faster
- - change pathfinding, so it can start from red squares
+~~ - make updatePassMask() in updateInnerMap() faster~~
+~~ - change pathfinding, so it can start from red squares~~
  - add smoothness to shapes
  - add a bunch of toggles (for example toggle for red squares)
 ~~ - add log window~~
@@ -17,5 +17,6 @@
  - make robot always be inside the map. (or at least mini robot should not be outside of the minimap)
  - add exit button
  - add internal timers to check efficiency
- - change all (type &) to (type& )
- 
+~~ - change all (type &) to (type& )~~
+ - watch a few simulation to find the ways to imrpove the visuals
+ - draw red zone before minimap

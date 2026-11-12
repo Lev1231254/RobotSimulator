@@ -104,7 +104,7 @@ void App::handleEvents(sf::Event event){
         int rowMouse = int(selectedSquare.y / square_side);
         cords end = {rowMouse, colMouse};
 
-        if (robot.getInnerMap().getPassMask()[rowMouse][colMouse] ==  1){
+        if (isMaskSet(robot.getInnerMap().getPassMask()[rowMouse][colMouse])){
             sf::Vector2f robotPos = robot.getBodyCircle().getPosition();
             cords start = posToCords(
                 getSquareInGrid(robot.getInnerMap().getSquareSide(), {robotPos.x, robotPos.y}),
@@ -140,12 +140,6 @@ void App::run(){
         // drawing
         window.clear(sf::Color::Black);
 
-        robot.drawRobot(window);
-        
-        map.drawObstacles(window);
-
-        robot.drawMiniMap(window);
-
         if (simulationMode == 1){
             map.drawCursor(window, mapImage, selectedSquare, sf::Color::Green);
             map.drawAvoidanceField(window);
@@ -154,7 +148,9 @@ void App::run(){
                 robot.drawLineToPath(window, currentPath);
             }
         }
-        
+        robot.drawRobot(window);
+        map.drawObstacles(window);
+        robot.drawMiniMap(window);
         robot.getChatLog().drawChat(window);
 
         window.display();
