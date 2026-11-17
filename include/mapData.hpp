@@ -3,7 +3,7 @@
 #include <objects.hpp>
 #include <vector>
 
-sf::Color obstacleColor = sf::Color(230, 230, 230, 255);
+sf::Color obstacleColor = sf::Color(200, 200, 200, 255);
 
 std::vector<Obstacle> obstacles1 = {
     Obstacle({640,960}, {400, 96}, obstacleColor),

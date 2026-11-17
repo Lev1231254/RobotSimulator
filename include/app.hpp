@@ -21,6 +21,7 @@ int const window_height = 1000;
 sf::Vector2f const window_size = {window_width, window_height};
 
 
+
 class App{
     sf::RenderWindow& window;
     Robot robot;
@@ -35,10 +36,10 @@ class App{
     sf::Vector2f selectedSquare;
     Path currentPath;
 
-    std::string simulationMode = "CONTROLS_GUIDE";
+    std::string simulationMode = "FREE_MOVEMENT";
     bool redZoneOn = 0;
     bool pathDrawingOn = true;
-    bool controlsWindowOn = 1;
+    bool controlsWindowOn = true;
 
     private:
         void accumulate(float time);

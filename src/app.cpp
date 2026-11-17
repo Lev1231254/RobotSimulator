@@ -6,6 +6,7 @@
 namespace {
 const char* controlsFontPath = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
 }
+sf::Color bg_color(30, 30, 30);
 
 App::App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput)
     : window(windowInput),
@@ -19,15 +20,18 @@ App::App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput)
 
     controlsText.setString(
         "CONTROLS GUIDE\n\n"
+        "F1      -  toggle controls guide\n"
         "LSHIFT  -  switch modes\n"
-        "R       -  toggle red zone\n"
-        "P       -  toggle path drawing\n"
         "ESC     -  exit program\n\n"
+
         "MOVEMENT MODE:\n"
         "  WASD  -  move\n\n"
+
         "PATHFINDING MODE:\n"
         "  LMouse click  -  choose destination\n\n"
-        "Press any key to continue");
+        
+        "R       -  toggle red zone\n"
+        "P       -  toggle path drawing\n");
     controlsText.setFillColor(sf::Color::White);
     controlsText.setLineSpacing(1.25f);
 
@@ -115,8 +119,8 @@ void App::accumulate(float time){
 
 void App::handleKeyPressed(const sf::Event::KeyPressed* key){
 
-    if (simulationMode == "CONTROLS_GUIDE"){
-        simulationMode = "FREE_MOVEMENT";
+    if (key->scancode == sf::Keyboard::Scancode::F1){
+        controlsWindowOn = !controlsWindowOn;
         return;
     }
 
@@ -192,12 +196,6 @@ void App::handleEvents(sf::Event event){
 }
 
 void App::drawAll(){
-
-    if (simulationMode == "CONTROLS_GUIDE"){
-        drawControlsWindow();
-        return;
-    }
-
     if (redZoneOn) map.drawRedZone(window);
 
     if (simulationMode == "FREE_MOVEMENT"){
@@ -220,13 +218,18 @@ void App::drawAll(){
         }
     }
 
+    if (controlsWindowOn) drawControlsWindow();
 }
 
 void App::drawControlsWindow(){
     const sf::Vector2f windowSize(window.getSize());
+    sf::RectangleShape backdrop(windowSize);
+    backdrop.setFillColor(sf::Color(0, 0, 0, 90));
+    window.draw(backdrop);
+
     const sf::Vector2f panelSize{
-        std::min(windowSize.x - 40.f, 700.f),
-        std::min(windowSize.y - 40.f, 620.f)
+        std::min(windowSize.x - 40.f, 800.f),
+        std::min(windowSize.y - 40.f, 720.f)
     };
     controlsBackground.setSize(panelSize);
     controlsBackground.setPosition({
@@ -264,7 +267,7 @@ void App::run(){
         runSimulationStep();
     
         // draw
-        window.clear(sf::Color::Black);
+        window.clear(bg_color);
         drawAll();
         window.display();
     }

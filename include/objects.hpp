@@ -79,6 +79,7 @@ class Path {
 
 class Robot {
     sf::CircleShape body;
+    sf::Color bodyColor = {40, 150, 40};
     sf::Angle angle;
     float movementSpeed = 1;
     sf::Angle rotationSpeed = sf::degrees(1);
@@ -86,6 +87,7 @@ class Robot {
     Map innerMap;
     ChatLog& chatLog;
     bool foundNewObst = 0;
+
 private:
     void updateSensorAngles();
 

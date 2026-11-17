@@ -9,6 +9,8 @@
 
 namespace {
 const char* cursorFontPath = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+sf::Color minimap_bg_color(45, 45, 45);
+
 
 sf::Color obstacleAgeColor(int storedDiscoveryTime, float currentTimeSeconds) {
     const long long discoveredAtSeconds =
@@ -134,7 +136,7 @@ void Map::drawRedZone(sf::RenderWindow& window){
 void Map::setMiniMap(sf::Vector2f topLeft, sf::Vector2f size){
     miniMapBG.setSize(size);
     miniMapBG.setPosition(topLeft);
-    miniMapBG.setFillColor(sf::Color::Black);
+    miniMapBG.setFillColor(minimap_bg_color);
     miniMapBG.setOutlineColor(sf::Color::White);
     miniMapBG.setOutlineThickness(3);
 }
