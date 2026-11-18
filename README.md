@@ -34,25 +34,10 @@ RobotSimulator/
 └── CMakeLists.txt    # Build configuration
 ```
 
-## Main discovery loop
+## Navigation loop
 
-```mermaid
-flowchart TD
-    A([Start loop]) --> B{"foundNewObstacle = 1<br/>and ≥ 300 ms passed?"}
-    B -- yes --> C["Find new path (A*)<br/>foundNewObstacle = 0<br/>restart 300 ms timer"]
-    B -- no --> D
-    C --> D["Scan sensors<br/>get occupied points"]
-    D --> E{"Point not in<br/>mask yet?"}
-    E -- yes --> F["Update occupancy mask<br/>foundNewObstacle = 1"]
-    E -- no --> G
-    F --> G["Move robot<br/>along the path"]
-    G -- next tick --> A
+<img width="707" height="451" alt="image" src="https://github.com/user-attachments/assets/8829f957-0fc2-4891-bf59-2d933f0cca1d" />
 
-    classDef always fill:#E1F5EE,stroke:#0F6E56,color:#085041
-    classDef conditional fill:#EEEDFE,stroke:#534AB7,color:#3C3489
-    class D,G always
-    class C,F conditional
-```
 
 ## Build
 
