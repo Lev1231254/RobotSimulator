@@ -262,6 +262,7 @@ Nodes findPathAStar(const mask2& passMask, cords startCords, cords destinationCo
         path.pop_back();
         path.push_back(startNode);
     }
+    chatLog.addMessage("Found path");
     chatLog.addMessage("Processed total of " + std::to_string(c) + " nodes");
     return path;
 }

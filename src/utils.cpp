@@ -16,7 +16,7 @@ float exponentialTransition(float value, float cap){
     if (cap <= 0.f) return 1.f;
 
     const float progress = clamp(value / cap, 0.f, 1.f);
-    constexpr float curveStrength = 10;
+    constexpr float curveStrength = 7;
     return -std::expm1(-curveStrength * progress)
         / -std::expm1(-curveStrength);
 }
