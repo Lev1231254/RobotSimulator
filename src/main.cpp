@@ -20,7 +20,7 @@ int main()
         sf::VideoMode::getDesktopMode(),
         WINDOW_TITLE,
         sf::Style::Close,
-        sf::State::Windowed);
+        sf::State::Fullscreen);
     window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(false);
 

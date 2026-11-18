@@ -23,20 +23,22 @@ ControlsGuide::ControlsGuide()
           24),
       rightText(
           font,
-          "PATHFINDING MODE:\n"
-          "  LMouse click  -  choose target\n\n"
-
-          "MOVEMENT MODE:\n"
-          "  WASD  -  move",
-          24) {
+          "  LMouse click  -  choose target",
+          24),
+      movementText(font, "  WASD  -  move", 24),
+      pathfindingLabel(font, "PATHFINDING MODE:", 24),
+      movementLabel(font, "MOVEMENT MODE:", 24) {
     if (!font.openFromFile(controlsFontPath)) {
         throw std::runtime_error(std::string("Failed to load controls font: ") + controlsFontPath);
     }
 
     header.setFillColor(sf::Color::White);
     headerHint.setFillColor(sf::Color::White);
-    leftText.setFillColor(sf::Color::White);
-    rightText.setFillColor(sf::Color::White);
+    leftText.setFillColor(sf::Color(200, 200, 200));
+    rightText.setFillColor(sf::Color(200, 200, 200));
+    movementText.setFillColor(sf::Color(200, 200, 200));
+    pathfindingLabel.setFillColor(sf::Color(60, 150, 200));
+    movementLabel.setFillColor(sf::Color(200, 180, 63));
     leftText.setLineSpacing(1.35f);
     rightText.setLineSpacing(1.35f);
 
@@ -77,14 +79,20 @@ void ControlsGuide::draw(sf::RenderWindow& window) {
         panelPosition.x + 40.f,
         panelPosition.y + 160.f
     });
-    rightText.setPosition({
-        panelPosition.x + panelSize.x / 2.f + 20.f,
-        panelPosition.y + 160.f
-    });
+    const float rightColumnX = panelPosition.x + panelSize.x / 2.f + 20.f;
+    const float rightColumnY = panelPosition.y + 160.f;
+    const float lineHeight = 24.f * 1.35f;
+    pathfindingLabel.setPosition({rightColumnX, rightColumnY});
+    rightText.setPosition({rightColumnX, rightColumnY + lineHeight});
+    movementLabel.setPosition({rightColumnX, rightColumnY + lineHeight * 3.f});
+    movementText.setPosition({rightColumnX, rightColumnY + lineHeight * 4.f});
 
     window.draw(background);
     window.draw(header);
     window.draw(headerHint);
     window.draw(leftText);
+    window.draw(pathfindingLabel);
     window.draw(rightText);
+    window.draw(movementLabel);
+    window.draw(movementText);
 }

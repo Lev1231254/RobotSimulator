@@ -52,7 +52,7 @@ class Path {
     Map& map;
     RayTracer tracer;
     int lineHeight = 6;
-    sf::Color color = sf::Color(0, 0, 255, 100);
+    sf::Color color = sf::Color(44, 47, 214);
 
     public:
         Path(Nodes nodesInput, Map& mapInput);
@@ -79,7 +79,7 @@ class Path {
 
 class Robot {
     sf::CircleShape body;
-    sf::Color bodyColor = {40, 150, 40};
+    sf::Color bodyColor = {200, 180, 63};
     sf::Angle angle;
     float movementSpeed = 1;
     sf::Angle rotationSpeed = sf::degrees(1);

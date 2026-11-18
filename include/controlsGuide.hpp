@@ -10,6 +10,9 @@ class ControlsGuide {
     sf::Text headerHint;
     sf::Text leftText;
     sf::Text rightText;
+    sf::Text movementText;
+    sf::Text pathfindingLabel;
+    sf::Text movementLabel;
 
 public:
     ControlsGuide();

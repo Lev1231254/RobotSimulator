@@ -9,7 +9,7 @@
 
 namespace {
 const char* cursorFontPath = "../assets/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf";
-sf::Color minimap_bg_color(45, 45, 45);
+sf::Color minimap_bg_color(60, 60, 60);
 
 
 sf::Color obstacleAgeColor(int storedDiscoveryTime, float currentTimeSeconds) {

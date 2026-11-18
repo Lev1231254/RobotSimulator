@@ -1,6 +1,6 @@
 #include <app.hpp>
 
-sf::Color bg_color(30, 30, 30);
+sf::Color bg_color(45, 45, 45);
 
 App::App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput)
     :     window(windowInput),
@@ -87,6 +87,10 @@ void App::accumulate(float time){
 }
 
 void App::handleKeyPressed(const sf::Event::KeyPressed* key){
+    if (controlsWindowOn) {
+        controlsWindowOn = false;
+        return;
+    }
 
     if (key->scancode == sf::Keyboard::Scancode::F1){
         controlsWindowOn = !controlsWindowOn;
@@ -133,6 +137,11 @@ void App::handleKeyPressed(const sf::Event::KeyPressed* key){
 }
 
 void App::handleMouseButtonPressed(){
+    if (controlsWindowOn) {
+        controlsWindowOn = false;
+        return;
+    }
+
     if (simulationMode == "PATHFINDING") {
         int colMouse = int(selectedSquare.x / square_side);
         int rowMouse = int(selectedSquare.y / square_side);
@@ -165,6 +174,7 @@ void App::handleMouseWheelScrolled(const sf::Event::MouseWheelScrolled* wheel) {
 void App::handleEvents(sf::Event event){
     if (event.is<sf::Event::Closed>()){
         window.close();
+        return;
     }
 
     // toggle pathfinding mode using LeftSHIFT
