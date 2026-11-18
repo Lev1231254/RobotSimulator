@@ -39,6 +39,7 @@ class App{
     std::string simulationMode = "FREE_MOVEMENT";
     bool redZoneOn = 0;
     bool pathDrawingOn = true;
+    bool hudOn = true;
     bool controlsWindowOn = true;
 
     private:

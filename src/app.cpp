@@ -30,8 +30,10 @@ App::App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput)
         "PATHFINDING MODE:\n"
         "  LMouse click  -  choose destination\n\n"
         
-        "R       -  toggle red zone\n"
-        "P       -  toggle path drawing\n");
+        "R  -  toggle red zone\n"
+        "P  -  toggle path drawing\n"
+        "M  -  toggle map");
+
     controlsText.setFillColor(sf::Color::White);
     controlsText.setLineSpacing(1.25f);
 
@@ -127,10 +129,10 @@ void App::handleKeyPressed(const sf::Event::KeyPressed* key){
     if (key->scancode == sf::Keyboard::Scancode::LShift){
         if (simulationMode == "PATHFINDING") {
             simulationMode = "FREE_MOVEMENT";
-            robot.getChatLog().addMessage("Changed to free movement");
+            robot.getChatLog().addMessage("Switched to free movement");
         }
         else if (simulationMode == "FREE_MOVEMENT"){
-            robot.getChatLog().addMessage("Changed to pathfinding");
+            robot.getChatLog().addMessage("Switched to pathfinding");
             simulationMode = "PATHFINDING";
         }
         return;
@@ -146,6 +148,13 @@ void App::handleKeyPressed(const sf::Event::KeyPressed* key){
         pathDrawingOn = !pathDrawingOn;
         robot.getChatLog().addMessage(
             pathDrawingOn ? "Path drawing enabled" : "Path drawing disabled");
+        return;
+    }
+
+    else if (key->scancode == sf::Keyboard::Scancode::M){
+        hudOn = !hudOn;
+        robot.getChatLog().addMessage(
+            hudOn ? "Minimap enabled" : "Minimap disabled");
         return;
     }
 
@@ -201,21 +210,24 @@ void App::drawAll(){
     if (simulationMode == "FREE_MOVEMENT"){
         robot.drawRobot(window);
         map.drawObstacles(window);
-        robot.drawMiniMap(window);
-        robot.getChatLog().drawChat(window);
+        if (hudOn) {
+            robot.drawMiniMap(window);
+            robot.getChatLog().drawChat(window);
+        }
     }
 
     else if (simulationMode == "PATHFINDING"){
         robot.drawRobot(window);
         map.drawObstacles(window);
-        robot.drawMiniMap(window);
-        robot.getChatLog().drawChat(window);
+        if (hudOn) robot.drawMiniMap(window);
 
         map.drawCursor(window, mapImage, selectedSquare, sf::Color::Green);
         if (pathDrawingOn && !currentPath.getNodes().empty()) {
             currentPath.drawPath(window, square_side);
             robot.drawLineToPath(window, currentPath);
         }
+
+        if (hudOn) robot.getChatLog().drawChat(window);
     }
 
     if (controlsWindowOn) drawControlsWindow();

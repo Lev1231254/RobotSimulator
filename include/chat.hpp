@@ -9,6 +9,7 @@ class ChatLog {
     sf::Font font;
     sf::RectangleShape background;
     sf::Text text;
+    sf::Text toggleHint;
     std::deque<std::string> messages;
     sf::Vector2f topLeft;
     int counter;

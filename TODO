@@ -21,6 +21,7 @@
  - watch a few simulation to find the ways to imrpove the visuals
 ~~ - draw red zone before minimap~~
  - stop path when exit the mode
+ - fix finding the start position
  - fix lagging when making path to near walls
  - add paralell computing of path
- - add toggle to guide window
+ - add toggle to guide windows

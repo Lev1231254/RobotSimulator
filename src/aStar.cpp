@@ -1,4 +1,5 @@
 #include <aStar.hpp>
+#include <limits>
 
 Node findClosestNode(Nodes& list){
     Node bestNode = list[0];
@@ -123,6 +124,9 @@ Nodes makePath(Nodes& closedList, cords startCords, cords destinationCords){
 }
 
 cords searchFree(const mask2& passMask, cords originCords){
+    cords bestFreeCords;
+    float shortestDistance = std::numeric_limits<float>::infinity();
+
     if (passMask.empty() || passMask[0].empty()) return nullCords;
 
     const int maxRadius = static_cast<int>(std::max(passMask.size(), passMask[0].size()));
@@ -130,11 +134,18 @@ cords searchFree(const mask2& passMask, cords originCords){
         for (int drow = -radius; drow < radius + 1; drow++){
             for (int dcol = -radius; dcol < radius + 1; dcol++){
                 if (drow != -radius && drow != radius && dcol != -radius && dcol != radius) continue;
-
                 cords cords{originCords.row + drow, originCords.col + dcol};
-                if (cordsInMask(passMask, cords) && isMaskSet(passMask[cords.row][cords.col])) return cords;
+
+                // check if cords are free and if they are less than the nearest cords
+                if (cordsInMask(passMask, cords) && isMaskSet(passMask[cords.row][cords.col])) {
+                    if (getDistance(originCords, cords) < shortestDistance) {
+                        bestFreeCords = cords;
+                        shortestDistance = getDistance(originCords, cords);
+                    }
+                }
             }
         }
+        if (shortestDistance < std::numeric_limits<float>::infinity()) return bestFreeCords;
     }
     return nullCords;
 }

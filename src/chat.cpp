@@ -9,7 +9,8 @@ constexpr float margin = 10.f;
 }
 
 ChatLog::ChatLog(const sf::Vector2f& topLeft, const sf::Vector2f& size)
-    : text(font, "", 16) {
+    : text(font, "", 16),
+      toggleHint(font, "M - toggle hub", 16) {
     if (!font.openFromFile(fontPath)) {
         throw std::runtime_error(std::string("Failed to load chat font: ") + fontPath);
     }
@@ -22,6 +23,11 @@ ChatLog::ChatLog(const sf::Vector2f& topLeft, const sf::Vector2f& size)
     background.setOutlineThickness(1.f);
     text.setFillColor(sf::Color::White);
     text.setPosition({topLeft.x + margin, topLeft.y + margin + 8.f});
+    toggleHint.setFillColor(sf::Color::White);
+    toggleHint.setPosition({
+        topLeft.x + margin,
+        topLeft.y + margin + size.y + 4.f
+    });
 }
 
 
@@ -42,4 +48,5 @@ void ChatLog::addMessage(const std::string& message) {
 void ChatLog::drawChat(sf::RenderWindow& window) {
     window.draw(background);
     window.draw(text);
+    window.draw(toggleHint);
 }
