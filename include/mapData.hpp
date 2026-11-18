@@ -28,7 +28,11 @@ Obstacle labyrinthWestEntryWall({224, 176}, {16, 240}, obstacleColor);
 Obstacle zigZagWest({688, 176}, {16, 256}, obstacleColor);
 Obstacle zigZagEast({1264, 176}, {16, 256}, obstacleColor);
 Obstacle tiplePointUpperWall({416, 416}, {448, 16}, obstacleColor);
-Obstacle tiplePointLowerWall({224, 672}, {640, 16}, obstacleColor);
+Obstacle tiplePointLowerWall({80, 672}, {784, 16}, obstacleColor);
+Obstacle kishkaVertical1({256, 672}, {16, 240}, obstacleColor);
+Obstacle kishkaVertical2({608, 672}, {16, 240}, obstacleColor);
+Obstacle kishkaVertical3({432, 864}, {16, 240}, obstacleColor);
+Obstacle kishkaVertical4({784, 864}, {16, 240}, obstacleColor);
 Obstacle greatSouthWall({80, 1088}, {1760, 16}, obstacleColor);
 Obstacle trapWallA({1264, 416}, {368, 16}, obstacleColor);
 Obstacle trapWallB({1264, 656}, {368, 16}, obstacleColor);
@@ -50,10 +54,14 @@ std::vector<Obstacle> labyrinthMap = {
     zigZagWest,
     zigZagEast,
     tiplePointUpperWall,
+    tiplePointLowerWall,
+    kishkaVertical1,
+    kishkaVertical2,
+    kishkaVertical3,
+    kishkaVertical4,
     trapWallA,
     trapWallB,
     trapWallC,
-    tiplePointLowerWall,
     greatSouthWall,
     trapEastWallRight,
     trapEastWallLeft,

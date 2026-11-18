@@ -123,7 +123,7 @@ Nodes makePath(Nodes& closedList, cords startCords, cords destinationCords){
     return path;
 }
 
-cords searchFree(const mask2& passMask, cords originCords){
+cords searchFree(const mask2& passMask, cords originCords, cords destination){
     cords bestFreeCords;
     float shortestDistance = std::numeric_limits<float>::infinity();
 
@@ -138,9 +138,9 @@ cords searchFree(const mask2& passMask, cords originCords){
 
                 // check if cords are free and if they are less than the nearest cords
                 if (cordsInMask(passMask, cords) && isMaskSet(passMask[cords.row][cords.col])) {
-                    if (getDistance(originCords, cords) < shortestDistance) {
+                    if (getDistance(destination, cords) < shortestDistance) {
                         bestFreeCords = cords;
-                        shortestDistance = getDistance(originCords, cords);
+                        shortestDistance = getDistance(destination, cords);
                     }
                 }
             }
@@ -151,7 +151,7 @@ cords searchFree(const mask2& passMask, cords originCords){
 }
 
 void addFree(const mask2& passMask, Node& originNode, cords endCords, Nodes& nodesList){
-    cords freeCords = searchFree(passMask, originNode.pos);
+    cords freeCords = searchFree(passMask, originNode.pos, endCords);
     if (freeCords == nullCords) return;
 
     Node freeNode = generateNextNode(passMask, originNode, freeCords, endCords);
@@ -164,14 +164,14 @@ struct PathStart {
     bool selectedFreeSquare;
 };
 
-PathStart selectPathStart(const mask2& passMask, cords startCords){
+PathStart selectPathStart(const mask2& passMask, cords startCords, cords destination){
     // 
     if (cordsInMask(passMask, startCords) && isMaskSet(passMask[startCords.row][startCords.col])) {
         return {startCords, true};
     }
 
 
-    cords freeCords = searchFree(passMask, startCords);
+    cords freeCords = searchFree(passMask, startCords, destination);
     if (freeCords == nullCords) return {startCords, false};
 
     bool nearFree = (
@@ -184,7 +184,7 @@ PathStart selectPathStart(const mask2& passMask, cords startCords){
 }
 
 Nodes findPathAStar(const mask2& passMask, cords startCords, cords destinationCords, ChatLog& chatLog){
-    PathStart selectedStart = selectPathStart(passMask, startCords);
+    PathStart selectedStart = selectPathStart(passMask, startCords, destinationCords);
     cords pathstartCords = selectedStart.position;
 
     if (selectedStart.selectedFreeSquare && pathstartCords == destinationCords) {

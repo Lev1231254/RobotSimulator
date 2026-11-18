@@ -36,7 +36,7 @@ class App{
     sf::Vector2f selectedSquare;
     Path currentPath;
 
-    std::string simulationMode = "FREE_MOVEMENT";
+    std::string simulationMode = "PATHFINDING";
     bool redZoneOn = 0;
     bool pathDrawingOn = true;
     bool hudOn = true;
@@ -49,6 +49,7 @@ class App{
         void handleEvents(sf::Event event);
         void handleKeyPressed(const sf::Event::KeyPressed* key);
         void handleMouseButtonPressed();
+        void handleMouseWheelScrolled(const sf::Event::MouseWheelScrolled* wheel);
         void drawAll();
         void drawControlsWindow();
 

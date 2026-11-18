@@ -200,6 +200,11 @@ void Map::drawMiniMap(sf::RenderWindow& window){
     window.draw(miniMapBG);
     //drawPassMaskMiniMap(window);
     drawObstaclesMiniMap(window);
+
+    sf::Text label(cursorFont, "THE INNER MAP", 20);
+    label.setPosition(miniMapBG.getPosition() + sf::Vector2f(12.f, 8.f));
+    label.setFillColor(sf::Color(255, 255, 255, 128));
+    window.draw(label);
 }
 
 void Map::makeAvoidanceRects(){
@@ -244,7 +249,7 @@ void Map::drawCursor(sf::RenderWindow& window, const sf::Image& windowCopy, sf::
     const cords gridCords = posToCords(leftTop, squareSide);
     sf::Text coordinates(
         cursorFont,
-        "(" + std::to_string(gridCords.row) + ", " + std::to_string(gridCords.col) + ")",
+        "(" + std::to_string(gridCords.col) + ", " + std::to_string(gridCords.row) + ")",
         14);
     coordinates.setFillColor(sf::Color::White);
     coordinates.setOutlineColor(sf::Color::Black);

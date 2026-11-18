@@ -99,7 +99,8 @@ public:
         float movementSpeedInput,
         sf::Angle rotationSpeedInput,
         Map innerMapInput,
-        ChatLog& chatLogInput);
+        ChatLog& chatLogInput
+    );
 
     void updateInnerMap();
     bool foundNewObstacle() const;

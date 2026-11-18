@@ -24,11 +24,11 @@ App::App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput)
         "LSHIFT  -  switch modes\n"
         "ESC     -  exit program\n\n"
 
-        "MOVEMENT MODE:\n"
-        "  WASD  -  move\n\n"
-
         "PATHFINDING MODE:\n"
         "  LMouse click  -  choose destination\n\n"
+
+        "MOVEMENT MODE:\n"
+        "  WASD  -  move\n\n"
         
         "R  -  toggle red zone\n"
         "P  -  toggle path drawing\n"
@@ -188,6 +188,13 @@ void App::handleMouseButtonPressed(){
     }
 }
 
+void App::handleMouseWheelScrolled(const sf::Event::MouseWheelScrolled* wheel) {
+    ChatLog& chatLog = robot.getChatLog();
+    if (chatLog.isMouseOver(wheel->position)) {
+        chatLog.scroll(wheel->delta);
+    }
+}
+
 void App::handleEvents(sf::Event event){
     if (event.is<sf::Event::Closed>()){
         window.close();
@@ -196,6 +203,10 @@ void App::handleEvents(sf::Event event){
     // toggle pathfinding mode using LeftSHIFT
     if (const auto* key = event.getIf<sf::Event::KeyPressed>()){
         handleKeyPressed(key);
+    }
+
+    if (const auto* wheel = event.getIf<sf::Event::MouseWheelScrolled>()) {
+        handleMouseWheelScrolled(wheel);
     }
 
     // find the best path
