@@ -102,5 +102,5 @@ void ChatLog::scroll(float delta) {
 void ChatLog::drawChat(sf::RenderWindow& window) {
     window.draw(background);
     window.draw(text);
-    window.draw(toggleHint);
+    //window.draw(toggleHint);
 }

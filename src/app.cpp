@@ -1,45 +1,12 @@
 #include <app.hpp>
 
-#include <cmath>
-#include <stdexcept>
-
-namespace {
-const char* controlsFontPath = "../assets/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf";
-}
 sf::Color bg_color(30, 30, 30);
 
 App::App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput)
-    : window(windowInput),
-      robot(robotInput),
-      map(mapInput),
-      controlsText(controlsFont, "", 30),
-      currentPath(Nodes{}, map) {
-    if (!controlsFont.openFromFile(controlsFontPath)) {
-        throw std::runtime_error(std::string("Failed to load controls font: ") + controlsFontPath);
-    }
-
-    controlsText.setString(
-        "CONTROLS GUIDE\n\n"
-        "F1      -  toggle controls guide\n"
-        "LSHIFT  -  switch modes\n"
-        "ESC     -  exit program\n\n"
-
-        "PATHFINDING MODE:\n"
-        "  LMouse click  -  choose destination\n\n"
-
-        "MOVEMENT MODE:\n"
-        "  WASD  -  move\n\n"
-        
-        "R  -  toggle red zone\n"
-        "P  -  toggle path drawing\n"
-        "M  -  toggle map");
-
-    controlsText.setFillColor(sf::Color::White);
-    controlsText.setLineSpacing(1.25f);
-
-    controlsBackground.setFillColor(sf::Color(20, 20, 20, 240));
-    controlsBackground.setOutlineColor(sf::Color(180, 180, 180));
-    controlsBackground.setOutlineThickness(2.f);
+    :     window(windowInput),
+    robot(robotInput),
+    map(mapInput),
+    currentPath(Nodes{}, map) {
 }
 
 void App::setRobot(sf::Vector2f position, float radius, float angleRad){
@@ -241,33 +208,7 @@ void App::drawAll(){
         if (hudOn) robot.getChatLog().drawChat(window);
     }
 
-    if (controlsWindowOn) drawControlsWindow();
-}
-
-void App::drawControlsWindow(){
-    const sf::Vector2f windowSize(window.getSize());
-    sf::RectangleShape backdrop(windowSize);
-    backdrop.setFillColor(sf::Color(0, 0, 0, 90));
-    window.draw(backdrop);
-
-    const sf::Vector2f panelSize{
-        std::min(windowSize.x - 40.f, 800.f),
-        std::min(windowSize.y - 40.f, 720.f)
-    };
-    controlsBackground.setSize(panelSize);
-    controlsBackground.setPosition({
-        (windowSize.x - panelSize.x) / 2.f,
-        (windowSize.y - panelSize.y) / 2.f
-    });
-
-    const sf::Vector2f textSize = controlsText.getLocalBounds().size;
-    controlsText.setPosition({
-        std::round(controlsBackground.getPosition().x + (panelSize.x - textSize.x) / 2.f),
-        std::round(controlsBackground.getPosition().y + (panelSize.y - textSize.y) / 2.f)
-    });
-
-    window.draw(controlsBackground);
-    window.draw(controlsText);
+    if (controlsWindowOn) controlsGuide.draw(window);
 }
 
 void App::run(){

@@ -116,6 +116,7 @@ Robot::Robot(
         body.setRadius(radius);
         body.setOrigin({radius, radius});
         body.setFillColor(bodyColor);
+        
         // body.setOutlineColor(sf::Color(30, 120, 30));
         // body.setOutlineThickness(5);
         for (std::size_t i = 0; i < sensors.size(); ++i) {

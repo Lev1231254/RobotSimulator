@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <aStar.hpp>
+#include <controlsGuide.hpp>
 
 
 float const pi = 3.141592653f;
@@ -28,9 +29,7 @@ class App{
     Map map;
     sf::Image mapImage;
     sf::Clock clock;
-    sf::Font controlsFont;
-    sf::Text controlsText;
-    sf::RectangleShape controlsBackground;
+    ControlsGuide controlsGuide;
     float accumulator = 0.f;
     float pathFindingAccumulator = 0.f;
     sf::Vector2f selectedSquare;
@@ -51,7 +50,6 @@ class App{
         void handleMouseButtonPressed();
         void handleMouseWheelScrolled(const sf::Event::MouseWheelScrolled* wheel);
         void drawAll();
-        void drawControlsWindow();
 
     public:
         App(sf::RenderWindow& windowInput, Robot robotInput, Map mapInput);

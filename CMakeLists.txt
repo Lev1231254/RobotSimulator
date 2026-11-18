@@ -24,6 +24,7 @@ FetchContent_MakeAvailable(SFML)
 add_executable(robot_simulator
     src/main.cpp
     src/app.cpp
+    src/controlsGuide.cpp
     src/chat.cpp
     src/map.cpp
     src/objects.cpp
