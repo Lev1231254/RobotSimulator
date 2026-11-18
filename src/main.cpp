@@ -10,7 +10,7 @@
 std::string WINDOW_TITLE = "Robot simulator";
 
 
-sf::Vector2f const ROBOT_POS = {900, 500};
+sf::Vector2f const ROBOT_POS = {1500, 546};
 float const ROBOT_RADIUS = 40;
 float const ROBOT_ANGLE_RAD = pi / 6;
 

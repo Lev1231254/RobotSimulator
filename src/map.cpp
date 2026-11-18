@@ -138,7 +138,7 @@ void Map::setMiniMap(sf::Vector2f topLeft, sf::Vector2f size){
     miniMapBG.setPosition(topLeft);
     miniMapBG.setFillColor(minimap_bg_color);
     miniMapBG.setOutlineColor(sf::Color::White);
-    miniMapBG.setOutlineThickness(3);
+    miniMapBG.setOutlineThickness(2.f);
 }
 
 void Map::setObstMaskAt(cords cords, int value){

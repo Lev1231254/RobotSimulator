@@ -23,7 +23,7 @@ std::vector<Obstacle> obstacles1 = {
 
 Obstacle labyrinthUpperWestWall({224, 160}, {480, 16}, obstacleColor);
 Obstacle labyrinthUpperCenterWall({880, 160}, {400, 16}, obstacleColor);
-Obstacle northEastCornerUpperWall({1456, 160}, {320, 16}, obstacleColor);
+Obstacle northEastCornerUpperWall({1280, 160}, {576, 16}, obstacleColor);
 Obstacle labyrinthWestEntryWall({224, 176}, {16, 240}, obstacleColor);
 Obstacle zigZagWest({688, 176}, {16, 256}, obstacleColor);
 Obstacle zigZagEast({1264, 176}, {16, 256}, obstacleColor);
@@ -33,11 +33,11 @@ Obstacle kishkaVertical1({256, 672}, {16, 240}, obstacleColor);
 Obstacle kishkaVertical2({608, 672}, {16, 240}, obstacleColor);
 Obstacle kishkaVertical3({432, 864}, {16, 240}, obstacleColor);
 Obstacle kishkaVertical4({784, 864}, {16, 240}, obstacleColor);
-Obstacle greatSouthWall({80, 1088}, {1760, 16}, obstacleColor);
+Obstacle greatSouthWall({80, 1136}, {1792, 16}, obstacleColor);
 Obstacle trapWallA({1264, 416}, {368, 16}, obstacleColor);
 Obstacle trapWallB({1264, 656}, {368, 16}, obstacleColor);
 Obstacle trapWallC({1264, 896}, {368, 16}, obstacleColor);
-Obstacle trapEastWallRight({1824, 368}, {16, 736}, obstacleColor);
+Obstacle trapEastWallRight({1856, 160}, {16, 976}, obstacleColor);
 Obstacle trapEastWallLeft({1632, 416}, {16, 496}, obstacleColor);
 Obstacle labyrinthWestSteppingStoneA({704, 464}, {48, 48}, obstacleColor);
 Obstacle labyrinthWestSteppingStoneB({752, 528}, {48, 48}, obstacleColor);
