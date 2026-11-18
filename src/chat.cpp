@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 namespace {
-const char* fontPath = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+const char* fontPath = "../assets/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf";
 constexpr float margin = 10.f;
 constexpr float messageAreaVerticalPadding = 16.f;
 }

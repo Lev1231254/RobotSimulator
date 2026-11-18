@@ -8,7 +8,7 @@
 #include <string>
 
 namespace {
-const char* cursorFontPath = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+const char* cursorFontPath = "../assets/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf";
 sf::Color minimap_bg_color(45, 45, 45);
 
 

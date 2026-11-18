@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 namespace {
-const char* controlsFontPath = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+const char* controlsFontPath = "../assets/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf";
 }
 sf::Color bg_color(30, 30, 30);
 
